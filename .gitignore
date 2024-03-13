@@ -1,0 +1,6 @@
+/server/__pycache__
+/server/controllers/__pycache__
+/server/migrations/__pycache__
+/server/models/__pycache__
+/server/migrations/versions/__pycache__
+/server/venv
