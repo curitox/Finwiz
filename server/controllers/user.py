@@ -13,7 +13,7 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = "Finwiz.in@gmail.com"
+app.config['MAIL_USERNAME'] = "decisionhub.in@gmail.com"
 app.config['MAIL_PASSWORD'] = "wscmailudpfcuizp"
 
 obj=User()
@@ -42,7 +42,7 @@ def createUsers():
         return jsonify({'message': 'User already exists'}), 409
 
     # Hash the password
-    hashed_password = bcrypt.generate_password_hash(password.encode('utf-8'))
+    hashed_password = bcrypt.generate_password_hash(password)
 
     # Create a new user
     new_user = User(email=email, password=hashed_password)
@@ -137,15 +137,10 @@ def googleAuth():
     except Exception as e:
         raise e
 
-@app.route("/generate-otp", methods=['POST'])
-def generatOTP():
-    secret_key = pyotp.random_base32()
-    otp = pyotp.TOTP(secret_key)
-    otp_code = otp.now()
-    email=request.json.get('email')
-    name=request.json.get('name')
-    msg = Message(subject='Finwiz: Please verify your OTP', sender=os.environ.get("Finwiz.in@gmail.com"), recipients=[email])
-    msg.html = """<div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+def reset_password_otp(name, otp_c):
+    return {
+    'subject': "Finwiz Reset Password Verification",
+    'html': """<div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
     <h1 style="font-size: 22px; font-weight: 500; color: #007AFF; text-align: center; margin-bottom: 30px;">Verify Your Finwiz Account</h1>
     <div style="background-color: #FFF; border: 1px solid #e5e5e5; border-radius: 5px; box-shadow: 0px 3px 6px rgba(0,0,0,0.05);">
         <div style="background-color: #007AFF; border-top-left-radius: 5px; border-top-right-radius: 5px; padding: 20px 0;">
@@ -162,6 +157,53 @@ def generatOTP():
     </div>
     <br>
     <p style="font-size: 16px; color: #666; margin-bottom: 20px; text-align: center;">Best regards,<br>The Finwiz Team</p>
-    </div>""".format(otp_code, name, otp_code)
-    mail.send(msg)
-    return "Message sent!"
+    </div>""".format(otp_c, name, otp_c)
+}
+
+def verify_otp(name, otp_c):
+    return {
+    'subject': "Finwiz Verify OTP",
+    'html': """
+            <div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+    <h1 style="font-size: 22px; font-weight: 500; color: #007AFF; text-align: center; margin-bottom: 30px;">Verify Your DecisionHub Account</h1>
+    <div style="background-color: #FFF; border: 1px solid #e5e5e5; border-radius: 5px; box-shadow: 0px 3px 6px rgba(0,0,0,0.05);">
+        <div style="background-color: #007AFF; border-top-left-radius: 5px; border-top-right-radius: 5px; padding: 20px 0;">
+            <h2 style="font-size: 28px; font-weight: 500; color: #FFF; text-align: center; margin-bottom: 10px;">Verification Code</h2>
+            <h1 style="font-size: 32px; font-weight: 500; color: #FFF; text-align: center; margin-bottom: 20px;">{}</h1>
+        </div>
+        <div style="padding: 30px;">
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Dear {},</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Thank you for creating a Finwiz account. To activate your account, please enter the following verification code:</p>
+            <p style="font-size: 20px; font-weight: 500; color: #666; text-align: center; margin-bottom: 30px; color: #007AFF;">{}</p>
+            <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Please enter this code in the Finwiz app to activate your account.</p>
+            <p style="font-size: 12px; color: #666; margin-bottom: 20px;">If you did not create a Finwiz account, please disregard this email.</p>
+        </div>
+    </div>
+    <br>
+    <p style="font-size: 16px; color: #666; margin-bottom: 20px; text-align: center;">Best regards,<br>The Finwiz Team</p>
+</div>
+        """.format(otp_c, name, otp_c)
+}
+@app.route("/generate-otp", methods=['POST'])
+def generatOTP():
+    email=request.json.get('email')
+    name=request.json.get('name')
+    reason=request.json.get('reason')
+    secret_key = pyotp.random_base32()
+    otp = pyotp.TOTP(secret_key)
+    otp_code = otp.now()
+    if reason == "FORGOTPASSWORD":
+        send_mail(reset_password_otp(name, otp_code), email)
+    else:
+        send_mail(verify_otp(name, otp_code), email)
+
+    return jsonify({'message': 'OTP sent'})
+
+def send_mail(template, recipient):
+    msg = Message(template['subject'], sender=template['sender'], recipients=[recipient])
+    msg.html = template['html']
+    
+    try:
+        mail.send(msg)
+    except Exception as e:
+        return str(e)

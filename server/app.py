@@ -18,3 +18,4 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from controllers import *
+from ml import *
