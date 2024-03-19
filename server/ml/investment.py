@@ -1,4 +1,3 @@
-import yfinance as yf
 import pandas as pd
 
 class User:
@@ -15,7 +14,6 @@ class RecommendationSystem:
     def get_recommendation(self):
         filtered_assets = self.data[self.data["Close"].notna()]
         returns = filtered_assets["Close"].pct_change()
-        average_returns = returns.mean()
         filtered_assets = pd.DataFrame(returns[returns <= self.user.riskTolerance])
         sorted_assets = filtered_assets.sort_values(by="Close", ascending=False)
         top_assets = sorted_assets.head(self.user.investHorizon)

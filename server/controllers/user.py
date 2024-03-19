@@ -200,10 +200,12 @@ def generatOTP():
     return jsonify({'message': 'OTP sent'})
 
 def send_mail(template, recipient):
-    msg = Message(template['subject'], sender=template['sender'], recipients=[recipient])
+    msg = Message(template['subject'], sender=os.environ['MAIL_USERNAME'], recipients=[recipient])
     msg.html = template['html']
     
     try:
         mail.send(msg)
     except Exception as e:
         return str(e)
+
+@app.route('/verifyOTP', methods=['GET'])
