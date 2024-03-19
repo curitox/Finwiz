@@ -28,7 +28,7 @@ class User(db.Model):
     def dropTable():
         try:
             with app.app_context():
-                db.metadata.drop_all(bind=app)
+                db.drop_all()
             print("Dropped table")
         except Exception as e:
             print(f"Error: {e}")

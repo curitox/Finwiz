@@ -10,6 +10,8 @@ import { Image } from "react-native-elements";
 import TextButton from "../../components/buttons/textButton";
 import { useThemeContext } from "../../context/themeContext";
 import { router } from "expo-router";
+import { UserSignIn } from "../../api/index";
+import Toast from "react-native-toast-message";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -179,9 +181,27 @@ const SignIn = () => {
     }
   }, [error, user]);
 
-  const handleSignIn = () => {
-    toggleTheme();
+  const handleSignIn = async () => {
     setLoading(true);
+    await UserSignIn(user)
+      .then((res) => {
+        console.log(res.data);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "LoggedIn successfully 👋",
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+        Toast.show({
+          type: "error",
+          text1: "Wrong Credentials",
+          text2: err.response.data.message,
+        });
+        setLoading(false);
+      });
   };
 
   return (
@@ -323,6 +343,7 @@ const SignIn = () => {
           />
         </AlreadyAccount>
       </View>
+      <Toast />
     </Wrapper>
   );
 };

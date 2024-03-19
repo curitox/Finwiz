@@ -21,7 +21,7 @@ bcrypt = Bcrypt(app)
 mail = Mail(app)
 
 # obj.createTable()
-obj.dropTable()
+# obj.dropTable()
 
 @app.route("/users", methods=['GET'])
 def getUsers():
@@ -69,7 +69,14 @@ def create_users():
     # Return response with token and user information
     response_data = {
         'token': token,
-        'user': new_user
+        'user': {
+            'id': new_user.id,
+            'name': new_user.name,
+            'image': new_user.image,
+            'email': new_user.email,
+            'googleAuth': new_user.googleAuth
+        }
+
     }
     return jsonify(response_data), 201
 
@@ -78,6 +85,7 @@ def create_users():
 def signin():
     email = request.json.get('email')
     password = request.json.get('password')
+    print(email,password)
 
     if not email or not password:
         abort(400, "Missing email or password")
@@ -97,6 +105,8 @@ def signin():
         'token': token,
         'user': {
             'id': user.id,
+            'name': user.name,
+            'image': user.image,
             'email': user.email,
             'googleAuth': user.googleAuth
         }
