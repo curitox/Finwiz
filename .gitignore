@@ -4,3 +4,73 @@
 /server/models/__pycache__
 /server/migrations/versions/__pycache__
 /server/venv
+
+
+
+# OSX
+#
+/client/.DS_Store
+
+# Xcode
+#
+/client/build/
+/client/*.pbxuser
+/client/!default.pbxuser
+/client/*.mode1v3
+/client/!default.mode1v3
+/client/*.mode2v3
+/client/!default.mode2v3
+/client/*.perspectivev3
+/client/!default.perspectivev3
+/client/xcuserdata
+/client/*.xccheckout
+/client/*.moved-aside
+/client/DerivedData
+/client/*.hmap
+/client/*.ipa
+/client/*.xcuserstate
+/client/project.xcworkspace
+
+# Android/IntelliJ
+#
+/client/build/
+/client/.idea
+/client/.gradle
+/client/local.properties
+/client/*.iml
+/client/*.hprof
+
+# node.js
+#
+/client/node_modules/
+/server/node_modules/
+/server/.env/
+/client/.env/
+/client/npm-debug.log
+/client/yarn-error.log
+
+# BUCK
+/client/buck-out/
+/client/\.buckd/
+/client/*.keystore
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+/client/*/fastlane/report.xml
+/client/*/fastlane/Preview.html
+/client/*/fastlane/screenshots
+
+# Bundle artifacts
+/client/*.jsbundle
+
+# CocoaPods
+/client/ios/Pods/
+
+# Expo
+/client/.expo/*
+/client/web-build/
