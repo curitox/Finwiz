@@ -15,6 +15,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = "decisionhub.in@gmail.com"
 app.config['MAIL_PASSWORD'] = "wscmailudpfcuizp"
+app.config['resetSession'] = True
 
 obj=User()
 bcrypt = Bcrypt(app)
@@ -192,6 +193,7 @@ def generatOTP():
     secret_key = pyotp.random_base32()
     otp = pyotp.TOTP(secret_key)
     otp_code = otp.now()
+    app.config['OTP']=otp_code
     if reason == "FORGOTPASSWORD":
         send_mail(reset_password_otp(name, otp_code), email)
     else:
@@ -202,10 +204,53 @@ def generatOTP():
 def send_mail(template, recipient):
     msg = Message(template['subject'], sender=os.environ['MAIL_USERNAME'], recipients=[recipient])
     msg.html = template['html']
-    
     try:
         mail.send(msg)
     except Exception as e:
         return str(e)
 
 @app.route('/verifyOTP', methods=['GET'])
+def verify_OTP():
+    code = request.args.getlist('code')
+    stored_otp = app.config.get('OTP')
+    print(stored_otp)
+
+    if code[0] and stored_otp and int(code[0]) == int(stored_otp):
+        app.config['OTP'] = None
+        app.config['resetSession'] = True
+        return jsonify({'message': 'OTP verified'}), 200
+    return abort(403, "Wrong OTP")
+
+@app.route('/createResetSession', methods=['GET'])
+def create_reset_session():
+    if app.config.get('resetSession'):
+        app.config['resetSession'] = False
+        return jsonify({'message': 'Access granted'}), 200
+    return jsonify({'message': 'Session expired'}), 400
+
+@app.route('/resetPassword', methods=['POST'])
+def reset_password():
+    print(app.config.get('resetSession'))
+    if not app.config.get('resetSession'):
+        return jsonify({'message': 'Session expired'}), 440
+
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return create_error(404, "User does not exist")
+
+    if user:
+        hashed_password = bcrypt.generate_password_hash(password.encode('utf-8'))
+
+        user.password = hashed_password
+        db.session.commit()
+        db.session.close()
+
+        app.config['resetSession'] = False
+        return jsonify({'message': 'Password reset successful'}), 200
