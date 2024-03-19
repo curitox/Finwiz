@@ -21,7 +21,7 @@ bcrypt = Bcrypt(app)
 mail = Mail(app)
 
 # obj.createTable()
-# obj.dropTable()
+obj.dropTable()
 
 @app.route("/users", methods=['GET'])
 def getUsers():
@@ -32,9 +32,17 @@ def getUsers():
     return ({"users": userList})
 
 @app.route('/signup', methods=['POST'])
-def createUsers():
-    email = request.json.get('email')
-    password = request.json.get('password')
+def create_users():
+    # Get user input from request
+    data = request.json
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+    image = data.get('image')
+
+    # Check if required fields are provided
+    if not name or not email or not password:
+        return jsonify({'message': 'Name, email, and password are required'}), 400
 
     # Check if the user already exists
     existing_user = User.query.filter_by(email=email).first()
@@ -42,12 +50,18 @@ def createUsers():
         return jsonify({'message': 'User already exists'}), 409
 
     # Hash the password
-    hashed_password = bcrypt.generate_password_hash(password)
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     # Create a new user
-    new_user = User(email=email, password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
+    new_user = User(name=name, email=email, password=hashed_password, image=image)
+
+    # Add the new user to the database
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Failed to create user'}), 500
 
     # Generate JWT token
     token = jwt.encode({'id': new_user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=365*100)}, app.config['SECRET_KEY'], algorithm='HS256')
@@ -55,13 +69,10 @@ def createUsers():
     # Return response with token and user information
     response_data = {
         'token': token,
-        'user': {
-            'id': new_user.id,
-            'email': new_user.email,
-            'googleAuth': new_user.googleAuth,
-        }
+        'user': new_user
     }
     return jsonify(response_data), 201
+
 
 @app.route('/signin', methods=['POST'])
 def signin():
@@ -208,4 +219,4 @@ def send_mail(template, recipient):
     except Exception as e:
         return str(e)
 
-@app.route('/verifyOTP', methods=['GET'])
+# @app.route('/verifyOTP', methods=['GET'])
