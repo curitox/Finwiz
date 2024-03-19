@@ -207,5 +207,3 @@ def send_mail(template, recipient):
         mail.send(msg)
     except Exception as e:
         return str(e)
-
-@app.route('/verifyOTP', methods=['GET'])
