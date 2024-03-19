@@ -1,4 +1,3 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -19,5 +18,8 @@ except:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from controllers import *
+from blueprints.user.user import user_bp
 from ml import *
+
+app.register_blueprint(user_bp)
+

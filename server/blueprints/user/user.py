@@ -1,12 +1,11 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, Blueprint, render_template
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 import pyotp
 import jwt
-import bcrypt
 import datetime
-from app import app, os
+from app import app
 from error import create_error
 from models.user import User, db
 
@@ -18,6 +17,7 @@ app.config['MAIL_USERNAME'] = "decisionhub.in@gmail.com"
 app.config['MAIL_PASSWORD'] = "wscmailudpfcuizp"
 app.config['resetSession'] = True
 
+user_bp=Blueprint("user", __name__, template_folder="users")
 obj=User()
 bcrypt = Bcrypt(app)
 mail = Mail(app)
@@ -25,7 +25,7 @@ mail = Mail(app)
 # obj.createTable()
 # obj.dropTable()
 
-@app.route("/users", methods=['GET'])
+@user_bp.route("/users", methods=['GET'])
 def getUsers():
     users=User.query.all()
     userList=[
@@ -33,7 +33,7 @@ def getUsers():
     ]
     return ({"users": userList})
 
-@app.route('/signup', methods=['POST'])
+@user_bp.route('/user/signup', methods=['POST'])
 def create_users():
     # Get user input from request
     data = request.json
@@ -83,7 +83,7 @@ def create_users():
     return jsonify(response_data), 201
 
 
-@app.route('/signin', methods=['POST'])
+@user_bp.route('/user/signin', methods=['POST'])
 def signin():
     email = request.json.get('email')
     password = request.json.get('password')
@@ -114,7 +114,7 @@ def signin():
     }
     return jsonify(response_data), 201
 
-@app.route('/googleAuth', methods=['POST'])
+@user_bp.route('/user/googleAuth', methods=['POST'])
 def googleAuth():
     try:
         email = request.json.get('email')
@@ -206,7 +206,7 @@ def verify_otp(name, otp_c):
 </div>
         """.format(otp_c, name, otp_c)
 }
-@app.route("/generate-otp", methods=['POST'])
+@app.route("/user/generate-otp", methods=['POST'])
 def generatOTP():
     email=request.json.get('email')
     name=request.json.get('name')
@@ -230,7 +230,7 @@ def send_mail(template, recipient):
     except Exception as e:
         return str(e)
 
-@app.route('/verifyOTP', methods=['GET'])
+@app.route('/user/verifyOTP', methods=['GET'])
 def verify_OTP():
     code = request.args.getlist('code')
     stored_otp = app.config.get('OTP')
@@ -242,14 +242,14 @@ def verify_OTP():
         return jsonify({'message': 'OTP verified'}), 200
     return abort(403, "Wrong OTP")
 
-@app.route('/createResetSession', methods=['GET'])
+@app.route('/user/createResetSession', methods=['GET'])
 def create_reset_session():
     if app.config.get('resetSession'):
         app.config['resetSession'] = False
         return jsonify({'message': 'Access granted'}), 200
     return jsonify({'message': 'Session expired'}), 400
 
-@app.route('/resetPassword', methods=['POST'])
+@user_bp.route('/user/resetPassword', methods=['POST'])
 def reset_password():
     if not app.config.get('resetSession'):
         return jsonify({'message': 'Session expired'}), 440
