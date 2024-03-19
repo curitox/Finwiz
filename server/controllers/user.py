@@ -1,5 +1,6 @@
 from flask import request, jsonify, abort
 from flask_bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 import pyotp
 import jwt
@@ -51,7 +52,7 @@ def create_users():
         return jsonify({'message': 'User already exists'}), 409
 
     # Hash the password
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    hashed_password = generate_password_hash(password)
 
     # Create a new user
     new_user = User(name=name, email=email, password=hashed_password, image=image)
@@ -86,20 +87,19 @@ def create_users():
 def signin():
     email = request.json.get('email')
     password = request.json.get('password')
-    print(email,password)
 
     if not email or not password:
         abort(400, "Missing email or password")
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        return create_error(404, "User does not exist")
+        return jsonify({'message': "User does not exist"}), 404
 
     if user.googleAuth:
-        return create_error(401, "Please login with google")
+        return jsonify({'message': "Please login with Google"}), 401
     
-    if not bcrypt.check_password_hash(user.password, password):
-        return create_error(401, "Invalid password")
+    if not check_password_hash(user.password, password):
+        return jsonify({'message': "Invalid password"}), 401
     token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=365*100)}, app.config['SECRET_KEY'], algorithm='HS256')
     # Return response with token and user information
     response_data = {
@@ -251,7 +251,6 @@ def create_reset_session():
 
 @app.route('/resetPassword', methods=['POST'])
 def reset_password():
-    print(app.config.get('resetSession'))
     if not app.config.get('resetSession'):
         return jsonify({'message': 'Session expired'}), 440
 
@@ -267,7 +266,7 @@ def reset_password():
         return create_error(404, "User does not exist")
 
     if user:
-        hashed_password = bcrypt.generate_password_hash(password.encode('utf-8'))
+        hashed_password = generate_password_hash(password)
 
         user.password = hashed_password
         db.session.commit()
