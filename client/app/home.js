@@ -3,6 +3,8 @@ import { View, Text, StatusBar } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useThemeContext } from "../context/themeContext";
 import { router } from "expo-router";
+import { useAuthContext } from "../context/auth";
+import Button from "../components/buttons/button";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -14,6 +16,7 @@ const Home = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
+  const { signOut } = useAuthContext();
 
   return (
     <Wrapper>
@@ -25,6 +28,15 @@ const Home = () => {
       />
       <View>
         <Text>Hi</Text>
+
+        <Button
+          type="filled"
+          color={theme.white}
+          bgcolor={theme.primary}
+          onPress={() => signOut()}
+        >
+          SignOut
+        </Button>
       </View>
     </Wrapper>
   );

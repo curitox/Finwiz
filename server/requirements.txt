@@ -26,3 +26,4 @@ yfinance
 flask_bcrypt
 flask_mail
 pyotp
+flask_cors

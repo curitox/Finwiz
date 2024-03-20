@@ -11,6 +11,8 @@ import TextButton from "../../components/buttons/textButton";
 import { useThemeContext } from "../../context/themeContext";
 import { router } from "expo-router";
 import TextArea from "../../components/text_fields/inputTextArea";
+import OtpVerify from "../../components/OtpVerify";
+import { useAuthContext } from "../../context/auth";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -94,7 +96,9 @@ const Txt = styled.Text`
 const SignUp = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
+  const [showOtp, setShowOtp] = useState(false);
   const { toggleTheme } = useThemeContext();
+  const { signIn, currentUser } = useAuthContext();
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -214,109 +218,114 @@ const SignUp = () => {
 
   const handleSignIn = () => {
     // toggleTheme();
-    router.replace("/profile-create");
+    setLoading(true);
+    // setShowOtp(true);
+    signIn({ user: "Rishav" });
+    // router.replace("/profile-create");
   };
 
   return (
-    <Wrapper>
-      <StatusBar
-        barStyle={
-          themeMode.theme === "light" ? "dark-content" : "light-content"
-        }
-        backgroundColor={theme.bg} // Set the status bar color based on the theme
-      />
-      <View
-        style={{
-          flex: 1,
-          padding: 16,
-          gap: 4,
-        }}
-      >
-        <Logo>Finwiz</Logo>
-        <HeadingText>Welcome to Finwiz 👋</HeadingText>
-        <SubHeadingText>
-          Create your new account to continue to Finwiz
-        </SubHeadingText>
-      </View>
-      <View
-        style={{
-          flex: 1,
-          padding: 16,
-          gap: 16,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            gap: 10,
-          }}
-        >
-          <InputText
-            startIcon={
-              <Icon
-                name="account-outline"
-                size={24}
-                color={theme.text_secondary}
-              />
+    <>
+      {!showOtp ? (
+        <Wrapper>
+          <StatusBar
+            barStyle={
+              themeMode.theme === "light" ? "dark-content" : "light-content"
             }
-            endIcon={
-              !error.name &&
-              user.name !== "" && (
-                <Verified>
-                  <Icon name="check" size={10} color="white" />
-                </Verified>
-              )
-            }
-            value={user.name}
-            onChangeText={handleInputChange}
-            placeholder="Enter full name"
-            name="name"
-            label="Full Name"
-            type="default"
-            error={error.name}
+            backgroundColor={theme.bg} // Set the status bar color based on the theme
           />
-          <InputText
-            startIcon={
-              <Icon
-                name="email-outline"
-                size={24}
-                color={theme.text_secondary}
+          <View
+            style={{
+              flex: 1,
+              padding: 16,
+              gap: 4,
+            }}
+          >
+            <Logo>Finwiz</Logo>
+            <HeadingText>Welcome to Finwiz 👋</HeadingText>
+            <SubHeadingText>
+              Create your new account to continue to Finwiz
+            </SubHeadingText>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              padding: 16,
+              gap: 16,
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                gap: 10,
+              }}
+            >
+              <InputText
+                startIcon={
+                  <Icon
+                    name="account-outline"
+                    size={24}
+                    color={theme.text_secondary}
+                  />
+                }
+                endIcon={
+                  !error.name &&
+                  user.name !== "" && (
+                    <Verified>
+                      <Icon name="check" size={10} color="white" />
+                    </Verified>
+                  )
+                }
+                value={user.name}
+                onChangeText={handleInputChange}
+                placeholder="Enter full name"
+                name="name"
+                label="Full Name"
+                type="default"
+                error={error.name}
               />
-            }
-            endIcon={
-              !error.email &&
-              user.email !== "" && (
-                <Verified>
-                  <Icon name="check" size={10} color="white" />
-                </Verified>
-              )
-            }
-            value={user.email}
-            onChangeText={handleInputChange}
-            placeholder="Enter email address"
-            label="Email Address"
-            name="email"
-            type={"email-address"}
-            error={error.email}
-          />
-          <InputText
-            startIcon={
-              <Icon
-                name="lock-outline"
-                size={24}
-                color={theme.text_secondary}
+              <InputText
+                startIcon={
+                  <Icon
+                    name="email-outline"
+                    size={24}
+                    color={theme.text_secondary}
+                  />
+                }
+                endIcon={
+                  !error.email &&
+                  user.email !== "" && (
+                    <Verified>
+                      <Icon name="check" size={10} color="white" />
+                    </Verified>
+                  )
+                }
+                value={user.email}
+                onChangeText={handleInputChange}
+                placeholder="Enter email address"
+                label="Email Address"
+                name="email"
+                type={"email-address"}
+                error={error.email}
               />
-            }
-            value={user.password}
-            onChangeText={handleInputChange}
-            secureTextEntry={!isPasswordVisible}
-            placeholder="Enter password"
-            label="Password"
-            name="password"
-            type={"default"}
-            error={error.password}
-          />
-          {/* <TextArea
+              <InputText
+                startIcon={
+                  <Icon
+                    name="lock-outline"
+                    size={24}
+                    color={theme.text_secondary}
+                  />
+                }
+                value={user.password}
+                onChangeText={handleInputChange}
+                secureTextEntry={!isPasswordVisible}
+                placeholder="Enter password"
+                label="Password"
+                name="password"
+                type={"default"}
+                error={error.password}
+              />
+              {/* <TextArea
             label="Description"
             value={description}
             startIcon={<Icon name="lock-outline" size={24} />}
@@ -325,53 +334,57 @@ const SignUp = () => {
             rows={5} // Set the initial number of rows
             placeholder="Enter your description here..."
           /> */}
-        </View>
+            </View>
 
-        <Button
-          type="filled"
-          color={theme.white}
-          bgcolor={theme.primary}
-          loading={loading}
-          onPress={handleSignIn}
-          disabled={buttonDisabled}
-        >
-          Continue
-        </Button>
+            <Button
+              type="filled"
+              color={theme.white}
+              bgcolor={theme.primary}
+              loading={loading}
+              onPress={handleSignIn}
+              disabled={buttonDisabled}
+            >
+              Continue
+            </Button>
 
-        <Seperator>
-          <Hr />
-          <OrText>Or Continue With</OrText>
-          <Hr />
-        </Seperator>
-        <SocialAuth>
-          <Button
-            startIcon={
-              <Image
-                source={require("../../assets/icons/Google.png")}
-                style={{ width: 20, height: 20 }}
+            <Seperator>
+              <Hr />
+              <OrText>Or Continue With</OrText>
+              <Hr />
+            </Seperator>
+            <SocialAuth>
+              <Button
+                startIcon={
+                  <Image
+                    source={require("../../assets/icons/Google.png")}
+                    style={{ width: 20, height: 20 }}
+                  />
+                }
+                type="outlined"
+                bordercolor={theme.text_secondary_light}
+                color={theme.text_secondary}
+                loading={loading}
+                onPress={handleSignIn}
+              >
+                Continue with Google
+              </Button>
+            </SocialAuth>
+            <AlreadyAccount>
+              <Txt>Already have an account on Renegan? </Txt>
+              <TextButton
+                label="Sign In"
+                color={theme.primary}
+                disabled={false}
+                enabled={true}
+                onPress={() => router.replace("/profile-create")}
               />
-            }
-            type="outlined"
-            bordercolor={theme.text_secondary_light}
-            color={theme.text_secondary}
-            loading={loading}
-            onPress={handleSignIn}
-          >
-            Continue with Google
-          </Button>
-        </SocialAuth>
-        <AlreadyAccount>
-          <Txt>Already have an account on Renegan? </Txt>
-          <TextButton
-            label="Sign In"
-            color={theme.primary}
-            disabled={false}
-            enabled={true}
-            onPress={() => router.replace("/profile-create")}
-          />
-        </AlreadyAccount>
-      </View>
-    </Wrapper>
+            </AlreadyAccount>
+          </View>
+        </Wrapper>
+      ) : (
+        <OtpVerify emailId={user.email} setShowOtp={setShowOtp} />
+      )}
+    </>
   );
 };
 

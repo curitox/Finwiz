@@ -174,13 +174,14 @@ const ForgetPassword = () => {
   }, [error, user]);
 
   const handleForgetPassword = () => {
-    toggleTheme();
+    // toggleTheme();
     setLoading(true);
+    setShowOtp(true);
   };
 
   return (
     <>
-      {showOtp ? (
+      {!showOtp ? (
         <Wrapper>
           <StatusBar
             barStyle={
@@ -306,7 +307,7 @@ const ForgetPassword = () => {
           </View>
         </Wrapper>
       ) : (
-        <OtpVerify emailId="rishavchanda0@gmail.com" />
+        <OtpVerify emailId={user.email} setShowOtp={setShowOtp} />
       )}
     </>
   );
