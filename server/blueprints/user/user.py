@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from middleware.verifyToken import verifyToken
 
 user_bp=Blueprint("user", __name__, template_folder="user")

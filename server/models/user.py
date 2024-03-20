@@ -9,6 +9,7 @@ class User(db.Model):
     name= db.Column(db.String(50),nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200))
+    gender = db.Column(Enum('MALE','FEMALE','OTHER', name='gender_enum', default='MALE'))
     dob = db.Column(db.Date)  
     image = db.Column(db.String) 
     financialKnowledge = db.Column(Enum('BEGINNER', 'INTERMEDIATE', 'ADVANCED',name='financial_knowledge_enum',default='BEGINNER'))
