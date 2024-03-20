@@ -96,7 +96,7 @@ const Txt = styled.Text`
 const SignUp = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
-  const [showOtp, setShowOtp] = useState(false);
+  const [showOtp, setShowOtp] = useState(true);
   const { toggleTheme } = useThemeContext();
   const { signIn, currentUser } = useAuthContext();
   const [user, setUser] = useState({

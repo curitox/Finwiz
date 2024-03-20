@@ -8,6 +8,7 @@ import datetime
 from app import app
 from error import create_error
 from models.user import User, db
+import os
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465

@@ -3,6 +3,9 @@
 /server/migrations/__pycache__
 /server/models/__pycache__
 /server/migrations/versions/__pycache__
+/server/blueprints/__pycache__
+/server/blueprints/auth/__pycache__
+/server/blueprints/predictions/__pycache__
 /server/.venv
 
 

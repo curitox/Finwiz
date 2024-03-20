@@ -7,7 +7,9 @@ import styled, { useTheme } from "styled-components/native";
 import TextButton from "./buttons/textButton";
 import { useThemeContext } from "../context/themeContext";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 import { OtpInput } from "react-native-otp-entry";
+import { generateOtp, verifyOtp } from "../api";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -41,24 +43,70 @@ const SubHeadingText = styled.Text`
   color: ${({ theme }) => theme.text_secondary};
 `;
 
-const OtpVerify = ({ emailId, setShowOtp }) => {
+const OtpVerify = ({
+  emailId = "rishavchanda0@gmail.com",
+  name = "Rishav Chanda",
+  setShowOtp,
+}) => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
   const [otp, setOtp] = useState("");
-  const [otpError, setOtpError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
   const [timer, setTimer] = useState("00:00");
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
-  const handleOtpVerify = () => {
-    toggleTheme();
-    setLoading(true);
-  };
-
   const sendOtp = async () => {
     console.log("sent");
+    await generateOtp({ email: "rishavchanda0@gmail.com", name: "name" })
+      .then((res) => {
+        console.log(res.data);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "OTP sent successfully 👋",
+        });
+      })
+      .catch((err) => {
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+      });
+  };
+
+  const validateOtp = async () => {
+    setButtonDisabled(true);
+    setLoading(true);
+    await verifyOtp({ code: otp })
+      .then((res) => {
+        if (res.status === 200) {
+          setOtpVerified(true);
+          setOtp("");
+          setButtonDisabled(false);
+          setLoading(false);
+          setShowOtp(false);
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Something went wrong",
+            text2: res.data.message,
+          });
+          setButtonDisabled(false);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+        setButtonDisabled(false);
+        setLoading(false);
+      });
   };
 
   const Ref = useRef(null);
@@ -187,8 +235,7 @@ const OtpVerify = ({ emailId, setShowOtp }) => {
             numberOfDigits={6}
             focusColor={theme.primary}
             focusStickBlinkingDuration={500}
-            onTextChange={(text) => console.log(text)}
-            onFilled={(text) => console.log(`OTP is ${text}`)}
+            onTextChange={(text) => setOtp(text)}
           />
           <Resend>
             {showTimer ? (
@@ -225,12 +272,13 @@ const OtpVerify = ({ emailId, setShowOtp }) => {
           color={theme.white}
           bgcolor={theme.primary}
           loading={loading}
-          onPress={handleOtpVerify}
+          onPress={validateOtp}
           disabled={buttonDisabled}
         >
           Verify OTP
         </Button>
       </View>
+      <Toast />
     </Wrapper>
   );
 };

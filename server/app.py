@@ -18,9 +18,9 @@ except:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from blueprints.predictions.predictions import predictions_bp
+# from blueprints.predictions.predictions import predictions_bp
 from blueprints.auth.auth import auth_bp
 from ml import *
 
 app.register_blueprint(auth_bp)
-app.register_blueprint(predictions_bp)
+# app.register_blueprint(predictions_bp)
