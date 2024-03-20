@@ -5,6 +5,7 @@ from flask_mail import Mail, Message
 import pyotp
 import jwt
 import datetime
+import os
 from app import app
 from error import create_error
 from models.user import User, db
