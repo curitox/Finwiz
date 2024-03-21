@@ -34,6 +34,8 @@ def index():
         if 'riskTolerance' in details:
             user.riskTolerance = details['riskTolerance']
 
+        user.profileCreated=True
+
         db.session.commit()
 
         return jsonify({'message': 'User details updated successfully'})
