@@ -18,7 +18,9 @@ function useProtectedRoute(currentUser) {
 
     if (!currentUser && !inAuthGroup) {
       router.replace("/sign-in");
-    } else if (currentUser && inAuthGroup) {
+    } else if (currentUser && !currentUser.user.profileCreated && inAuthGroup) {
+      router.replace("/profile-create");
+    } else if (currentUser && currentUser.user.profileCreated && inAuthGroup) {
       router.replace("/");
     }
   }, [currentUser, segments]);

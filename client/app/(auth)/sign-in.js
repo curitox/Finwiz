@@ -12,6 +12,7 @@ import { useThemeContext } from "../../context/themeContext";
 import { router } from "expo-router";
 import { UserSignIn } from "../../api/index";
 import Toast from "react-native-toast-message";
+import { useAuthContext } from "../../context/auth";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -96,6 +97,7 @@ const SignIn = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
+  const { signIn, currentUser } = useAuthContext();
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -185,7 +187,7 @@ const SignIn = () => {
     setLoading(true);
     await UserSignIn(user)
       .then((res) => {
-        console.log(res.data);
+        signIn(res.data);
         Toast.show({
           type: "success",
           text1: "Success",
@@ -194,7 +196,6 @@ const SignIn = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err.response.data.message);
         Toast.show({
           type: "error",
           text1: "Wrong Credentials",

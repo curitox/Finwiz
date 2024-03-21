@@ -12,4 +12,4 @@ export const generateOtp = async (data) =>
   await API.post("/auth/generate-otp", data);
 
 export const verifyOtp = async (data) =>
-  await API.post("/auth/verifyOTP", data);
+  await API.get(`/auth/verifyOTP?code=${data}`);

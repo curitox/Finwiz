@@ -1,14 +1,16 @@
-from sqlalchemy.orm import relationship
 from app import app, db
 from sqlalchemy import Enum
-from sqlalchemy import inspect
+from sqlalchemy.orm import validates
+from datetime import datetime
+from error import create_error
 
 class User(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name= db.Column(db.String(50),nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200))
-    age = db.Column(db.Integer,default=14)
+    gender = db.Column(Enum('MALE','FEMALE','OTHER', name='gender_enum', default='MALE'))
+    dob = db.Column(db.Date)  
     image = db.Column(db.String) 
     financialKnowledge = db.Column(Enum('BEGINNER', 'INTERMEDIATE', 'ADVANCED',name='financial_knowledge_enum',default='BEGINNER'))
     monthlyIncome = db.Column(db.Float,default=0.0)
@@ -32,3 +34,9 @@ class User(db.Model):
             print("Dropped table")
         except Exception as e:
             print(f"Error: {e}")
+    
+    @validates('dob')
+    def validate_dob(self, key, dob):
+        if dob > datetime.now().date():
+            return create_error(500, "Incorrect date value")
+        return dob

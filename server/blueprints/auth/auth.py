@@ -5,6 +5,7 @@ from flask_mail import Mail, Message
 import pyotp
 import jwt
 import datetime
+import os
 from app import app
 from error import create_error
 from models.user import User, db
@@ -234,6 +235,7 @@ def send_mail(template, recipient):
 @auth_bp.route('/auth/verifyOTP', methods=['GET'])
 def verify_OTP():
     code = request.args.getlist('code')
+    print(code)
     stored_otp = app.config.get('OTP')
     print(stored_otp)
 

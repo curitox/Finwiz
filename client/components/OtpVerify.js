@@ -43,11 +43,7 @@ const SubHeadingText = styled.Text`
   color: ${({ theme }) => theme.text_secondary};
 `;
 
-const OtpVerify = ({
-  emailId = "rishavchanda0@gmail.com",
-  name = "Rishav Chanda",
-  setShowOtp,
-}) => {
+const OtpVerify = ({ emailId, name, setShowOtp, setOtpVerified }) => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
@@ -59,7 +55,7 @@ const OtpVerify = ({
 
   const sendOtp = async () => {
     console.log("sent");
-    await generateOtp({ email: "rishavchanda0@gmail.com", name: "name" })
+    await generateOtp({ email: emailId, name: name })
       .then((res) => {
         console.log(res.data);
         Toast.show({
@@ -80,7 +76,7 @@ const OtpVerify = ({
   const validateOtp = async () => {
     setButtonDisabled(true);
     setLoading(true);
-    await verifyOtp({ code: otp })
+    await verifyOtp(otp)
       .then((res) => {
         if (res.status === 200) {
           setOtpVerified(true);
@@ -89,6 +85,7 @@ const OtpVerify = ({
           setLoading(false);
           setShowOtp(false);
         } else {
+          console.log(res);
           Toast.show({
             type: "error",
             text1: "Something went wrong",
@@ -99,6 +96,7 @@ const OtpVerify = ({
         }
       })
       .catch((err) => {
+        console.log(err.response.data.message);
         Toast.show({
           type: "error",
           text1: "Something went wrong",

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StatusBar } from "react-native";
+import { View, StatusBar } from "react-native";
 import InputText from "../../components/text_fields/inputText";
 import Button from "../../components/buttons/button";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import styled, { useTheme } from "styled-components/native";
 import { Image } from "react-native-elements";
 import TextButton from "../../components/buttons/textButton";
 import { useThemeContext } from "../../context/themeContext";
 import { router } from "expo-router";
-import TextArea from "../../components/text_fields/inputTextArea";
 import OtpVerify from "../../components/OtpVerify";
 import { useAuthContext } from "../../context/auth";
+import { UserSignUp } from "../../api";
+import Toast from "react-native-toast-message";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -96,7 +95,8 @@ const Txt = styled.Text`
 const SignUp = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
-  const [showOtp, setShowOtp] = useState(true);
+  const [showOtp, setShowOtp] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const { toggleTheme } = useThemeContext();
   const { signIn, currentUser } = useAuthContext();
   const [user, setUser] = useState({
@@ -217,12 +217,38 @@ const SignUp = () => {
   }, [error, user]);
 
   const handleSignIn = () => {
-    // toggleTheme();
     setLoading(true);
-    // setShowOtp(true);
-    signIn({ user: "Rishav" });
-    // router.replace("/profile-create");
+    setShowOtp(true);
   };
+
+  const registerUser = async () => {
+    await UserSignUp(user)
+      .then((res) => {
+        signIn(res.data);
+        router.replace("/profile-create");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "LoggedIn successfully 👋",
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+        Toast.show({
+          type: "error",
+          text1: "Wrong Credentials",
+          text2: err.response.data.message,
+        });
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (otpVerified) {
+      registerUser();
+    }
+  }, [otpVerified]);
 
   return (
     <>
@@ -380,9 +406,15 @@ const SignUp = () => {
               />
             </AlreadyAccount>
           </View>
+          <Toast />
         </Wrapper>
       ) : (
-        <OtpVerify emailId={user.email} setShowOtp={setShowOtp} />
+        <OtpVerify
+          emailId={user.email}
+          name={user.name}
+          setShowOtp={setShowOtp}
+          setOtpVerified={setOtpVerified}
+        />
       )}
     </>
   );
