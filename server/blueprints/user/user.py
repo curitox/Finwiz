@@ -8,9 +8,8 @@ user_bp=Blueprint("user", __name__, template_folder="user")
 
 @user_bp.route('/user/details', methods=['POST'])
 @verifyToken
-def index():
+def addDetails():
     user_id = request.user.get('id')
-    details=request.json
     user = User.query.get(user_id)
     if not user:
         return create_error(404, "User not found")
