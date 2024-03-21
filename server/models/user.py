@@ -16,6 +16,7 @@ class User(db.Model):
     monthlyIncome = db.Column(db.Float,default=0.0)
     riskTolerance = db.Column(Enum('CONSERVATIVE', 'MODERATE', 'AGGRESSIVE', name='risk_tolerance_enum',default='CONSERVATIVE'))
     googleAuth = db.Column(db.Boolean, nullable=False, default=False)
+    profileCreated = db.Column(db.Boolean, nullable=False, default=False)
 
     @staticmethod
     def createTable():

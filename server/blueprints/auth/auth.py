@@ -78,7 +78,8 @@ def create_users():
             'name': new_user.name,
             'image': new_user.image,
             'email': new_user.email,
-            'googleAuth': new_user.googleAuth
+            'googleAuth': new_user.googleAuth,
+            'profileCreated': new_user.profileCreated
         }
 
     }
@@ -111,7 +112,8 @@ def signin():
             'name': user.name,
             'image': user.image,
             'email': user.email,
-            'googleAuth': user.googleAuth
+            'googleAuth': user.googleAuth,
+            'profileCreated': user.profileCreated
         }
     }
     return jsonify(response_data), 201
