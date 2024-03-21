@@ -8,6 +8,9 @@ import styled, { useTheme } from "styled-components/native";
 import { useThemeContext } from "../../context/themeContext";
 import DateInput from "../../components/text_fields/dateInput";
 import SelectableChip from "../../components/selectable/SelectableChip";
+import { useAuthContext } from "../../context/auth";
+import { UserProfileCreate } from "../../api";
+import Toast from "react-native-toast-message";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -53,6 +56,7 @@ const IconContainer = styled.View`
 const ProfileCreate = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
+  const { signIn, currentUser } = useAuthContext();
   const { toggleTheme } = useThemeContext();
   const options = {
     gender: [
@@ -73,14 +77,14 @@ const ProfileCreate = () => {
     riskTolerance: ["🐢 Conservative", "🐇 Moderate", "🚀 Aggressive"],
   };
   const [user, setUser] = useState({
-    dateOfBirth: "",
+    dob: "",
     monthlyIncome: "",
     gender: "",
     riskTolerance: "",
     financialKnowledge: "",
   });
   const [error, setError] = useState({
-    dateOfBirth: "",
+    dob: "",
     monthlyIncome: "",
     gender: "",
     riskTolerance: "",
@@ -98,12 +102,12 @@ const ProfileCreate = () => {
   useEffect(() => {
     // If there is no error message and all the fields are filled, then enable the button
     if (
-      !error.dateOfBirth &&
+      !error.dob &&
       !error.monthlyIncome &&
       !error.financialKnowledge &&
       !error.gender &&
       !error.riskTolerance &&
-      user.dateOfBirth &&
+      user.dob &&
       user.financialKnowledge &&
       user.riskTolerance &&
       user.monthlyIncome &&
@@ -115,8 +119,27 @@ const ProfileCreate = () => {
     }
   }, [error, user]);
 
-  const handleSignIn = () => {
-    toggleTheme();
+  const handelProfileCreate = async () => {
+    setLoading(true);
+    await UserProfileCreate(user, currentUser?.token)
+      .then((res) => {
+        signIn({ token: currentUser?.token, user: res?.data?.user });
+        Toast.show({
+          type: "success",
+          text1: "Profile created",
+          text2: "Profile created successfully 👋",
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+        setLoading(false);
+      });
   };
 
   return (
@@ -159,12 +182,12 @@ const ProfileCreate = () => {
                 color={theme.text_secondary}
               />
             }
-            value={user.dateOfBirth}
-            onChange={(date, name) => setUser({ ...user, dateOfBirth: date })}
+            value={user.dob}
+            onChange={(date, name) => setUser({ ...user, dob: date })}
             label="Date of Birth"
             placeholder="Enter your date of birth"
-            name="dateOfBirth"
-            error={error.dateOfBirth}
+            name="dob"
+            error={error.dob}
           />
           <InputText
             startIcon={
@@ -263,12 +286,13 @@ const ProfileCreate = () => {
           color={theme.white}
           bgcolor={theme.primary}
           loading={loading}
-          onPress={handleSignIn}
+          onPress={handelProfileCreate}
           disabled={buttonDisabled}
         >
           Continue
         </Button>
       </View>
+      <Toast />
     </Wrapper>
   );
 };

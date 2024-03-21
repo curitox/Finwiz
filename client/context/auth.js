@@ -16,11 +16,13 @@ function useProtectedRoute(currentUser) {
   React.useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (!currentUser && !inAuthGroup) {
+    if (!currentUser && !currentUser?.user?.profileCreated && !inAuthGroup) {
       router.replace("/sign-in");
-    } else if (currentUser && !currentUser.user.profileCreated && inAuthGroup) {
-      router.replace("/profile-create");
-    } else if (currentUser && currentUser.user.profileCreated && inAuthGroup) {
+    } else if (
+      currentUser &&
+      inAuthGroup &&
+      currentUser?.user?.profileCreated
+    ) {
       router.replace("/");
     }
   }, [currentUser, segments]);

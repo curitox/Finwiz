@@ -28,3 +28,4 @@ flask_mail
 pyotp
 flask_cors
 scikit-learn
+flask_sqlalchemy

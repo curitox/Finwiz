@@ -24,4 +24,4 @@ from blueprints.user.user import user_bp
 from ml import *
 
 app.register_blueprint(auth_bp)
-# app.register_blueprint(predictions_bp)
+app.register_blueprint(user_bp)

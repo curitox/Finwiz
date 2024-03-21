@@ -8,6 +8,11 @@ export const UserSignUp = async (data) => await API.post("/auth/signup", data);
 
 export const UserSignIn = async (data) => await API.post("/auth/signin", data);
 
+export const UserProfileCreate = async (data, token) =>
+  await API.post("/user/details", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 export const generateOtp = async (data) =>
   await API.post("/auth/generate-otp", data);
 

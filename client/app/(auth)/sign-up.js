@@ -237,7 +237,7 @@ const SignUp = () => {
         console.log(err.response.data.message);
         Toast.show({
           type: "error",
-          text1: "Wrong Credentials",
+          text1: "Something went wrong",
           text2: err.response.data.message,
         });
         setLoading(false);
@@ -249,6 +249,12 @@ const SignUp = () => {
       registerUser();
     }
   }, [otpVerified]);
+
+  useEffect(() => {
+    if (currentUser && !currentUser?.user?.profileCreated) {
+      router.replace("/profile-create");
+    }
+  }, [currentUser]);
 
   return (
     <>
@@ -402,7 +408,7 @@ const SignUp = () => {
                 color={theme.primary}
                 disabled={false}
                 enabled={true}
-                onPress={() => router.replace("/profile-create")}
+                onPress={() => router.replace("/sign-in")}
               />
             </AlreadyAccount>
           </View>

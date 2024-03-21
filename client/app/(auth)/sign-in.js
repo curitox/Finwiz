@@ -188,6 +188,9 @@ const SignIn = () => {
     await UserSignIn(user)
       .then((res) => {
         signIn(res.data);
+        if (currentUser?.user?.profileCreated === false) {
+          router.replace("/profile-create");
+        }
         Toast.show({
           type: "success",
           text1: "Success",
@@ -204,6 +207,12 @@ const SignIn = () => {
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (currentUser && !currentUser?.user?.profileCreated) {
+      router.replace("/profile-create");
+    }
+  }, [currentUser]);
 
   return (
     <Wrapper>
