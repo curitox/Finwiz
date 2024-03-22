@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from middleware.verifyToken import verifyToken
 from error import create_error
-from models.user import User,db
+from model import User,db
 
 user_bp=Blueprint("user", __name__, template_folder="user")
 

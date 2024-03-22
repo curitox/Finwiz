@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint
 from datetime import datetime, timedelta
 from middleware.verifyToken import verifyToken
-from models.user import User, Expense, db
+from model import User, Expense, db
 from error import create_error
 
 expense_bp=Blueprint("expense", __name__, template_folder="expense")
