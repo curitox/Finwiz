@@ -18,7 +18,7 @@ def addDetails():
 
     try:
         if 'dob' in details:
-            dob = datetime.strptime(details['dob'], '%Y-%m-%d').date()
+            dob = datetime.strptime(details['dob'], '%d/%m/%Y').date()
             user.dob = dob
 
         if 'monthlyIncome' in details:
@@ -37,7 +37,14 @@ def addDetails():
 
         db.session.commit()
 
-        return jsonify({'message': 'User details updated successfully'})
+        return jsonify({'user': {
+            'id': user.id,
+            'name': user.name,
+            'image': user.image,
+            'email': user.email,
+            'googleAuth': user.googleAuth,
+            'profileCreated': user.profileCreated
+        }})
 
     except ValueError as e:
         return jsonify({'message': 'Error: {}'.format(str(e))}), 400
