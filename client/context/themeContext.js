@@ -25,6 +25,7 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const currentTheme = theme === "light" ? light : dark;
+  // const currentTheme = dark;
 
   useEffect(() => {
     saveTheme(theme);
