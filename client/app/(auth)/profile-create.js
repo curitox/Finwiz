@@ -61,20 +61,46 @@ const ProfileCreate = () => {
   const options = {
     gender: [
       {
-        value: "Male",
+        value: "MALE",
         icon: "mars",
       },
       {
-        value: "Female",
+        value: "FEMALE",
         icon: "venus",
       },
       {
-        value: "Other",
+        value: "OTHER",
         icon: "transgender",
       },
     ],
-    financialKnowledge: ["📚 Beginner", "📊 Intermediate", "📈 Advances"],
-    riskTolerance: ["🐢 Conservative", "🐇 Moderate", "🚀 Aggressive"],
+    financialKnowledge: [
+      {
+        value: "BEGINNER",
+        icon: "📚 Beginner",
+      },
+      {
+        value: "INTERMEDIATE",
+        icon: "📊 Intermediate",
+      },
+      {
+        value: "ADVANCED",
+        icon: "📈 Advances",
+      },
+    ],
+    riskTolerance: [
+      {
+        value: "CONSERVATIVE",
+        icon: "🐢 Conservative",
+      },
+      {
+        value: "MODERATE",
+        icon: "🐇 Moderate",
+      },
+      {
+        value: "AGGRESSIVE",
+        icon: "🚀 Aggressive",
+      },
+    ],
   };
   const [user, setUser] = useState({
     dob: "",
@@ -241,15 +267,17 @@ const ProfileCreate = () => {
               {options.financialKnowledge.map((financialKnowledge, index) => (
                 <SelectableChip
                   key={`financialKnowledge-${index}`}
-                  selected={financialKnowledge === user.financialKnowledge}
+                  selected={
+                    financialKnowledge.value === user.financialKnowledge
+                  }
                   onPress={() =>
                     setUser({
                       ...user,
-                      financialKnowledge: financialKnowledge,
+                      financialKnowledge: financialKnowledge.value,
                     })
                   }
                 >
-                  {financialKnowledge}
+                  {financialKnowledge.icon}
                 </SelectableChip>
               ))}
             </View>
@@ -266,15 +294,15 @@ const ProfileCreate = () => {
               {options.riskTolerance.map((riskTolerance, index) => (
                 <SelectableChip
                   key={`riskTolerance-${index}`}
-                  selected={riskTolerance === user.riskTolerance}
+                  selected={riskTolerance.value === user.riskTolerance}
                   onPress={() =>
                     setUser({
                       ...user,
-                      riskTolerance: riskTolerance,
+                      riskTolerance: riskTolerance.value,
                     })
                   }
                 >
-                  {riskTolerance}
+                  {riskTolerance.value}
                 </SelectableChip>
               ))}
             </View>
