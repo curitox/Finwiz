@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StatusBar } from "react-native";
+import { View, Text, StatusBar, TouchableHighlightBase } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import { useThemeContext } from "../context/themeContext";
-import { router } from "expo-router";
-import { useAuthContext } from "../context/auth";
-import Button from "../components/buttons/button";
+import { useThemeContext } from "../../context/themeContext";
+import { router, useRouter } from "expo-router";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useAuthContext } from "../../context/auth";
+import Button from "../../components/buttons/button";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -13,10 +14,10 @@ const Wrapper = styled.ScrollView`
 `;
 
 const Home = () => {
+  const router = useRouter();
   const theme = useTheme();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
-  const { signOut } = useAuthContext();
 
   return (
     <Wrapper>
@@ -28,15 +29,9 @@ const Home = () => {
       />
       <View>
         <Text>Hi</Text>
-
-        <Button
-          type="filled"
-          color={theme.white}
-          bgcolor={theme.primary}
-          onPress={() => signOut()}
-        >
-          SignOut
-        </Button>
+        <TouchableOpacity onPress={() => router.replace("/other")}>
+          <Text>Other page</Text>
+        </TouchableOpacity>
       </View>
     </Wrapper>
   );

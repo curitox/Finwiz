@@ -18,7 +18,7 @@ def addDetails():
 
     try:
         if 'dob' in details:
-            dob = datetime.strptime(details['dob'], '%d/%m/%Y').date()
+            dob = datetime.strptime(str(details['dob']), "%Y-%m-%d").date()
             user.dob = dob
 
         if 'monthlyIncome' in details:

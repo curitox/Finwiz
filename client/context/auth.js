@@ -1,4 +1,9 @@
-import { router, useSegments } from "expo-router";
+import {
+  router,
+  useRouter,
+  useSegments,
+  useRootNavigationState,
+} from "expo-router";
 import React from "react";
 import * as SecureStore from "expo-secure-store";
 
@@ -12,9 +17,16 @@ export function useAuthContext() {
 // This hook will protect the route access based on currentUser authentication.
 function useProtectedRoute(currentUser) {
   const segments = useSegments();
+  const navigationState = useRootNavigationState();
 
+  const router = useRouter();
   React.useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
+
+    if (!navigationState?.key) {
+      // Temporary fix for router not being ready.
+      return;
+    }
 
     if (!currentUser && !currentUser?.user?.profileCreated && !inAuthGroup) {
       router.replace("/sign-in");
@@ -23,9 +35,9 @@ function useProtectedRoute(currentUser) {
       inAuthGroup &&
       currentUser?.user?.profileCreated
     ) {
-      router.replace("/");
+      router.replace("/home");
     }
-  }, [currentUser, segments]);
+  }, [currentUser, segments, navigationState?.key]);
 }
 
 async function saveUser(user) {
