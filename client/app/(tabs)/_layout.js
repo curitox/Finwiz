@@ -1,21 +1,28 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import { FontAwesome6 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 import { BottomTabBar } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Platform, View, Text } from "react-native";
+import { useTheme } from "styled-components/native";
 
 export default function TabsLayout() {
+  const theme = useTheme();
   return (
     <Tabs
       initialRouteName="home"
       screenOptions={{
-        tabBarStyle: Platform.OS === "ios" && {
-          backgroundColor: "transparent",
-        },
         headerShown: false,
+        tabBarStyle: {
+          position: "absolute",
+          backgroundColor: theme.bottomBar,
+          padding: 2,
+          height: 60,
+        },
       }}
       tabBar={(props) =>
         Platform.OS === "ios" ? (
@@ -40,17 +47,24 @@ export default function TabsLayout() {
               style={{
                 flexDirection: "column",
                 alignItems: "center",
-                marginTop: 17,
+                marginTop: 14,
                 backgroundColor: "transparent",
               }}
             >
-              <FontAwesome
-                size={26}
-                style={{ marginBottom: -6 }}
-                name="home"
+              <Ionicons
+                name="home-outline"
+                size={24}
+                style={{ marginBottom: -4 }}
                 color={color}
               />
-              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.6 }}>
+              <Text
+                style={{
+                  marginTop: 5,
+                  fontSize: 12,
+                  opacity: 1,
+                  color: color,
+                }}
+              >
                 Home
               </Text>
             </View>
@@ -71,13 +85,15 @@ export default function TabsLayout() {
                 backgroundColor: "transparent",
               }}
             >
-              <FontAwesome
-                name="bank"
-                size={20}
-                style={{ marginBottom: 0 }}
+              <MaterialCommunityIcons
+                name="bank-outline"
+                size={24}
+                style={{ marginBottom: -5 }}
                 color={color}
               />
-              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.6 }}>
+              <Text
+                style={{ marginTop: 5, fontSize: 12, opacity: 1, color: color }}
+              >
                 Expences
               </Text>
             </View>
@@ -100,11 +116,13 @@ export default function TabsLayout() {
             >
               <MaterialCommunityIcons
                 name="bullseye-arrow"
-                size={27}
+                size={24}
                 color={color}
                 style={{ marginBottom: -6 }}
               />
-              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.6 }}>
+              <Text
+                style={{ marginTop: 5, fontSize: 12, opacity: 1, color: color }}
+              >
                 Goals
               </Text>
             </View>
@@ -125,13 +143,15 @@ export default function TabsLayout() {
                 backgroundColor: "transparent",
               }}
             >
-              <FontAwesome
-                size={22}
-                style={{ marginBottom: -2 }}
-                name="pie-chart"
+              <SimpleLineIcons
+                name="chart"
+                size={20}
+                style={{ marginBottom: -1 }}
                 color={color}
               />
-              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.6 }}>
+              <Text
+                style={{ marginTop: 5, fontSize: 12, opacity: 1, color: color }}
+              >
                 Analytics
               </Text>
             </View>
@@ -153,12 +173,14 @@ export default function TabsLayout() {
               }}
             >
               <FontAwesome
-                size={24}
-                style={{ marginBottom: -5 }}
-                name="user"
+                size={21}
+                style={{ marginBottom: -4 }}
+                name="user-o"
                 color={color}
               />
-              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.6 }}>
+              <Text
+                style={{ marginTop: 5, fontSize: 12, opacity: 1, color: color }}
+              >
                 Account
               </Text>
             </View>

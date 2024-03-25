@@ -8,7 +8,7 @@ import datetime
 import os
 from app import app
 from error import create_error
-from model import User, Expense, Goal, db
+from model import User,Expense,Goal,db
 import os
 
 app.config['MAIL_SERVER']='smtp.gmail.com'

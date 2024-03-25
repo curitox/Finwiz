@@ -25,7 +25,6 @@ const Layout = () => {
   return (
     <ThemeProvider>
       <Provider>
-        {/* <Slot onLayout={onLayoutRootView} /> */}
         <Stack>
           <Stack.Screen
             name="(tabs)"
