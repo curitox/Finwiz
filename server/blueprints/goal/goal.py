@@ -135,6 +135,7 @@ def deleteGoal():
         return create_error(403, "You do not have permission to delete this goal")
 
     try:
+        print(user.goal)
         db.session.delete(goal)
         user.goal.remove(goal)
 

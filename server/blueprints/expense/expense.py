@@ -158,6 +158,7 @@ def deleteExpense():
         return create_error(403, "You do not have permission to delete this expense")
 
     try:
+        print(user.expense)
         db.session.delete(expense)
         user.expense.remove(expense)
 
