@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from model import User,Goal,db
+from model import User,Goal,Savings,db
 from middleware.verifyToken import verifyToken
 from error import create_error
 
@@ -118,6 +118,30 @@ def goalUpdate():
     except Exception as e:
         db.session.rollback()
         return create_error(500, str(e))
+
+@goal_bp.route('/goal/progress', methods=['POST'])
+@verifyToken
+def goalProgress():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+    goal_id = request.args.get('id')
+    goal = Goal.query.filter_by(id=goal_id, user_id=user_id).first()
+    if not goal:
+        return create_error(404, "Goal not found")
+    created_on = goal.createdOn
+    week_number = created_on.isocalendar()[1] 
+    amount = request.json.get('amount')
+    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id)
+    goal.savings.append(savings_entry)
+    db.session.add(savings_entry)
+    db.session.commit()
+    total_savings = sum(entry.amount for entry in goal.savings)
+    if total_savings >= goal.target_amount:
+        goal.status = 'COMPLETE'
+        db.session.commit()
+    return jsonify({"message": "Savings entry created successfully."}), 201
     
 @goal_bp.route('/goal/delete', methods=['DELETE'])
 @verifyToken

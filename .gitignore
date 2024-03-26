@@ -11,7 +11,7 @@
 /server/blueprints/__pycache__
 /server/blueprints/auth/__pycache__
 /server/blueprints/user/__pycache__
-/server/blueprints/predictions/__pycache__
+/server/blueprints/analytics/__pycache__
 
 # OSX
 #

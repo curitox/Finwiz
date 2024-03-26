@@ -92,4 +92,24 @@ def expense_weekly():
     bar_data = list(bar_data)
     return jsonify(bar_data)
 
+@graphs_bp.route('/get/goalsGraph', methods=['GET'])
+@verifyToken
+def goalsGraph():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+    user_goals = Goal.query.filter_by(user_id=user_id, status='IN_PROGRESS').all()
+    all_lineData = []
 
+    for goal in user_goals:
+        savings_by_week = defaultdict(float)
+        savings_entries = goal.savings
+        for entry in savings_entries:
+            savings_by_week[entry.week] += float(entry.amount)
+            lineData = []
+        for week, savings in sorted(savings_by_week.items()):
+            lineData.append({"value": savings, "dataPointText": str(savings)})
+        all_lineData.append(lineData)
+
+    return jsonify({"lineData": all_lineData}), 200

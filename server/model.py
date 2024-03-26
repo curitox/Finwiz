@@ -1,5 +1,5 @@
 from app import app, db
-from sqlalchemy import Enum
+from sqlalchemy import Enum, func
 from sqlalchemy.orm import validates
 from datetime import datetime
 from error import create_error
@@ -86,6 +86,8 @@ class Goal(db.Model):
     priority_level = db.Column(Enum('HIGH', 'MEDIUM', 'LOW', name='priority_level_enum', default='LOW'))
     status = db.Column(Enum('COMPLETE', 'IN_PROGRESS', name='status_enum', default='IN_PROGRESS'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    savings = db.relationship('Savings', backref='goal')
+    createdOn = db.Column(db.Date, default=func.current_date(), nullable=False)
 
     @staticmethod
     def createTable():
@@ -110,3 +112,27 @@ class Goal(db.Model):
         if date < datetime.now().date():
             return create_error(500, "Target date should be more than the current date!")
         return date
+
+class Savings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    week = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    goal_id = db.Column(db.Integer, db.ForeignKey('goal.id'), nullable=False)
+
+    @staticmethod
+    def createTable():
+        try:
+            with app.app_context():
+                db.create_all()
+            print("Created table")
+        except:
+            print("Error")
+    
+    @staticmethod
+    def dropTable():
+        try:
+            with app.app_context():
+                db.drop_all()
+            print("Dropped table")
+        except Exception as e:
+            print(f"Error: {e}")

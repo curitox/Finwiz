@@ -8,7 +8,7 @@ import datetime
 import os
 from app import app
 from error import create_error
-from model import User,Expense,Goal,db
+from model import User,Expense,Goal,Savings,db
 import os
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
@@ -23,17 +23,19 @@ auth_bp=Blueprint("auth", __name__, template_folder="auth")
 user=User()
 expense=Expense()
 goal=Goal()
+savings=Savings()
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
 # user.createTable()
-# user.dropTable()
-
 # expense.createTable()
-# expense.dropTable()
-
 # goal.createTable()
+# savings.createTable()
+
+# savings.dropTable()
 # goal.dropTable()
+# expense.dropTable()
+# user.dropTable()
 
 @auth_bp.route("/users", methods=['GET'])
 def getUsers():
