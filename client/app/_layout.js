@@ -22,12 +22,25 @@ const Layout = () => {
   if (!fontsLoaded) return null;
 
   // return <Stack onLayout={onLayoutRootView} />;
+
   return (
     <ThemeProvider>
       <Provider>
         <Stack>
           <Stack.Screen
             name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="other"
             options={{
               headerShown: false,
             }}

@@ -7,7 +7,7 @@ import styled, { useTheme } from "styled-components/native";
 import { Image } from "react-native-elements";
 import TextButton from "../../components/buttons/textButton";
 import { useThemeContext } from "../../context/themeContext";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import OtpVerify from "../../components/OtpVerify";
 import { useAuthContext } from "../../context/auth";
 import { UserSignUp } from "../../api";
@@ -93,6 +93,7 @@ const Txt = styled.Text`
 `;
 
 const SignUp = () => {
+  const router = useRouter();
   const theme = useTheme();
   const themeMode = useThemeContext();
   const [showOtp, setShowOtp] = useState(false);

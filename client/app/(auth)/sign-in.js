@@ -9,7 +9,7 @@ import styled, { useTheme } from "styled-components/native";
 import { Image } from "react-native-elements";
 import TextButton from "../../components/buttons/textButton";
 import { useThemeContext } from "../../context/themeContext";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { UserSignIn } from "../../api/index";
 import Toast from "react-native-toast-message";
 import { useAuthContext } from "../../context/auth";
@@ -95,6 +95,7 @@ const Txt = styled.Text`
 
 const SignIn = () => {
   const theme = useTheme();
+  const router = useRouter();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
   const { signIn, currentUser } = useAuthContext();
