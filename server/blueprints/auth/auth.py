@@ -1,13 +1,15 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, Blueprint, render_template
 from flask_bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 import pyotp
 import jwt
-import bcrypt
 import datetime
-from app import app, os
+import os
+from app import app
 from error import create_error
-from models.user import User, db
+from model import User,Expense,Goal,Savings,db
+import os
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
@@ -15,15 +17,27 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = "decisionhub.in@gmail.com"
 app.config['MAIL_PASSWORD'] = "wscmailudpfcuizp"
+app.config['resetSession'] = True
 
-obj=User()
+auth_bp=Blueprint("auth", __name__, template_folder="auth")
+user=User()
+expense=Expense()
+goal=Goal()
+savings=Savings()
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-# obj.createTable()
-obj.dropTable()
+# user.createTable()
+# expense.createTable()
+# goal.createTable()
+# savings.createTable()
 
-@app.route("/users", methods=['GET'])
+# savings.dropTable()
+# goal.dropTable()
+# expense.dropTable()
+# user.dropTable()
+
+@auth_bp.route("/users", methods=['GET'])
 def getUsers():
     users=User.query.all()
     userList=[
@@ -31,7 +45,7 @@ def getUsers():
     ]
     return ({"users": userList})
 
-@app.route('/signup', methods=['POST'])
+@auth_bp.route('/auth/signup', methods=['POST'])
 def create_users():
     # Get user input from request
     data = request.json
@@ -50,7 +64,7 @@ def create_users():
         return jsonify({'message': 'User already exists'}), 409
 
     # Hash the password
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    hashed_password = generate_password_hash(password)
 
     # Create a new user
     new_user = User(name=name, email=email, password=hashed_password, image=image)
@@ -69,12 +83,20 @@ def create_users():
     # Return response with token and user information
     response_data = {
         'token': token,
-        'user': new_user
+        'user': {
+            'id': new_user.id,
+            'name': new_user.name,
+            'image': new_user.image,
+            'email': new_user.email,
+            'googleAuth': new_user.googleAuth,
+            'profileCreated': new_user.profileCreated
+        }
+
     }
     return jsonify(response_data), 201
 
 
-@app.route('/signin', methods=['POST'])
+@auth_bp.route('/auth/signin', methods=['POST'])
 def signin():
     email = request.json.get('email')
     password = request.json.get('password')
@@ -84,26 +106,29 @@ def signin():
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        return create_error(404, "User does not exist")
+        return jsonify({'message': "User does not exist"}), 404
 
     if user.googleAuth:
-        return create_error(401, "Please login with google")
+        return jsonify({'message': "Please login with Google"}), 401
     
-    if not bcrypt.check_password_hash(user.password, password):
-        return create_error(401, "Invalid password")
+    if not check_password_hash(user.password, password):
+        return jsonify({'message': "Invalid password"}), 401
     token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=365*100)}, app.config['SECRET_KEY'], algorithm='HS256')
     # Return response with token and user information
     response_data = {
         'token': token,
         'user': {
             'id': user.id,
+            'name': user.name,
+            'image': user.image,
             'email': user.email,
-            'googleAuth': user.googleAuth
+            'googleAuth': user.googleAuth,
+            'profileCreated': user.profileCreated
         }
     }
     return jsonify(response_data), 201
 
-@app.route('/googleAuth', methods=['POST'])
+@auth_bp.route('/auth/googleAuth', methods=['POST'])
 def googleAuth():
     try:
         email = request.json.get('email')
@@ -195,7 +220,7 @@ def verify_otp(name, otp_c):
 </div>
         """.format(otp_c, name, otp_c)
 }
-@app.route("/generate-otp", methods=['POST'])
+@auth_bp.route("/auth/generate-otp", methods=['POST'])
 def generatOTP():
     email=request.json.get('email')
     name=request.json.get('name')
@@ -203,6 +228,7 @@ def generatOTP():
     secret_key = pyotp.random_base32()
     otp = pyotp.TOTP(secret_key)
     otp_code = otp.now()
+    app.config['OTP']=otp_code
     if reason == "FORGOTPASSWORD":
         send_mail(reset_password_otp(name, otp_code), email)
     else:
@@ -213,10 +239,53 @@ def generatOTP():
 def send_mail(template, recipient):
     msg = Message(template['subject'], sender=os.environ['MAIL_USERNAME'], recipients=[recipient])
     msg.html = template['html']
-    
     try:
         mail.send(msg)
     except Exception as e:
         return str(e)
 
-# @app.route('/verifyOTP', methods=['GET'])
+@auth_bp.route('/auth/verifyOTP', methods=['GET'])
+def verify_OTP():
+    code = request.args.getlist('code')
+    print(code)
+    stored_otp = app.config.get('OTP')
+    print(stored_otp)
+
+    if code[0] and stored_otp and int(code[0]) == int(stored_otp):
+        app.config['OTP'] = None
+        app.config['resetSession'] = True
+        return jsonify({'message': 'OTP verified'}), 200
+    return abort(403, "Wrong OTP")
+
+@auth_bp.route('/auth/createResetSession', methods=['GET'])
+def create_reset_session():
+    if app.config.get('resetSession'):
+        app.config['resetSession'] = False
+        return jsonify({'message': 'Access granted'}), 200
+    return jsonify({'message': 'Session expired'}), 400
+
+@auth_bp.route('/auth/resetPassword', methods=['POST'])
+def reset_password():
+    if not app.config.get('resetSession'):
+        return jsonify({'message': 'Session expired'}), 440
+
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return create_error(404, "User does not exist")
+
+    if user:
+        hashed_password = generate_password_hash(password)
+
+        user.password = hashed_password
+        db.session.commit()
+        db.session.close()
+
+        app.config['resetSession'] = False
+        return jsonify({'message': 'Password reset successful'}), 200

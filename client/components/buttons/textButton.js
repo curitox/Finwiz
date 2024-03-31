@@ -8,11 +8,11 @@ const TextButtonContainer = styled(TouchableOpacity)`
 
 const TextButtonLabel = styled.Text`
   color: ${({ color }) => color || "white"};
-  font-size: 14px;
+  font-size: ${({ small }) => (small ? `12px` : "14px")};
   font-weight: 500;
 `;
 
-const TextButton = ({ onPress, label, color, disabled, enabled }) => {
+const TextButton = ({ small, onPress, label, color, disabled, enabled }) => {
   const isDisabled = enabled === false || disabled;
 
   return (
@@ -20,7 +20,7 @@ const TextButton = ({ onPress, label, color, disabled, enabled }) => {
       onPress={isDisabled ? null : onPress}
       disabled={isDisabled}
     >
-      <TextButtonLabel color={color} disabled={isDisabled}>
+      <TextButtonLabel color={color} disabled={isDisabled} small={small}>
         {label}
       </TextButtonLabel>
     </TextButtonContainer>

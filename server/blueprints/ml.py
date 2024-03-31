@@ -1,7 +1,7 @@
 from flask import request
 import yfinance as yf
 from app import app
-from ml.investment import investment
+from server.blueprints.predictions.predictions import investment
 
 def download_data(ticker, start_date, end_date):
     asset = yf.Ticker(ticker)

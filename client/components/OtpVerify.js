@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StatusBar } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StatusBar, Dimensions } from "react-native";
 import InputText from "./text_fields/inputText";
 import Button from "./buttons/button";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -7,11 +7,13 @@ import styled, { useTheme } from "styled-components/native";
 import TextButton from "./buttons/textButton";
 import { useThemeContext } from "../context/themeContext";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 import { OtpInput } from "react-native-otp-entry";
+import { generateOtp, verifyOtp } from "../api";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
-  padding: 80px 0px;
+  padding: 80px 16px;
   background-color: ${({ theme }) => theme.bg};
 `;
 
@@ -19,7 +21,6 @@ const Logo = styled.Text`
   font-size: 24px;
   font-weight: 700;
   color: ${({ theme }) => theme.primary};
-  padding: 14px 0px;
 `;
 
 const Resend = styled.View`
@@ -39,130 +40,153 @@ const HeadingText = styled.Text`
 const SubHeadingText = styled.Text`
   font-size: 14px;
   font-weight: 400;
-  margin-top: 12px;
   color: ${({ theme }) => theme.text_secondary};
 `;
 
-const OtpVerify = ({ emailId }) => {
+const OtpVerify = ({ emailId, name, setShowOtp, setOtpVerified }) => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [error, setError] = useState("");
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isPasswordVisible, setPasswordVisible] = useState(false);
-
+  const [showTimer, setShowTimer] = useState(false);
+  const [timer, setTimer] = useState("00:00");
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [buttonLoading, setButtonLoading] = useState(true);
 
-  const handleInputChange = (value, name) => {
-    // validation checks
-    if (name === "email") {
-      // Email validation regex pattern
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (!value) {
-        setButtonDisabled(true);
-      }
-
-      if (value && !emailRegex.test(value)) {
-        setError({
-          ...error,
-          email: "Enter correct email format",
+  const sendOtp = async () => {
+    console.log("sent");
+    await generateOtp({ email: emailId, name: name })
+      .then((res) => {
+        console.log(res.data);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "OTP sent successfully 👋",
         });
-        setButtonDisabled(true);
-      } else {
-        setError({
-          ...error,
-          email: "",
+      })
+      .catch((err) => {
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
         });
-      }
+      });
+  };
+
+  const validateOtp = async () => {
+    setButtonDisabled(true);
+    setLoading(true);
+    await verifyOtp(otp)
+      .then((res) => {
+        if (res.status === 200) {
+          setOtpVerified(true);
+          setOtp("");
+          setButtonDisabled(false);
+          setLoading(false);
+          setShowOtp(false);
+        } else {
+          console.log(res);
+          Toast.show({
+            type: "error",
+            text1: "Something went wrong",
+            text2: res.data.message,
+          });
+          setButtonDisabled(false);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+        setButtonDisabled(false);
+        setLoading(false);
+      });
+  };
+
+  const Ref = useRef(null);
+
+  const getTimeRemaining = (e) => {
+    const total = Date.parse(e) - Date.parse(new Date());
+    const seconds = Math.floor((total / 1000) % 60);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+    return {
+      total,
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  const startTimer = (e) => {
+    let { total, hours, minutes, seconds } = getTimeRemaining(e);
+    if (total >= 0) {
+      // update the timer
+      // check if less than 10 then we need to
+      // add '0' at the beginning of the variable
+      setTimer(
+        (minutes > 9 ? minutes : "0" + minutes) +
+          ":" +
+          (seconds > 9 ? seconds : "0" + seconds)
+      );
     }
+  };
 
-    if (name === "password") {
-      if (!value) {
-        setButtonDisabled(true);
-      }
-      // Password validation regex pattern
-      if (value && value.length < 8) {
-        setError({
-          ...error,
-          password: "Password must be atleast 8 characters long!",
-        });
-        setButtonDisabled(true);
-      } else if (value && value.length > 16) {
-        setError({
-          ...error,
-          password: "Password must be less than 16 characters long!",
-        });
-        setButtonDisabled(true);
-      } else if (
-        value &&
-        (!value.match(/[a-z]/g) ||
-          !value.match(/[A-Z]/g) ||
-          !value.match(/[0-9]/g) ||
-          !value.match(/[^a-zA-Z\d]/g))
-      ) {
-        setError({
-          ...error,
-          password:
-            "Password must contain atleast one lowercase, uppercase, number and special character!",
-        });
-        setButtonDisabled(true);
-      } else {
-        setError({
-          ...error,
-          password: "",
-        });
-      }
-    }
+  const clearTimer = (e) => {
+    // If you adjust it you should also need to
+    // adjust the Endtime formula we are about
+    // to code next
+    setTimer("01:00");
 
-    if (name === "confirmPassword") {
-      if (!value) {
-        setButtonDisabled(true);
-      }
-      if (value && value !== user.password) {
-        setError({
-          ...error,
-          confirmPassword: "Passwords do not match!",
-        });
-        setButtonDisabled(true);
-      } else {
-        setError({
-          ...error,
-          confirmPassword: "",
-        });
-      }
-    }
+    // If you try to remove this line the
+    // updating of timer Variable will be
+    // after 1000ms or 1sec
+    if (Ref.current) clearInterval(Ref.current);
+    const id = setInterval(() => {
+      startTimer(e);
+    }, 1000);
+    Ref.current = id;
+  };
 
-    setUser({ ...user, [name]: value });
+  const getDeadTime = () => {
+    let deadline = new Date();
+
+    // This is where you need to adjust if
+    // you entend to add more time
+    deadline.setSeconds(deadline.getSeconds() + 60);
+    return deadline;
+  };
+
+  const resendOtp = () => {
+    setShowTimer(true);
+    clearTimer(getDeadTime());
+    sendOtp();
   };
 
   useEffect(() => {
-    // If there is no error message and all the fields are filled, then enable the button
-    if (
-      !error.email &&
-      !error.password &&
-      !error.confirmPassword &&
-      user.email &&
-      user.password &&
-      user.confirmPassword &&
-      user.password === user.confirmPassword
-    ) {
+    sendOtp();
+    clearTimer(getDeadTime());
+  }, []);
+
+  useEffect(() => {
+    if (timer === "00:00") {
+      setShowTimer(false);
+    } else {
+      setShowTimer(true);
+    }
+  }, [timer]);
+
+  useEffect(() => {
+    if (otp.length === 6) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [error, user]);
-
-  const handleOtpVerify = () => {
-    toggleTheme();
-    setLoading(true);
-  };
+  }, [otp]);
 
   return (
     <Wrapper>
@@ -175,29 +199,30 @@ const OtpVerify = ({ emailId }) => {
       <View
         style={{
           flex: 1,
-          padding: 16,
-          gap: 4,
+          gap: 22,
+          paddingTop: 16,
         }}
       >
         <Logo>Finwiz</Logo>
         <HeadingText>Verify OTP 📩💬</HeadingText>
-        <SubHeadingText>
-          An OTP has been sent to your email id:{" "}
+
+        <View
+          style={{
+            flex: 1,
+            gap: 2,
+          }}
+        >
+          <SubHeadingText>
+            An OTP has been sent to your email id:
+          </SubHeadingText>
           <TextButton
             label={emailId}
             color={theme.primary}
             disabled={true}
             enabled={false}
           />
-        </SubHeadingText>
-      </View>
-      <View
-        style={{
-          flex: 1,
-          padding: 16,
-          gap: 42,
-        }}
-      >
+        </View>
+
         <View
           style={{
             flex: 1,
@@ -208,40 +233,50 @@ const OtpVerify = ({ emailId }) => {
             numberOfDigits={6}
             focusColor={theme.primary}
             focusStickBlinkingDuration={500}
-            onTextChange={(text) => console.log(text)}
-            onFilled={(text) => console.log(`OTP is ${text}`)}
-            // theme={{
-            //   containerStyle: styles.container,
-            //   inputsContainerStyle: styles.inputsContainer,
-            //   pinCodeContainerStyle: styles.pinCodeContainer,
-            //   pinCodeTextStyle: styles.pinCodeText,
-            //   focusStickStyle: styles.focusStick,
-            //   focusedPinCodeContainerStyle: styles.activePinCodeContainer,
-            // }}
+            onTextChange={(text) => setOtp(text)}
           />
           <Resend>
-            <Text>Resend in 00:59 </Text>
-            <TextButton
-              label="Resend"
-              color={theme.primary}
-              disabled={false}
-              enabled={true}
-              onPress={() => router.replace("/sign-in")}
-            />
+            {showTimer ? (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  gap: 10,
+                }}
+              >
+                <Text>Resend in</Text>
+                <TextButton
+                  label={timer}
+                  color={theme.primary}
+                  disabled={true}
+                  enabled={true}
+                />
+              </View>
+            ) : (
+              <TextButton
+                label="Resend"
+                color={theme.primary}
+                disabled={false}
+                enabled={true}
+                onPress={() => resendOtp()}
+              />
+            )}
           </Resend>
         </View>
-
         <Button
           type="filled"
           color={theme.white}
           bgcolor={theme.primary}
           loading={loading}
-          onPress={handleOtpVerify}
+          onPress={validateOtp}
           disabled={buttonDisabled}
         >
           Verify OTP
         </Button>
       </View>
+      <Toast />
     </Wrapper>
   );
 };

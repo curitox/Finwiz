@@ -1,9 +1,10 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 if __name__ == '__main__':
     app.run(debug=True)
 
@@ -15,7 +16,19 @@ except:
     print("Some error")
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
-from controllers import *
+from blueprints.analytics.predictions import predictions_bp
+from blueprints.analytics.graphs import graphs_bp
+from blueprints.auth.auth import auth_bp
+from blueprints.user.user import user_bp
+from blueprints.expense.expense import expense_bp
+from blueprints.goal.goal import goal_bp
 from ml import *
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(graphs_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(expense_bp)
+app.register_blueprint(goal_bp)
+app.register_blueprint(predictions_bp)

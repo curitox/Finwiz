@@ -9,7 +9,10 @@ import styled, { useTheme } from "styled-components/native";
 import { Image } from "react-native-elements";
 import TextButton from "../../components/buttons/textButton";
 import { useThemeContext } from "../../context/themeContext";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
+import { UserSignIn } from "../../api/index";
+import Toast from "react-native-toast-message";
+import { useAuthContext } from "../../context/auth";
 
 const Wrapper = styled.ScrollView`
   flex: 1;
@@ -92,8 +95,10 @@ const Txt = styled.Text`
 
 const SignIn = () => {
   const theme = useTheme();
+  const router = useRouter();
   const themeMode = useThemeContext();
   const { toggleTheme } = useThemeContext();
+  const { signIn, currentUser } = useAuthContext();
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -179,10 +184,36 @@ const SignIn = () => {
     }
   }, [error, user]);
 
-  const handleSignIn = () => {
-    toggleTheme();
+  const handleSignIn = async () => {
     setLoading(true);
+    await UserSignIn(user)
+      .then((res) => {
+        signIn(res.data);
+        if (currentUser?.user?.profileCreated === false) {
+          router.replace("/profile-create");
+        }
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "LoggedIn successfully 👋",
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        Toast.show({
+          type: "error",
+          text1: "Wrong Credentials",
+          text2: err.response.data.message,
+        });
+        setLoading(false);
+      });
   };
+
+  useEffect(() => {
+    if (currentUser && !currentUser?.user?.profileCreated) {
+      router.replace("/profile-create");
+    }
+  }, [currentUser]);
 
   return (
     <Wrapper>
@@ -323,6 +354,7 @@ const SignIn = () => {
           />
         </AlreadyAccount>
       </View>
+      <Toast />
     </Wrapper>
   );
 };
