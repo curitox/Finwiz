@@ -39,7 +39,7 @@ mail = Mail(app)
 
 @auth_bp.route("/", methods=['GET'])
 def hello():
-    print('hello')
+    return 'hello'
 
 @auth_bp.route("/users", methods=['GET'])
 def getUsers():
