@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 
-export default function Accout() {
+export default function Transactions() {
   const { signOut, currentUser } = useAuthContext();
 
   return (

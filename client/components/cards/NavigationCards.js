@@ -11,17 +11,19 @@ const Card = styled.TouchableOpacity`
 `;
 
 const CardIcon = styled.View`
-  width: 50px;
-  height: 50px;
+  width: 58px;
+  height: 58px;
   justify-content: center;
   align-items: center;
   background: ${({ background }) => background};
   color: ${({ color }) => color};
-  border-radius: 50px;
+  border-radius: 60px;
 `;
 const CardText = styled.Text`
   font-size: 10px;
-  color: ${({ theme }) => theme.text_primary};
+  font-weight: 500;
+  text-align: center;
+  color: ${({ theme }) => theme.text_secondary};
 `;
 const NavigationCards = ({ data }) => {
   return (

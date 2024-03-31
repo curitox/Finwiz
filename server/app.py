@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -16,7 +16,7 @@ except:
     print("Some error")
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 from blueprints.analytics.predictions import predictions_bp
 from blueprints.analytics.graphs import graphs_bp
