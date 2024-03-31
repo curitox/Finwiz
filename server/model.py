@@ -1,8 +1,11 @@
-from app import app, db
+from app import app
 from sqlalchemy import Enum, func
 from sqlalchemy.orm import validates
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from error import create_error
+
+db = SQLAlchemy(app)
 
 class User(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
