@@ -5,6 +5,7 @@ import {
   StatusBar,
   TouchableHighlightBase,
   Linking,
+  ScrollView,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import styled, { useTheme } from "styled-components/native";
@@ -57,6 +58,10 @@ const Title = styled.Text`
 const CardWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
+`;
+const GoalsWrapper = styled.ScrollView`
+  gap: 16px;
+  flex: 1;
 `;
 
 const TransactionCardWrapper = styled.View`
@@ -178,8 +183,14 @@ const Home = () => {
               onPress={() => router.replace("/goals")}
             />
           </TitleWrapper>
-
-          <GoalCard />
+          <GoalsWrapper
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          >
+            {categories.map((item) => (
+              <GoalCard key={item.id} />
+            ))}
+          </GoalsWrapper>
         </Section>
         <Section>
           <Title>Transactions</Title>

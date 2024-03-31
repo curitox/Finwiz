@@ -72,9 +72,9 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="expences"
+        name="transactions"
         options={{
-          href: "/expences",
+          href: "/transactions",
           title: "",
           tabBarIcon: ({ color }) => (
             <View
@@ -94,7 +94,7 @@ export default function TabsLayout() {
               <Text
                 style={{ marginTop: 5, fontSize: 12, opacity: 1, color: color }}
               >
-                Expences
+                Transactions
               </Text>
             </View>
           ),
