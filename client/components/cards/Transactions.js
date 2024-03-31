@@ -33,7 +33,9 @@ const Right = styled.View`
 const Left = styled.View`
   width: 46px;
   height: 46px;
-  background-color: ${({ theme }) => theme.categoryRedLight};
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ color }) => color + 20};
   border-radius: 25px;
 `;
 const Name = styled.Text`
@@ -61,7 +63,7 @@ const TagText = styled.Text`
   font-size: 12px;
   color: ${({ expence, theme }) => (expence ? theme.red : theme.green)};
 `;
-const TransactionsCard = () => {
+const TransactionsCard = ({ item }) => {
   const theme = useTheme();
   const data = {
     name: "Seoul",
@@ -74,7 +76,7 @@ const TransactionsCard = () => {
   return (
     <Card>
       <Wrapper>
-        <Left>{/* <Image /> */}</Left>
+        <Left color={item?.color}>{item?.icon}</Left>
         <Right>
           <View
             style={{
