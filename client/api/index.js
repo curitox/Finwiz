@@ -18,3 +18,9 @@ export const generateOtp = async (data) =>
 
 export const verifyOtp = async (data) =>
   await API.get(`/auth/verifyOTP?code=${data}`);
+
+
+export const AddExpence = async (data, token) =>
+  await API.post("/expense/add", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

@@ -11,6 +11,8 @@ import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
+import { AddExpence } from "../../api";
+import Toast from "react-native-toast-message";
 
 const Container = styled.View`
   flex: 1;
@@ -65,6 +67,7 @@ const IconContainer = styled.View`
 export default function AddTransactions() {
   const router = useRouter();
   const theme = useTheme();
+  const [loading, setLoading] = useState();
   const { signOut, currentUser } = useAuthContext();
 
   const TransactionCategories = [
@@ -198,6 +201,7 @@ export default function AddTransactions() {
     transactionDate: "",
     category: "",
     description: "",
+    paymentMethod: "ONLINE",
   });
 
   const handleInputChange = (value, name) => {
@@ -211,7 +215,36 @@ export default function AddTransactions() {
       transactionData.amount !== "0"
     ) {
       setStages(1);
+    } else if (
+      transactionData.transactionDate !== "" ||
+      transactionData.category !== "" ||
+      transactionData.description !== ""
+    ) {
+      handelAddTransaction();
     }
+  };
+
+  const handelAddTransaction = async () => {
+    setLoading(true);
+    await AddExpence(transactionData, currentUser?.token)
+      .then((res) => {
+        Toast.show({
+          type: "success",
+          text1: "Transaction Added",
+          text2: "Transaction created successfully 👋",
+        });
+        setLoading(false);
+        router.replace("/home");
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+        setLoading(false);
+      });
   };
 
   return (
@@ -349,7 +382,7 @@ export default function AddTransactions() {
               type="filled"
               color={theme.white}
               bgcolor={theme.primary}
-              // loading={loading}
+              loading={loading}
               onPress={() => handelNext()}
               disabled={
                 transactionData.transactionDate === "" ||
@@ -359,6 +392,7 @@ export default function AddTransactions() {
             >
               Continue
             </Button>
+            <Toast />
           </Wrapper>
         </Container>
       )}

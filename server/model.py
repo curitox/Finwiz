@@ -47,10 +47,10 @@ class User(db.Model):
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     transactionDate=db.Column(db.Date)
-    category = db.Column(Enum('SAVINGS/INVESTMENT','DEBT_PAYMENTS', 'GROCERIES', 'TRANSPORTATION', 'ENTERTAINMENT', 'UTILITIES', 'INSURANCE', 'DINING_OUT', 'SHOPPING', 'HEALTHCARE', 'RENT/MORTGAGE', 'EDUCATION', 'OTHER', name='expense_category_enum', default='OTHER'))
+    category = db.Column(db.String(150))
     amount=db.Column(db.Numeric(10, 2), nullable=False)
     description=db.Column(db.String(200))
-    paymentMethod=db.Column(Enum('CASH','DEBIT_CARD', name='payment_method_enum', default='CASH'))
+    paymentMethod=db.Column(Enum('CASH','CARD','ONLINE', name='payment_method_enum', default='ONLINE'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     @staticmethod
