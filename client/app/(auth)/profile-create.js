@@ -245,8 +245,9 @@ const ProfileCreate = () => {
             >
               {options.gender.map((gender, index) => (
                 <SelectableChip
+                  flex
                   key={`gender-${index}`}
-                  startIcon={gender.icon}
+                  startIconText={gender.icon}
                   selected={gender.value === user.gender}
                   onPress={() => setUser({ ...user, gender: gender.value })}
                 >
@@ -266,6 +267,7 @@ const ProfileCreate = () => {
             >
               {options.financialKnowledge.map((financialKnowledge, index) => (
                 <SelectableChip
+                  flex
                   key={`financialKnowledge-${index}`}
                   selected={
                     financialKnowledge.value === user.financialKnowledge
@@ -293,6 +295,7 @@ const ProfileCreate = () => {
             >
               {options.riskTolerance.map((riskTolerance, index) => (
                 <SelectableChip
+                  flex
                   key={`riskTolerance-${index}`}
                   selected={riskTolerance.value === user.riskTolerance}
                   onPress={() =>
