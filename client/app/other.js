@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, Image, Linking } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Camera } from "expo-camera";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useRouter } from "expo-router";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import Button from "../components/buttons/button";
 // import { Camera } from "expo-barcode-scanner";
 
 const Container = styled.View`
@@ -11,13 +15,25 @@ const Container = styled.View`
   background-color: ${({ theme }) => theme.bg};
 `;
 
+const Back = styled.TouchableOpacity`
+  width: 46px;
+  height: 46px;
+  border-radius: 46px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.text_secondary + 20};
+`;
+
 const Title = styled.Text`
-  font-size: 18px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 24px;
   color: ${({ theme }) => theme.text_primary};
-  font-weight: 500;
 `;
 
 const Other = () => {
+  const router = useRouter();
+  const theme = useTheme();
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -29,21 +45,15 @@ const Other = () => {
       setHasCameraPermission(cameraStatus.status === "granted");
     })();
   }, []);
-  const takePicture = async () => {
-    if (camera) {
-      const data = await camera.takePictureAsync(null);
-      setImage(data.uri);
-    }
-  };
 
   const handleBarCodeScanned = ({ type, data }) => {
-    console.log("Here");
     setScanned(true);
-    alert(
-      `Bar code with type ${type} and data ${Linking.openURL(
-        `${data}`
-      )} has been scanned!`
-    );
+    const chechUrl = data.split(":")[0] === "upi";
+    if (chechUrl) {
+      router.replace({ pathname: `/add-transactions`, params: { data } });
+    } else {
+      alert(`Please scan a payment UPI QR Code`);
+    }
   };
 
   if (hasCameraPermission === false) {
@@ -51,11 +61,17 @@ const Other = () => {
   }
   return (
     <Container>
+      <Back onPress={() => router.replace("/home")}>
+        <Ionicons name="chevron-back" size={22} color={theme.text_primary} />
+      </Back>
       <Title>Scan Your Payment QR code</Title>
       <View style={styles.cameraContainer}>
         {hasCameraPermission ? (
           <Camera
-            onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            barCodeScannerSettings={{
+              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+            }}
             style={styles.fixedRatio}
             ratio={"1:1"}
           />
@@ -64,7 +80,14 @@ const Other = () => {
         )}
       </View>
       {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+        <Button
+          filled
+          color={theme.white}
+          bgcolor={theme.primary}
+          onPress={() => setScanned(false)}
+        >
+          Tap To Scan Again
+        </Button>
       )}
     </Container>
   );
@@ -76,10 +99,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
+    borderRadius: "12px",
   },
   fixedRatio: {
     flex: 0.9,
     aspectRatio: 1,
+    borderRadius: "12px",
   },
 });
 

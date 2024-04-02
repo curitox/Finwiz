@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { Slot, Stack } from "expo-router";
 import { ThemeProvider } from "../context/themeContext";
 import { Provider } from "../context/auth";
+import { BottomSheetProvider } from "../context/bottomSheetContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,35 +24,44 @@ const Layout = () => {
 
   // return <Stack onLayout={onLayoutRootView} />;
 
+
   return (
     <ThemeProvider>
       <Provider>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(auth)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(quicklinks)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="other"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
+        <BottomSheetProvider>
+          <Stack onLayout={onLayoutRootView}>
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(auth)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(quicklinks)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="other"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </BottomSheetProvider>
       </Provider>
     </ThemeProvider>
   );
