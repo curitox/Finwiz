@@ -37,7 +37,8 @@ const ProfileInfo = styled.View`
 `;
 const Topic = styled.Text`
   font-weight: 500;
-  font-size: 12px;
+  font-size: 10px;
+  color: ${({ theme }) => theme.text_secondary};
 `;
 const FlexContainer = styled.View`
   flex-direction: row;
@@ -51,7 +52,7 @@ const Flex = styled.View`
   gap: 4px;
 `;
 const Finance = styled.View`
-  background-color: ${({ theme }) => theme.text_secondary_light + 99};
+  background-color: ${({ theme }) => theme.text_secondary_light + 30};
   border-radius: 24px;
   margin: 12px;
   padding: 8px 20px;
@@ -122,17 +123,17 @@ export default function Account() {
         <Finance>
           <Content>
             <Topic>Financial Knowledge</Topic>
-            <Text style={{ fontSize: 14 }}>Moderate</Text>
+            <Text style={{ fontSize: 14, color: theme.text_primary }}>Moderate</Text>
           </Content>
           <VerticalLine />
           <Content>
             <Topic>Risk Tolerance</Topic>
-            <Text style={{ fontSize: 14 }}>Low</Text>
+            <Text style={{ fontSize: 14, color: theme.text_primary }}>Low</Text>
           </Content>
           <VerticalLine/>
           <Content>
             <Topic>Monthly Income</Topic>
-            <Text style={{ fontSize: 14 }}>Rs. 2500</Text>
+            <Text style={{ fontSize: 14, color: theme.text_primary }}>Rs. 2500</Text>
           </Content>
         </Finance>
       </ProfileInfo>
