@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React from "react";
 import { TouchableOpacity, ActivityIndicator, View, Text } from "react-native";
 import styled, { css } from "styled-components/native";
@@ -27,7 +28,7 @@ const CardText = styled.Text`
 `;
 const NavigationCards = ({ data }) => {
   return (
-    <Card>
+    <Card onPress={() => router.replace(data?.link)}>
       <CardIcon background={data.background} color={data.color}>
         {data.icon}
       </CardIcon>

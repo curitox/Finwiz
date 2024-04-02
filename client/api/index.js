@@ -1,7 +1,7 @@
 import axios from "axios";
 //http://10.0.2.2:
 const API = axios.create({
-  baseURL: "http://10.0.2.2:5000/",
+  baseURL: "https://expense-tracker-9kx3.onrender.com/",
 });
 
 export const UserSignUp = async (data) => await API.post("/auth/signup", data);
@@ -18,3 +18,9 @@ export const generateOtp = async (data) =>
 
 export const verifyOtp = async (data) =>
   await API.get(`/auth/verifyOTP?code=${data}`);
+
+
+export const AddExpence = async (data, token) =>
+  await API.post("/expense/add", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

@@ -40,6 +40,12 @@ const Layout = () => {
             }}
           />
           <Stack.Screen
+            name="(quicklinks)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="other"
             options={{
               headerShown: false,

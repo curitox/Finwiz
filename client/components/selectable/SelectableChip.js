@@ -4,28 +4,28 @@ import styled, { css, useTheme } from "styled-components/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const StyledButton = styled.TouchableOpacity`
-  flex: 1;
+  ${({ flex }) => flex && `flex: 1;`}
   flex-direction: row;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
   padding-vertical: 4px;
-  padding-horizontal: 6px;
-  gap: 4px;
+  padding-horizontal: 8px;
+  gap: 6px;
 
-  ${({ theme, selected }) => {
+  ${({ color, theme, selected }) => {
     if (selected) {
       return css`
         border-width: 1.2px;
-        border-color: ${theme.primary};
-        color: ${theme.primary};
-        background-color: ${theme.primary + 20};
+        border-color: ${color};
+        color: ${color};
+        background-color: ${color + 20};
       `;
     } else {
       return css`
         border-width: 1.2px;
-        border-color: ${theme.text_primary + 90};
-        color: ${theme.text_primary + 90};
+        border-color: ${theme.text_secondary + 90};
+        color: ${theme.text_secondary + 90};
       `;
     }
   }}
@@ -36,10 +36,10 @@ const ButtonText = styled.Text`
   font-weight: 500;
   line-height: 24px;
 
-  ${({ theme, selected }) => {
+  ${({ color, theme, selected }) => {
     if (selected) {
       return css`
-        color: ${theme.primary};
+        color: ${color};
       `;
     } else {
       return css`
@@ -54,26 +54,39 @@ const IconContainer = styled.View`
 `;
 
 const SelectableChip = ({
+  flex,
   startIcon,
+  startIconText,
   endIcon,
   onPress,
+  color,
   children,
   selected,
   ...props
 }) => {
   const theme = useTheme();
+  color = color ? color : theme.primary;
   return (
-    <StyledButton onPress={onPress} selected={selected} {...props}>
-      {startIcon && (
+    <StyledButton
+      color={color}
+      flex={flex}
+      onPress={onPress}
+      selected={selected}
+      {...props}
+    >
+      {startIcon}
+      {startIconText && (
         <IconContainer>
           <FontAwesome
-            name={startIcon}
+            name={startIconText}
             size={15}
             color={selected ? theme.primary : theme.text_primary}
           />
         </IconContainer>
       )}
-      <ButtonText selected={selected}>{children}</ButtonText>
+      <ButtonText selected={selected} color={color}>
+        {children}
+      </ButtonText>
       {endIcon && (
         <IconContainer>
           <FontAwesome

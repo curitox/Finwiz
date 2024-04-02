@@ -203,6 +203,7 @@ const Home = () => {
     {
       id: 1,
       text: "Add Transaction",
+      link: "/add-transactions",
       icon: (
         <MaterialIcons
           name="library-add"
@@ -216,6 +217,7 @@ const Home = () => {
     {
       id: 2,
       text: "Create Goals",
+      link: "/add-goals",
       icon: (
         <MaterialCommunityIcons
           name="medal"
@@ -228,7 +230,8 @@ const Home = () => {
     },
     {
       id: 3,
-      text: "AI Suggestions",
+      text: "AI Insights",
+      link: "/ai-insights",
       icon: (
         <MaterialCommunityIcons
           name="robot"
@@ -242,6 +245,7 @@ const Home = () => {
     {
       id: 4,
       text: "Investment",
+      link: "/investment",
       icon: (
         <MaterialCommunityIcons
           name="hand-coin"
