@@ -37,6 +37,10 @@ mail = Mail(app)
 # expense.dropTable()
 # user.dropTable()
 
+@auth_bp.route("/", methods=['GET'])
+def hello():
+    return 'hello'
+
 @auth_bp.route("/users", methods=['GET'])
 def getUsers():
     users=User.query.all()

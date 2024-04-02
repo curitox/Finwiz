@@ -29,7 +29,7 @@ function useProtectedRoute(currentUser) {
     }
 
     if (!currentUser && !currentUser?.user?.profileCreated && !inAuthGroup) {
-      router.replace("/sign-in");
+      router.replace("/home");
     } else if (
       currentUser &&
       inAuthGroup &&
