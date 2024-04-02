@@ -92,6 +92,11 @@ def create_users():
             'name': new_user.name,
             'image': new_user.image,
             'email': new_user.email,
+            'gender': new_user.gender,
+            'dob': new_user.dob,
+            'monthlyIncome': new_user.monthlyIncome,
+            'financialKnowledge': new_user.financialKnowledge,
+            'riskTolerance': new_user.riskTolerance,
             'googleAuth': new_user.googleAuth,
             'profileCreated': new_user.profileCreated
         }
@@ -126,6 +131,11 @@ def signin():
             'name': user.name,
             'image': user.image,
             'email': user.email,
+            'gender': user.gender,
+            'dob': user.dob,
+            'monthlyIncome': user.monthlyIncome,
+            'financialKnowledge': user.financialKnowledge,
+            'riskTolerance': user.riskTolerance,
             'googleAuth': user.googleAuth,
             'profileCreated': user.profileCreated
         }

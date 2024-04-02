@@ -42,6 +42,11 @@ def addDetails():
             'name': user.name,
             'image': user.image,
             'email': user.email,
+            'gender': user.gender,
+            'dob': user.dob,
+            'monthlyIncome': user.monthlyIncome,
+            'financialKnowledge': user.financialKnowledge,
+            'riskTolerance': user.riskTolerance,
             'googleAuth': user.googleAuth,
             'profileCreated': user.profileCreated
         }})
