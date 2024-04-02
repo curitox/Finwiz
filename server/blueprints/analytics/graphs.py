@@ -4,6 +4,7 @@ from sqlalchemy import func
 from collections import defaultdict, deque
 from middleware.verifyToken import verifyToken
 from error import create_error
+from datetime import date
 from model import User, Expense, Goal, db
 from app import app
 
@@ -113,3 +114,47 @@ def goalsGraph():
         all_lineData.append(lineData)
 
     return jsonify({"lineData": all_lineData}), 200
+
+@graphs_bp.route('/expenseDaily', methods=['GET'])
+@verifyToken
+def expense_daily():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+    current_date = date.today()
+
+    # Query expenses for the user on the current day
+    expenses = db.session.query(Expense.category, func.sum(Expense.amount)).filter(
+        Expense.user_id == user_id,
+        func.date(Expense.transactionDate) == current_date
+    ).group_by(Expense.category).all()
+
+    # Create dictionary to map category names to their hex colors
+    category_colors = {
+        "Food": "#FF6F61",
+        "Shopping": "#FFD166",
+        "Transportation": "#4CAF50",
+        "Housing": "#5DADE2",
+        "Utilities": "#FFA07A",
+        "Health & Fitness": "#AF7AC5",
+        "Personal Care": "#AED6F1",
+        "Entertainment": "#F5B041",
+        "Education": "#76D7C4",
+        "Travel": "#FAD7A0",
+        "Savings & Investments": "#F1948A",
+        "Debt Payments": "#85C1E9",
+        "Gifts & Donations": "#D7BDE2",
+        "Miscellaneous": "#E59866"
+    }
+
+    # Prepare response data
+    response_data = []
+    for category, amount in expenses:
+        response_data.append({
+            "name": category,
+            "color": category_colors.get(category, "#000000"),  # Default color if not found
+            "value": float(amount)  # Convert amount to float
+        })
+
+    return jsonify(response_data)
