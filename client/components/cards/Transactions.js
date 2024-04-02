@@ -14,6 +14,7 @@ import BottomSheetContext, {
   useBottomSheetContext,
 } from "../../context/bottomSheetContext";
 import TransactionDetails from "../TransactionDetails";
+import { getCategoryByValue } from "../../utils/data";
 
 const Card = styled.TouchableOpacity`
   flex: 1;
@@ -42,7 +43,7 @@ const Left = styled.View`
   background-color: ${({ color }) => color + 20};
   border-radius: 25px;
 `;
-const Name = styled.Text`
+const Desc = styled.Text`
   flex: 1;
   font-size: 14px;
   color: ${({ theme }) => theme.text_primary};
@@ -70,15 +71,6 @@ const TagText = styled.Text`
 const TransactionsCard = ({ item }) => {
   const { setOpenBottomSheet } = useBottomSheetContext();
 
-  const theme = useTheme();
-  const data = {
-    name: "Seoul",
-    population: 21500000,
-    color: "rgba(131, 167, 234, 1)",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15,
-  };
-
   return (
     <Card
       onPress={() =>
@@ -90,7 +82,9 @@ const TransactionsCard = ({ item }) => {
       }
     >
       <Wrapper>
-        <Left color={item?.color}>{item?.icon}</Left>
+        <Left color={getCategoryByValue(item?.category)?.color}>
+          {getCategoryByValue(item?.category)?.icon}
+        </Left>
         <Right>
           <View
             style={{
@@ -99,8 +93,8 @@ const TransactionsCard = ({ item }) => {
               justifyContent: "space-between",
             }}
           >
-            <Name>Prashant Sahoo</Name>
-            <Date>12th may 2024</Date>
+            <Desc>{item?.description}</Desc>
+            <Date>{item?.transactionDate}</Date>
           </View>
           <View
             style={{
@@ -108,7 +102,7 @@ const TransactionsCard = ({ item }) => {
               justifyContent: "space-between",
             }}
           >
-            <Amount>$120</Amount>
+            <Amount>₹{item?.amount}</Amount>
             {/* <Tag expence={true}>
               <TagText expence={true}>Expence</TagText>
             </Tag> */}

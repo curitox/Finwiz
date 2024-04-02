@@ -33,6 +33,7 @@ import {
 import GoalCard from "../../components/cards/GoalsCard";
 import TextButton from "../../components/buttons/textButton";
 import TransactionsCard from "../../components/cards/Transactions";
+import { GetExpences } from "../../api";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -79,7 +80,9 @@ const Home = () => {
   const router = useRouter();
   const theme = useTheme();
   const themeMode = useThemeContext();
+  const [loading, setLoading] = useState(false);
   const { toggleTheme } = useThemeContext();
+  const [expences, setExpences] = useState([]);
 
   const TransactionCategories = [
     {
@@ -205,7 +208,6 @@ const Home = () => {
       ),
     },
   ];
-
   const categories = [
     {
       id: 1,
@@ -301,12 +303,24 @@ const Home = () => {
     },
   ];
 
-  const OpenUpiApp = async () => {
-    const upiUrl =
-      "upi://pay?pa=8336940178@paytm&pn=Debashree%20Chanda&mc=1&mode=02&purpose=00";
-    await Linking.openURL(upiUrl).then((res) => console.log(res));
-    console.log("Here");
+  const { currentUser } = useAuthContext();
+
+  const getExpences = async () => {
+    setLoading(true);
+    await GetExpences(currentUser?.token)
+      .then((res) => {
+        setLoading(false);
+        setExpences(res?.data?.Expenses);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   };
+
+  useEffect(() => {
+    getExpences();
+  }, []);
 
   return (
     <Container>
@@ -318,6 +332,7 @@ const Home = () => {
           backgroundColor={theme.bg} // Set the status bar color based on the theme
         />
         <Topbar />
+        {loading && <Text>Loading...</Text>}
         <Section>
           <ChartCard />
         </Section>
@@ -367,8 +382,11 @@ const Home = () => {
         <Section>
           <Title>Transactions</Title>
           <TransactionCardWrapper>
-            {TransactionCategories.map((item) => (
-              <TransactionsCard item={item} key={item.value} />
+            {expences?.map((item) => (
+              <TransactionsCard
+                item={item}
+                key={`expence-home-${item?.category}`}
+              />
             ))}
           </TransactionCardWrapper>
         </Section>

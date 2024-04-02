@@ -79,7 +79,7 @@ export default function AddTransactions() {
   const router = useRouter();
   const theme = useTheme();
   const [loading, setLoading] = useState();
-  const { signOut, currentUser } = useAuthContext();
+  const { currentUser } = useAuthContext();
 
   const TransactionCategories = [
     {
