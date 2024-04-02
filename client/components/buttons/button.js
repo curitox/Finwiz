@@ -4,6 +4,7 @@ import styled, { css } from "styled-components/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const StyledButton = styled.TouchableOpacity`
+  width: 100%;
   flex-direction: row;
   justify-content: center;
   align-items: center;

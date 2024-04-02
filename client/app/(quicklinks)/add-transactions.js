@@ -1,5 +1,5 @@
-import { View, Text, Pressable } from "react-native";
-import { Link, router, useRouter } from "expo-router";
+import { View, Text, Pressable, Linking } from "react-native";
+import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
@@ -65,6 +65,7 @@ const IconContainer = styled.View`
 `;
 
 export default function AddTransactions() {
+  const { data } = useLocalSearchParams();
   const router = useRouter();
   const theme = useTheme();
   const [loading, setLoading] = useState();
@@ -208,6 +209,33 @@ export default function AddTransactions() {
     setTransactionData({ ...transactionData, [name]: value });
   };
 
+  const modifyUpiUrl = (upiUrl, additionalParams) => {
+    // Parse the existing UPI URL to extract existing parameters
+    const urlParts = upiUrl.split("?");
+    const baseUrl = urlParts[0];
+    const params = urlParts[1] ? urlParts[1].split("&") : [];
+
+    // Create a map to store parameters
+    const paramMap = {};
+    params.forEach((param) => {
+      const [key, value] = param.split("=");
+      paramMap[key] = value;
+    });
+
+    // Loop through additionalParams object and update URL parameters
+    for (const param in additionalParams) {
+      paramMap[param] = additionalParams[param];
+    }
+
+    // Construct the modified UPI URL
+    const modifiedParams = Object.entries(paramMap)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+    const modifiedUpiUrl = baseUrl + "?" + modifiedParams;
+
+    // Return the modified UPI URL
+    return modifiedUpiUrl;
+  };
   const handelNext = () => {
     if (
       stages === 0 &&
@@ -220,7 +248,16 @@ export default function AddTransactions() {
       transactionData.category !== "" ||
       transactionData.description !== ""
     ) {
-      handelAddTransaction();
+      // Example usage:
+      const upiUrl = data;
+      const additionalParams = {
+        tn: transactionData.description,
+        am: transactionData.amount,
+      };
+
+      console.log("Modified UPI URL:", modifyUpiUrl(upiUrl, additionalParams));
+      Linking.openURL(modifyUpiUrl(upiUrl, additionalParams));
+      // handelAddTransaction();
     }
   };
 

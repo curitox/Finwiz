@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -31,10 +37,11 @@ import TransactionsCard from "../../components/cards/Transactions";
 const Container = styled.ScrollView`
   flex: 1;
   padding: 32px 0px;
+  padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
 `;
 
-const Wrapper = styled.View`
+const Wrapper = styled.SafeAreaView`
   flex: 1;
   gap: -6px;
 `;
@@ -211,11 +218,29 @@ const Home = () => {
           color={theme.categoryGreen}
         />
       ),
+      text: "Add Transaction",
+      link: "/add-transactions",
+      icon: (
+        <MaterialIcons
+          name="library-add"
+          size={24}
+          color={theme.categoryGreen}
+        />
+      ),
       background: theme.categoryGreenLight,
       color: theme.categoryGreen,
     },
     {
       id: 2,
+      text: "Create Goals",
+      link: "/add-goals",
+      icon: (
+        <MaterialCommunityIcons
+          name="medal"
+          size={24}
+          color={theme.categoryYellow}
+        />
+      ),
       text: "Create Goals",
       link: "/add-goals",
       icon: (
@@ -239,11 +264,29 @@ const Home = () => {
           color={theme.categoryViolet}
         />
       ),
+      text: "AI Insights",
+      link: "/ai-insights",
+      icon: (
+        <MaterialCommunityIcons
+          name="robot"
+          size={24}
+          color={theme.categoryViolet}
+        />
+      ),
       background: theme.categoryVioletLight,
       color: theme.categoryViolet,
     },
     {
       id: 4,
+      text: "Investment",
+      link: "/investment",
+      icon: (
+        <MaterialCommunityIcons
+          name="hand-coin"
+          size={22}
+          color={theme.categoryBlue}
+        />
+      ),
       text: "Investment",
       link: "/investment",
       icon: (

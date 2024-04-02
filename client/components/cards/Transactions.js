@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   TouchableOpacity,
   ActivityIndicator,
@@ -10,6 +10,9 @@ import styled, { css, useTheme } from "styled-components/native";
 import BgImage from "../../assets/icons/pattern.png";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import BottomSheetContext, {
+  useBottomSheetContext,
+} from "../../context/bottomSheetContext";
 
 const Card = styled.TouchableOpacity`
   flex: 1;
@@ -64,6 +67,8 @@ const TagText = styled.Text`
   color: ${({ expence, theme }) => (expence ? theme.red : theme.green)};
 `;
 const TransactionsCard = ({ item }) => {
+  const { setOpenBottomSheet } = useBottomSheetContext();
+
   const theme = useTheme();
   const data = {
     name: "Seoul",
@@ -74,7 +79,11 @@ const TransactionsCard = ({ item }) => {
   };
 
   return (
-    <Card>
+    <Card
+      onPress={() =>
+        setOpenBottomSheet({ open: true, content: <Text>Hi</Text> })
+      }
+    >
       <Wrapper>
         <Left color={item?.color}>{item?.icon}</Left>
         <Right>
