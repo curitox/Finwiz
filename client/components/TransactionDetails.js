@@ -96,14 +96,14 @@ const TransactionDetails = ({ item }) => {
         </View>
         <Top color={item?.color}>{item?.icon}</Top>
         <Bottom>
-          <Amount>$ 120</Amount>
+          <Amount>₹{item?.amount}</Amount>
           <View
             style={{
               gap: 14,
             }}
           >
-            <Date>12th may 2024</Date>
-            <Desc> Note: Prashant Sahoo</Desc>
+            <Date>{item?.date}</Date>
+            <Desc> Note: {item?.description}</Desc>
           </View>
         </Bottom>
       </Wrapper>

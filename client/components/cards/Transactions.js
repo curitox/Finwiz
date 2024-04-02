@@ -76,7 +76,15 @@ const TransactionsCard = ({ item }) => {
       onPress={() =>
         setOpenBottomSheet({
           open: true,
-          content: <TransactionDetails item={item} />,
+          content: (
+            <TransactionDetails
+              item={{
+                ...item,
+                color: getCategoryByValue(item?.category)?.color,
+                icon: getCategoryByValue(item?.category)?.icon,
+              }}
+            />
+          ),
           snapPoint: ["45%"],
         })
       }
