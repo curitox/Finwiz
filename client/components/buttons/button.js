@@ -4,13 +4,14 @@ import styled, { css } from "styled-components/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const StyledButton = styled.TouchableOpacity`
-  width: 100%;
+  flex: 1;
+  max-height: 58px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  padding-vertical: 16px;
-  padding-horizontal: 18px;
+  padding-vertical: ${({ small }) => (small ? `8px` : `16px`)};
+  padding-horizontal: ${({ small }) => (small ? `12px` : `18px`)};
   gap: 10px;
 
   ${({ type, bgcolor, bordercolor }) => {
@@ -35,7 +36,7 @@ const StyledButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled.Text`
-  font-size: 14px;
+  font-size: ${({ small }) => (small ? `12px` : `14px`)};
   font-weight: 600;
   line-height: 24px;
   color: ${({ color }) => color};
@@ -60,6 +61,7 @@ const Button = ({
   onPress,
   children,
   loading = false,
+  small,
   ...props
 }) => {
   return (
@@ -70,11 +72,12 @@ const Button = ({
       type={type}
       disabled={disabled || loading} // Disable the button when loading is true
       onPress={onPress}
+      small={small}
       {...props}
     >
       {loading && <LoadingIndicator size="small" color={color} />}
       {startIcon && startIcon}
-      <ButtonText type={type} color={color}>
+      <ButtonText type={type} color={color} small={small}>
         {children}
       </ButtonText>
       {endIcon && endIcon}

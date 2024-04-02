@@ -12,6 +12,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { ProgressBar, Colors } from "react-native-paper";
 import { Card } from "react-native-paper";
+import { useBottomSheetContext } from "../../context/bottomSheetContext";
+import GoalsDetails from "../GoalsDetails";
 
 const CardContainer = styled(Card)`
   flex: 1;
@@ -21,6 +23,15 @@ const CardContainer = styled(Card)`
   border-radius: 12px;
   gap: 6px;
   background-color: ${({ theme }) => theme.bg};
+`;
+
+const IconButton = styled.TouchableOpacity`
+  width: 32px;
+  height: 32px;
+  border-radius: 32px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.text_secondary + 20};
 `;
 
 const Wrapper = styled(Card.Content)`
@@ -80,10 +91,19 @@ const renderDot = (color) => {
   );
 };
 
-const GoalCard = () => {
+const GoalCard = ({ item }) => {
+  const { setOpenBottomSheet } = useBottomSheetContext();
   const theme = useTheme();
   return (
-    <CardContainer>
+    <CardContainer
+      onPress={() =>
+        setOpenBottomSheet({
+          open: true,
+          content: <GoalsDetails item={item} />,
+          snapPoint: ["50%", "80%"],
+        })
+      }
+    >
       <Wrapper>
         <View
           style={{

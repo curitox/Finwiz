@@ -1,7 +1,8 @@
 import axios from "axios";
-//http://10.0.2.2:
+//http://10.0.2.2:8000
 const API = axios.create({
-  baseURL: "https://expense-tracker-9kx3.onrender.com/",
+  // baseURL: "https://expense-tracker-9kx3.onrender.com/",
+  baseURL: "http://10.0.2.2:8000/",
 });
 
 export const UserSignUp = async (data) => await API.post("/auth/signup", data);
@@ -19,8 +20,11 @@ export const generateOtp = async (data) =>
 export const verifyOtp = async (data) =>
   await API.get(`/auth/verifyOTP?code=${data}`);
 
-
 export const AddExpence = async (data, token) =>
   await API.post("/expense/add", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+export const GetExpences = async (token) =>
+  await API.get("/expense/get", {
     headers: { Authorization: `Bearer ${token}` },
   });
