@@ -1,8 +1,11 @@
-from app import app, db
+from app import app
 from sqlalchemy import Enum, func
 from sqlalchemy.orm import validates
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from error import create_error
+
+db = SQLAlchemy(app)
 
 class User(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -118,6 +121,8 @@ class Savings(db.Model):
     week = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     goal_id = db.Column(db.Integer, db.ForeignKey('goal.id'), nullable=False)
+    date=db.Column(db.Date)
+    category = db.Column(db.String(50), default='SAVINGS')
 
     @staticmethod
     def createTable():
