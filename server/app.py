@@ -1,5 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
+import os
+
+os.environ['PYTHONDONTWRITEBYTECODE']="1"
 
 app = Flask(__name__)
 

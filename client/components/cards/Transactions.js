@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import BottomSheetContext, {
   useBottomSheetContext,
 } from "../../context/bottomSheetContext";
+import TransactionDetails from "../TransactionDetails";
 
 const Card = styled.TouchableOpacity`
   flex: 1;
@@ -81,7 +82,11 @@ const TransactionsCard = ({ item }) => {
   return (
     <Card
       onPress={() =>
-        setOpenBottomSheet({ open: true, content: <Text>Hi</Text> })
+        setOpenBottomSheet({
+          open: true,
+          content: <TransactionDetails item={item} />,
+          snapPoint: ["45%"],
+        })
       }
     >
       <Wrapper>

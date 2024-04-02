@@ -34,6 +34,16 @@ const Title = styled.Text`
   color: ${({ theme }) => theme.text_primary};
 `;
 
+const UPIID = styled.Text`
+  width: fit-content;
+  font-size: 14px;
+  text-align: center;
+  color: ${({ theme }) => theme.text_primary};
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.text_secondary + 10};
+`;
+
 const Wrapper = styled.View`
   flex: 1;
   justify-content: space-between;
@@ -236,7 +246,7 @@ export default function AddTransactions() {
     // Return the modified UPI URL
     return modifiedUpiUrl;
   };
-  const handelNext = () => {
+  const handelNext = async () => {
     if (
       stages === 0 &&
       transactionData.amount !== "" &&
@@ -248,29 +258,33 @@ export default function AddTransactions() {
       transactionData.category !== "" ||
       transactionData.description !== ""
     ) {
-      // Example usage:
-      const upiUrl = data;
-      const additionalParams = {
-        tn: transactionData.description,
-        am: transactionData.amount,
-      };
-
-      console.log("Modified UPI URL:", modifyUpiUrl(upiUrl, additionalParams));
-      Linking.openURL(modifyUpiUrl(upiUrl, additionalParams));
-      // handelAddTransaction();
+      await handelAddTransaction();
     }
+  };
+
+  const OpenUPIAPP = async () => {
+    const upiUrl = data;
+    const additionalParams = {
+      tn: transactionData.description,
+      am: transactionData.amount,
+    };
+    await Linking.openURL(modifyUpiUrl(upiUrl, additionalParams));
   };
 
   const handelAddTransaction = async () => {
     setLoading(true);
+    console.log(transactionData);
     await AddExpence(transactionData, currentUser?.token)
-      .then((res) => {
+      .then(async (res) => {
         Toast.show({
           type: "success",
           text1: "Transaction Added",
           text2: "Transaction created successfully 👋",
         });
         setLoading(false);
+        if (data !== "") {
+          OpenUPIAPP();
+        }
         router.replace("/home");
       })
       .catch((err) => {
@@ -284,6 +298,25 @@ export default function AddTransactions() {
       });
   };
 
+  const extractUpiDetails = (upiUrl) => {
+    // Remove the 'upi://' part from the URL
+    const paramString = upiUrl.replace("upi://", "").split("?")[1];
+
+    // Parse parameters
+    const params = {};
+    if (paramString) {
+      paramString.split("&").forEach((param) => {
+        const [key, value] = param.split("=");
+        params[decodeURIComponent(key)] = decodeURIComponent(value);
+      });
+    }
+
+    // Get UPI ID and name parameters
+    const upiId = params["pa"];
+    const name = params["pn"];
+
+    return { upiId, name };
+  };
   return (
     <>
       {stages === 0 ? (
@@ -296,6 +329,11 @@ export default function AddTransactions() {
             />
           </Back>
           <Title>Add New Transaction</Title>
+          {data !== "" && data !== undefined && data !== null && (
+            <UPIID>
+              {extractUpiDetails(data).name} - {extractUpiDetails(data).upiId}
+            </UPIID>
+          )}
           <Wrapper>
             <View
               style={{
@@ -333,6 +371,7 @@ export default function AddTransactions() {
               Continue
             </Button>
           </Wrapper>
+          <Toast />
         </Container>
       ) : (
         <Container>
@@ -343,6 +382,7 @@ export default function AddTransactions() {
               color={theme.text_primary}
             />
           </Back>
+          <Toast />
           <Title>Transaction Details</Title>
           <Wrapper>
             <View
@@ -429,7 +469,6 @@ export default function AddTransactions() {
             >
               Continue
             </Button>
-            <Toast />
           </Wrapper>
         </Container>
       )}

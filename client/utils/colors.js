@@ -2,7 +2,7 @@ const commonColor = {
   primary: "#0266ff",
   white: "#ffffff",
   black: "#000000",
-  green: "#00ff00",
+  green: "#26C281",
   red: "#ff0000",
   gold: "#E1C158",
   categoryGreen: "#17715F",

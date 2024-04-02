@@ -9,7 +9,7 @@ import { Tabs } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Platform, View, Text } from "react-native";
 import { useTheme } from "styled-components/native";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useBottomSheetContext } from "../../context/bottomSheetContext";
 
 export default function TabsLayout() {
@@ -223,7 +223,9 @@ export default function TabsLayout() {
 
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={["40%"]}
+        snapPoints={
+          openBottomSheet?.snapPoint ? openBottomSheet?.snapPoint : ["45%"]
+        }
         enablePanDownToClose={true}
         index={-1}
         containerStyle={{
@@ -235,13 +237,24 @@ export default function TabsLayout() {
           // Use callback version of setOpenBottomSheet to prevent infinite loop
           setOpenBottomSheet((prevState) => {
             if (prevState.open) {
-              return { ...prevState, open: false, content: null };
+              return {
+                ...prevState,
+                open: false,
+                content: null,
+                snapPoint: null,
+              };
             }
             return prevState;
           });
         }}
       >
-        {openBottomSheet?.content}
+        <BottomSheetScrollView
+          style={{
+            flex: 1,
+          }}
+        >
+          {openBottomSheet?.content}
+        </BottomSheetScrollView>
       </BottomSheet>
     </>
   );
