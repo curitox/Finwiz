@@ -27,5 +27,5 @@ flask_bcrypt
 flask_mail
 pyotp
 flask_cors
-scikit-learn==1.0.2
+scikit-learn==1.4.1.post1
 flask_sqlalchemy
