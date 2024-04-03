@@ -102,7 +102,7 @@ const TransactionDetails = ({ item }) => {
               gap: 14,
             }}
           >
-            <Date>{item?.date}</Date>
+            <Date>{item?.transactionDate}</Date>
             <Desc> Note: {item?.description}</Desc>
           </View>
         </Bottom>

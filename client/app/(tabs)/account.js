@@ -1,34 +1,53 @@
-import { View, Text, Switch } from "react-native";
+import { View, Text, Switch, StatusBar } from "react-native";
 import { Link } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import UserAvatar from "react-native-user-avatar";
 import { useAuthContext } from "../../context/auth";
-import { Foundation, FontAwesome5, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
+import {
+  Foundation,
+  FontAwesome5,
+  MaterialIcons,
+  Entypo,
+  Feather,
+} from "@expo/vector-icons";
 import { useState } from "react";
+import BgImage from "../../assets/icons/pattern.png";
+import { useThemeContext } from "../../context/themeContext";
+import { AntDesign } from "@expo/vector-icons";
 
 const MainContainer = styled.ScrollView`
   flex: 1;
-  padding: 70px 10px;
   background-color: ${({ theme }) => theme.bg};
 `;
 const Card = styled.View`
   flex-direction: column;
-  border-radius: 12px;
+  border-radius: 16px;
   background: ${({ theme }) => theme.mainCard};
-  flex:1;
-  height: 130px;
+  flex: 1;
+  height: 150px;
+  overflow: hidden;
 `;
+
+const ImageBg = styled.ImageBackground`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.5;
+`;
+
 const ProfileImg = styled.View`
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin-top: -50px;
-  left: 40%;
+  left: 38%;
   border: 4px solid ${({ theme }) => theme.bg};
-  border-radius: 40px;
+  border-radius: 100px;
 `;
 const ProfileInfo = styled.View`
-  padding: 20px 0px;
+  padding: 16px 0px;
   flex-direction: column;
   justify-content: center;
   background-color: ${({ theme }) => theme.bg};
@@ -53,10 +72,10 @@ const Flex = styled.View`
 `;
 const Finance = styled.View`
   background-color: ${({ theme }) => theme.text_secondary_light + 30};
-  border-radius: 24px;
+  border-radius: 12px;
   margin: 12px;
-  padding: 8px 20px;
-  gap: 8px;
+  padding: 10px 20px;
+  gap: 16px;
   flex-direction: row;
 `;
 const Content = styled.View`
@@ -71,13 +90,13 @@ const Settings = styled.View`
   gap: 8px;
   flex-direction: column;
   border-radius: 6px;
-  padding: 12px 0px;
+  padding: 12px 10px;
 `;
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 6px 10px;
-  gap: 12;
+  gap: 12px;
 `;
 const HorizontalLine = styled.View`
   height: 1px;
@@ -92,83 +111,152 @@ const VerticalLine = styled.View`
 
 export default function Account() {
   const { signOut, currentUser } = useAuthContext();
+  const themeMode = useThemeContext();
   const theme = useTheme();
   const [fingerPrint, setFingerPrint] = useState(false);
 
   return (
     <MainContainer>
-      <Card />
+      <StatusBar
+        barStyle={"light"}
+        backgroundColor={"transparent"} // Set the status bar color based on the theme
+      />
+      <Card>
+        <ImageBg source={BgImage} resizeMode="cover" />
+      </Card>
       <ProfileImg>
-        <UserAvatar size={80} name="Rishav Chanda" />
+        <UserAvatar size={100} name="Rishav Chanda" />
       </ProfileImg>
       <ProfileInfo>
-        <Text style={{
-          color: theme.primary,
-          fontWeight: "400"
-        }}>rishavchanda0@gmail.com</Text>
-        <Text style={{
-          fontWeight: "500",
-          fontSize: 22
-        }}>Rishav Chanda</Text>
+        <Text
+          style={{
+            fontWeight: "500",
+            fontSize: 22,
+          }}
+        >
+          {currentUser?.user?.name}
+        </Text>
+        <Text
+          style={{
+            color: theme.primary,
+            fontWeight: "400",
+          }}
+        >
+          {currentUser?.user?.email}
+        </Text>
         <FlexContainer>
           <Flex borderRight="1px solid #5d5d5d">
             <Foundation name="male-symbol" size={24} color={theme.primary} />
-            <Text>Male</Text>
+            <Text>{currentUser?.user?.gender}</Text>
           </Flex>
           <Flex>
-            <FontAwesome5 name="birthday-cake" size={18} color={theme.primary} />
-            <Text>19 Nov 2003</Text>
+            <FontAwesome5
+              name="birthday-cake"
+              size={16}
+              color={theme.primary}
+            />
+            <Text>{currentUser?.user?.dob}</Text>
           </Flex>
         </FlexContainer>
         <Finance>
           <Content>
             <Topic>Financial Knowledge</Topic>
-            <Text style={{ fontSize: 14, color: theme.text_primary }}>Moderate</Text>
+            <Text
+              style={{
+                fontSize: 13,
+                color: theme.text_primary,
+                fontWeight: 500,
+              }}
+            >
+              {currentUser?.user?.financialKnowledge}
+            </Text>
           </Content>
           <VerticalLine />
           <Content>
             <Topic>Risk Tolerance</Topic>
-            <Text style={{ fontSize: 14, color: theme.text_primary }}>Low</Text>
+            <Text
+              style={{
+                fontSize: 13,
+                color: theme.text_primary,
+                fontWeight: 500,
+              }}
+            >
+              {currentUser?.user?.riskTolerance}
+            </Text>
           </Content>
-          <VerticalLine/>
+          <VerticalLine />
           <Content>
             <Topic>Monthly Income</Topic>
-            <Text style={{ fontSize: 14, color: theme.text_primary }}>Rs. 2500</Text>
+            <Text
+              style={{
+                fontSize: 13,
+                color: theme.text_primary,
+                fontWeight: 500,
+              }}
+            >
+              ₹{currentUser?.user?.monthlyIncome}
+            </Text>
           </Content>
         </Finance>
       </ProfileInfo>
-      <Text style={{ color: theme.text_primary, fontSize: 20, fontWeight: 500, marginLeft: 12 }}>Settings</Text>
+      <Text
+        style={{
+          color: theme.text_primary,
+          fontSize: 20,
+          fontWeight: 500,
+          marginLeft: 12,
+        }}
+      >
+        Settings
+      </Text>
       <Settings>
-        <Container style={{justifyContent: "space-between"}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
-            <MaterialIcons name="fingerprint" size={22} color={theme.text_secondary} />
-            <Text style={{fontSize: 16}}>Fingerprint Lock</Text>
+        <Container style={{ justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            <MaterialIcons
+              name="fingerprint"
+              size={22}
+              color={theme.text_secondary}
+            />
+            <Text style={{ fontSize: 16 }}>Fingerprint Lock</Text>
           </View>
           <Switch
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={fingerPrint ? theme.primary : '#f4f5f2'}
-            ios_backgroundColor='#85adde'
-            onValueChange={()=>setFingerPrint(!fingerPrint)}
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={fingerPrint ? theme.primary : "#f4f5f2"}
+            ios_backgroundColor="#85adde"
+            onValueChange={() => setFingerPrint(!fingerPrint)}
             value={fingerPrint}
-            margin={0}
+            style={{
+              transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
+              height: 12,
+            }}
           />
         </Container>
         <HorizontalLine />
         <Container>
-            <Entypo name="share" size={22} color={theme.text_secondary} />            
-            <Text style={{fontSize: 16}}>Share</Text>
+          <Entypo name="share" size={22} color={theme.text_secondary} />
+          <Text style={{ fontSize: 16 }}>Share</Text>
         </Container>
         <HorizontalLine />
         <Container>
-            <Feather name="info" size={22} color={theme.text_secondary} />
-            <Text style={{fontSize: 16}}>About Us</Text>
+          <Feather name="info" size={22} color={theme.text_secondary} />
+          <Text style={{ fontSize: 16 }}>About Us</Text>
         </Container>
         <HorizontalLine />
         <Container>
-            <MaterialIcons name="star-rate" size={22} color={theme.text_secondary} />
-            <Text style={{fontSize: 16}}>Rate Us</Text>
+          <MaterialIcons
+            name="star-rate"
+            size={22}
+            color={theme.text_secondary}
+          />
+          <Text style={{ fontSize: 16 }}>Rate Us</Text>
         </Container>
-
+        <HorizontalLine />
+        <Container onPress={() => signOut()}>
+          <AntDesign name="logout" size={20} color={theme.categoryRed + 90} />
+          <Text style={{ fontSize: 16, color: theme.categoryRed + 90 }}>
+            Logout
+          </Text>
+        </Container>
       </Settings>
     </MainContainer>
   );
