@@ -132,7 +132,8 @@ def goalProgress():
     created_on = goal.createdOn
     week_number = created_on.isocalendar()[1] 
     amount = request.json.get('amount')
-    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id)
+    desc = request.json.get('description')
+    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id, description=desc)
     goal.savings.append(savings_entry)
     db.session.add(savings_entry)
     db.session.commit()
