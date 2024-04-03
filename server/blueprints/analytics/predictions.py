@@ -15,8 +15,7 @@ type_mapping = {"Financial": 1, "Property": 2, "Commodity": 3, "Entrepreneurship
 @verifyToken
 def invest_predict():
     input_data = request.json
-    potential_return_value = potential_return_mapping.get(input_data['Potential Return'], 2)  
-    type_value = type_mapping.get(input_data['Type'], 1)
-    input_data_array = np.array([[input_data['Minimum Investment'], input_data['Risk'], input_data['Best_Investment'], input_data['Liquidity'], type_value, potential_return_value]])
+    potential_return_value = potential_return_mapping.get(input_data['potential_return'], 2)  
+    input_data_array = np.array([[input_data['minimum_investment'], input_data['risk'], input_data['best_investment'], input_data['liquidity'], potential_return_value]])
     prediction = model.predict(input_data_array)
     return jsonify(prediction.tolist())
