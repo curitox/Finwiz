@@ -13,6 +13,12 @@ const InputContainer = styled.View`
   padding-horizontal: 14px;
   padding-vertical: 6px;
   gap: 12px;
+  ${({ small }) =>
+    small &&
+    `
+  gap: 8px;
+  padding-horizontal: 12px;
+  padding-vertical: 4px;`}
 `;
 
 const Hr = styled.View`
@@ -29,6 +35,11 @@ const InputField = styled.TextInput`
   font-size: 14px;
   color: ${({ theme }) => theme.text};
   padding-bottom: 6px;
+  ${({ small }) =>
+    small &&
+    `
+  font-size: 12px;
+  padding-bottom: 4px;`}
 `;
 
 const Label = styled.Text`
@@ -36,6 +47,10 @@ const Label = styled.Text`
   font-weight: 700;
   color: ${({ error, focused, theme }) =>
     error ? "red" : focused ? theme.primary : theme.text_secondary};
+  ${({ small }) =>
+    small &&
+    `
+  font-size: 10px;`}
 `;
 
 const ErrorText = styled.Text`
@@ -63,6 +78,7 @@ const InputText = ({
   secureTextEntry,
   type,
   custom,
+  small,
   ...props
 }) => {
   const theme = useTheme();
@@ -83,11 +99,11 @@ const InputText = ({
 
   return (
     <View>
-      <InputContainer focused={isFocused} error={error}>
+      <InputContainer focused={isFocused} error={error} small={small}>
         {startIcon && <IconContainer>{startIcon}</IconContainer>}
         <Hr error={error} />
-        <InputWrapper>
-          <Label error={error} focused={isFocused}>
+        <InputWrapper small={small}>
+          <Label error={error} focused={isFocused} small={small}>
             {label}
           </Label>
           {custom ? (
@@ -102,6 +118,7 @@ const InputText = ({
               secureTextEntry={secureTextEntry && !isPasswordVisible}
               placeholderTextColor={"#777"}
               keyboardType={type}
+              small={small}
               {...props}
             />
           )}

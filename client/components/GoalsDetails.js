@@ -328,10 +328,15 @@ const GoalsDetails = ({ item }) => {
               startIcon={
                 <FontAwesome
                   name="rupee"
-                  size={24}
+                  size={20}
                   color={theme.text_secondary}
+                  style={{
+                    marginRight: 5,
+                    marginLeft: 5,
+                  }}
                 />
               }
+              small
               value={newSavings.amount}
               onChangeText={handleInputChange}
               placeholder="Enter Savings Amount"
@@ -343,10 +348,11 @@ const GoalsDetails = ({ item }) => {
               startIcon={
                 <MaterialCommunityIcons
                   name="notebook-edit"
-                  size={24}
+                  size={20}
                   color={theme.text_secondary}
                 />
               }
+              small
               value={newSavings.description}
               onChangeText={handleInputChange}
               placeholder="Enter Savings Short Description"
@@ -358,10 +364,11 @@ const GoalsDetails = ({ item }) => {
               startIcon={
                 <Icon
                   name="calendar-month-outline"
-                  size={24}
+                  size={20}
                   color={theme.text_secondary}
                 />
               }
+              small
               value={newSavings.date}
               onChange={(date, name) =>
                 setNewSavings({
