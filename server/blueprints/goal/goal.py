@@ -22,7 +22,6 @@ def addGoal():
             target_amount=goal_input['target_amount'],
             target_date=goal_input['target_date'],
             priority_level=goal_input['priority_level'],
-            status=goal_input['status'],
             user_id=user_id
         )
         
