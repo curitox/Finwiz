@@ -203,9 +203,7 @@ const Home = () => {
     <Container>
       <Wrapper>
         <StatusBar
-          barStyle={
-            themeMode.theme === "light" ? "dark-content" : "light-content"
-          }
+          barStyle={"dark-content"}
           backgroundColor={theme.bg} // Set the status bar color based on the theme
         />
         <Topbar />

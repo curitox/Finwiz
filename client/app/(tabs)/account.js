@@ -163,7 +163,7 @@ export default function Account() {
             <Topic>Financial Knowledge</Topic>
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 color: theme.text_primary,
                 fontWeight: 500,
               }}
@@ -176,7 +176,7 @@ export default function Account() {
             <Topic>Risk Tolerance</Topic>
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 color: theme.text_primary,
                 fontWeight: 500,
               }}
@@ -189,7 +189,7 @@ export default function Account() {
             <Topic>Monthly Income</Topic>
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 color: theme.text_primary,
                 fontWeight: 500,
               }}
