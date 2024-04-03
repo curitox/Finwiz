@@ -11,6 +11,7 @@ import BgImage from "../../assets/icons/pattern.png";
 import { LinearGradient } from "expo-linear-gradient";
 import { PieChart } from "react-native-gifted-charts";
 import { Feather } from "@expo/vector-icons";
+import { getCategoryByValue } from "../../utils/data";
 
 const Card = styled.View`
   flex: 1;
@@ -86,10 +87,9 @@ const renderDot = (color) => {
   );
 };
 
-const ChartCard = () => {
+const ChartCard = ({ chartData }) => {
   const theme = useTheme();
-
-  const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
+  console.log(chartData?.data);
 
   return (
     <Card style={{ elevation: 1 }}>
@@ -105,14 +105,16 @@ const ChartCard = () => {
         </View>
         <Section>
           <Left>
-            <PieChart
-              data={data}
-              donut
-              radius={50}
-              innerRadius={34}
-              focusOnPress
-              innerCircleColor={theme.mainCard}
-            />
+            {chartData && (
+              <PieChart
+                data={(chartData?.data && chartData?.data) || []}
+                donut
+                radius={50}
+                innerRadius={34}
+                focusOnPress
+                innerCircleColor={theme.mainCard}
+              />
+            )}
           </Left>
           <Right>
             <View
@@ -127,7 +129,7 @@ const ChartCard = () => {
                   gap: 12,
                 }}
               >
-                <Value>$ 1200</Value>
+                <Value>₹{Math.trunc(chartData?.total_amount)}</Value>
                 <Feather
                   name="arrow-down-circle"
                   size={18}
@@ -142,61 +144,19 @@ const ChartCard = () => {
                   gap: 8,
                 }}
               >
-                <Item>
-                  {renderDot("#ffffff")}
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 10,
-                    }}
-                  >
-                    Category 1
-                  </Text>
-                </Item>
-                <Item>
-                  {renderDot("#ffffff")}
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 10,
-                    }}
-                  >
-                    Category 1
-                  </Text>
-                </Item>
-                <Item>
-                  {renderDot("#ffffff")}
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 10,
-                    }}
-                  >
-                    Category 1
-                  </Text>
-                </Item>
-                <Item>
-                  {renderDot("#ffffff")}
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 10,
-                    }}
-                  >
-                    Category 1
-                  </Text>
-                </Item>
-                <Item>
-                  {renderDot("#ffffff")}
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 10,
-                    }}
-                  >
-                    Category 1
-                  </Text>
-                </Item>
+                {chartData?.data?.map((item, index) => (
+                  <Item key={`chart-card-home-${item?.name}-${index}`}>
+                    {renderDot(getCategoryByValue(item?.name)?.color)}
+                    <Text
+                      style={{
+                        color: theme.white,
+                        fontSize: 10,
+                      }}
+                    >
+                      {getCategoryByValue(item?.name)?.name}
+                    </Text>
+                  </Item>
+                ))}
               </View>
             </View>
           </Right>

@@ -22,7 +22,6 @@ def addGoal():
             target_amount=goal_input['target_amount'],
             target_date=goal_input['target_date'],
             priority_level=goal_input['priority_level'],
-            status=goal_input['status'],
             user_id=user_id
         )
         
@@ -52,7 +51,7 @@ def addGoal():
         db.session.rollback()
         return create_error(500, str(e))
     
-@goal_bp.route('/goal/get', methods=['POST'])
+@goal_bp.route('/goal/get', methods=['GET'])
 @verifyToken
 def goalGet():
     user_id = request.user.get('id')

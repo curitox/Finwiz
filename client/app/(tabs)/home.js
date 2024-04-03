@@ -33,7 +33,7 @@ import {
 import GoalCard from "../../components/cards/GoalsCard";
 import TextButton from "../../components/buttons/textButton";
 import TransactionsCard from "../../components/cards/Transactions";
-import { GetExpences } from "../../api";
+import { GetExpences, GetGoals, TodaysChart } from "../../api";
 import Loader from "../../components/Loader";
 
 const Container = styled.ScrollView`
@@ -84,19 +84,12 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const { toggleTheme } = useThemeContext();
   const [expences, setExpences] = useState([]);
+  const [goals, setGoals] = useState([]);
+  const [chartData, setChartData] = useState({});
 
   const categories = [
     {
       id: 1,
-      text: "Add Transaction",
-      link: "/add-transactions",
-      icon: (
-        <MaterialIcons
-          name="library-add"
-          size={24}
-          color={theme.categoryGreen}
-        />
-      ),
       text: "Add Transaction",
       link: "/add-transactions",
       icon: (
@@ -120,15 +113,6 @@ const Home = () => {
           color={theme.categoryYellow}
         />
       ),
-      text: "Create Goals",
-      link: "/add-goals",
-      icon: (
-        <MaterialCommunityIcons
-          name="medal"
-          size={24}
-          color={theme.categoryYellow}
-        />
-      ),
       background: theme.categoryYellowLight,
       color: theme.categoryYellow,
     },
@@ -143,29 +127,11 @@ const Home = () => {
           color={theme.categoryViolet}
         />
       ),
-      text: "AI Insights",
-      link: "/ai-insights",
-      icon: (
-        <MaterialCommunityIcons
-          name="robot"
-          size={24}
-          color={theme.categoryViolet}
-        />
-      ),
       background: theme.categoryVioletLight,
       color: theme.categoryViolet,
     },
     {
       id: 4,
-      text: "Investment",
-      link: "/investment",
-      icon: (
-        <MaterialCommunityIcons
-          name="hand-coin"
-          size={22}
-          color={theme.categoryBlue}
-        />
-      ),
       text: "Investment",
       link: "/investment",
       icon: (
@@ -194,9 +160,36 @@ const Home = () => {
         console.log(err);
       });
   };
+  const getGoals = async () => {
+    setLoading(true);
+    await GetGoals(currentUser?.token)
+      .then((res) => {
+        setLoading(false);
+        setGoals(res?.data?.Expenses);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
+
+  const getExpencesChart = async () => {
+    setLoading(true);
+    await TodaysChart(currentUser?.token)
+      .then((res) => {
+        setLoading(false);
+        setChartData(res?.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     getExpences();
+    getGoals();
+    getExpencesChart();
   }, []);
 
   return (
@@ -213,7 +206,9 @@ const Home = () => {
         ) : (
           <>
             <Section>
-              <ChartCard />
+              {chartData !== null && chartData !== undefined && (
+                <ChartCard chartData={chartData} />
+              )}
             </Section>
             <Section>
               <Title>Quick Links</Title>
@@ -253,8 +248,8 @@ const Home = () => {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
               >
-                {categories.map((item) => (
-                  <GoalCard key={item.id} />
+                {goals.map((item) => (
+                  <GoalCard key={`goal-home-${item?.id}`} />
                 ))}
               </GoalsWrapper>
             </Section>
@@ -264,7 +259,7 @@ const Home = () => {
                 {expences?.map((item) => (
                   <TransactionsCard
                     item={item}
-                    key={`expence-home-${item?.category}`}
+                    key={`expence-home-${item?.category}-${item?.id}`}
                   />
                 ))}
               </TransactionCardWrapper>

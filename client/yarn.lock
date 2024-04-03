@@ -6410,7 +6410,12 @@ react-native-modal-datetime-picker@^17.1.0:
 react-native-otp-entry@^1.5.0:
   version "1.5.0"
 
-react-native-paper@^5.12.3:
+react-native-paper-dropdown@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.npmjs.org/react-native-paper-dropdown/-/react-native-paper-dropdown-1.0.7.tgz"
+  integrity sha512-St0rZFw5sC7mbXtFCOGsyEa0fIBaG6Cfz78RsjFNzTj+rKd1i9qlDY2O7eOa2zAUEnFlL+C7FXdXUY9RUNELNw==
+
+react-native-paper@*, react-native-paper@^5.12.3:
   version "5.12.3"
   resolved "https://registry.npmjs.org/react-native-paper/-/react-native-paper-5.12.3.tgz"
   integrity sha512-nH1e1pGPE/aOE5YR2GRX7CfMHFA9cAfrAfgCtwL4amJPDZCoVjc5yt2VDiUE1rT+JUfk0qdICMP3UggxvjMgug==
@@ -7569,7 +7574,7 @@ type-is@~1.6.18:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
-typescript@>=4.9.5:
+typescript@*, typescript@>=4.9.5:
   version "4.9.5"
 
 ua-parser-js@^1.0.35:
