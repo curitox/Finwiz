@@ -122,7 +122,8 @@ class Savings(db.Model):
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     goal_id = db.Column(db.Integer, db.ForeignKey('goal.id'), nullable=False)
     date=db.Column(db.Date)
-    category = db.Column(db.String(50), default='SAVINGS')
+    description=db.Column(db.String(200))
+    category = db.Column(db.String(50), default='savings')
 
     @staticmethod
     def createTable():

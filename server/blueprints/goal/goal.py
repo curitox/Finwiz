@@ -22,6 +22,7 @@ def addGoal():
             target_amount=goal_input['target_amount'],
             target_date=goal_input['target_date'],
             priority_level=goal_input['priority_level'],
+            status="IN_PROGRESS",
             user_id=user_id
         )
         
@@ -65,7 +66,7 @@ def goalGet():
     elif status_filter == 'COMPLETE':
         goals = Goal.query.filter_by(user_id=user_id, status='COMPLETE').all()
     else:
-        goals = Goal.query.filter_by(user_id=user_id, status='IN_PROGRESS').all()
+        goals = Goal.query.filter_by(user_id=user_id).all()
 
     goals_data = [{
         'id': goal.id,
@@ -132,7 +133,8 @@ def goalProgress():
     created_on = goal.createdOn
     week_number = created_on.isocalendar()[1] 
     amount = request.json.get('amount')
-    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id)
+    desc = request.json.get('description')
+    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id, description=desc)
     goal.savings.append(savings_entry)
     db.session.add(savings_entry)
     db.session.commit()

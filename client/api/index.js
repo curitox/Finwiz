@@ -34,9 +34,7 @@ export const GetExpences = async (token) =>
   await API.get("/expense/get", {
     headers: { Authorization: `Bearer ${token}` },
   });
-
-//Goals
-export const AddGoal = async (data, token) =>
+  export const AddGoal = async (data, token) =>
   await API.post("/goal/add", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
