@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 from model import User,Goal,Savings,db
 from middleware.verifyToken import verifyToken
 from error import create_error
@@ -60,7 +61,6 @@ def goalGet():
     if not user:
         return create_error(404, "User not found")
     status_filter =  request.args.get('status')
-    print(status_filter)
     if status_filter == 'ALL':
         goals = Goal.query.filter_by(user_id=user_id).all()
     elif status_filter == 'COMPLETE':
@@ -134,7 +134,10 @@ def goalProgress():
     week_number = created_on.isocalendar()[1] 
     amount = request.json.get('amount')
     desc = request.json.get('description')
-    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id, description=desc)
+    date = request.json.get('date')
+    if not date:
+       date=datetime.today().strftime('%Y-%m-%d')
+    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id, description=desc, date=date)
     goal.savings.append(savings_entry)
     db.session.add(savings_entry)
     db.session.commit()
