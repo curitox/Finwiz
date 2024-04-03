@@ -132,29 +132,36 @@ def expense_daily():
 
     # Create dictionary to map category names to their hex colors
     category_colors = {
-        "Food": "#FF6F61",
-        "Shopping": "#FFD166",
-        "Transportation": "#4CAF50",
-        "Housing": "#5DADE2",
-        "Utilities": "#FFA07A",
-        "Health & Fitness": "#AF7AC5",
-        "Personal Care": "#AED6F1",
-        "Entertainment": "#F5B041",
-        "Education": "#76D7C4",
-        "Travel": "#FAD7A0",
-        "Savings & Investments": "#F1948A",
-        "Debt Payments": "#85C1E9",
-        "Gifts & Donations": "#D7BDE2",
-        "Miscellaneous": "#E59866"
+        "food": "#FF6F61",
+        "shopping": "#FFD166",
+        "transportation": "#4CAF50",
+        "housing": "#5DADE2",
+        "utilities": "#FFA07A",
+        "health_fitness": "#AF7AC5",
+        "personal_care": "#AED6F1",
+        "entertainment": "#F5B041",
+        "education": "#76D7C4",
+        "travel": "#FAD7A0",
+        "savings_investments": "#F1948A",
+        "debt_payments": "#85C1E9",
+        "gifts_donations": "#D7BDE2",
+        "miscellaneous": "#E59866"
     }
 
     # Prepare response data
     response_data = []
+    total_amount=0
     for category, amount in expenses:
         response_data.append({
             "name": category,
             "color": category_colors.get(category, "#000000"),  # Default color if not found
             "value": float(amount)  # Convert amount to float
         })
+        total_amount=total_amount+amount
+    
+    response = {
+        "data": response_data,
+        "total_amount": total_amount
+    }
 
-    return jsonify(response_data)
+    return jsonify(response)
