@@ -20,6 +20,11 @@ export const generateOtp = async (data) =>
 export const verifyOtp = async (data) =>
   await API.get(`/auth/verifyOTP?code=${data}`);
 
+export const TodaysChart = async (token) =>
+  await API.get("/expenseDaily", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 export const AddExpence = async (data, token) =>
   await API.post("/expense/add", data, {
     headers: { Authorization: `Bearer ${token}` },

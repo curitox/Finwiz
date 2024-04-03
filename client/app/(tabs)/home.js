@@ -33,7 +33,7 @@ import {
 import GoalCard from "../../components/cards/GoalsCard";
 import TextButton from "../../components/buttons/textButton";
 import TransactionsCard from "../../components/cards/Transactions";
-import { GetExpences } from "../../api";
+import { GetExpences, TodaysChart } from "../../api";
 import Loader from "../../components/Loader";
 
 const Container = styled.ScrollView`
@@ -84,6 +84,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const { toggleTheme } = useThemeContext();
   const [expences, setExpences] = useState([]);
+  const [chartData, setChartData] = useState({});
 
   const categories = [
     {
@@ -195,8 +196,22 @@ const Home = () => {
       });
   };
 
+  const getExpencesChart = async () => {
+    setLoading(true);
+    await TodaysChart(currentUser?.token)
+      .then((res) => {
+        setLoading(false);
+        setChartData(res?.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     getExpences();
+    getExpencesChart();
   }, []);
 
   return (
@@ -213,7 +228,9 @@ const Home = () => {
         ) : (
           <>
             <Section>
-              <ChartCard />
+              {chartData !== null && chartData !== undefined && (
+                <ChartCard chartData={chartData} />
+              )}
             </Section>
             <Section>
               <Title>Quick Links</Title>
