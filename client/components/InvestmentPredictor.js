@@ -57,7 +57,7 @@ const ResultWrapper = styled.View`
   margin-top: 20px;
 `;
 const Description = styled.Text`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: ${({ theme }) => theme.text_secondary};
   text-align: center;
