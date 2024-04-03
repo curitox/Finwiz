@@ -104,6 +104,8 @@ def getExpenses():
     
     return jsonify({'Expenses': expenses_data})
 
+
+
 @expense_bp.route('/expense/update', methods=['PATCH'])
 @verifyToken
 def updateExpense():
