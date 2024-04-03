@@ -34,7 +34,7 @@ export const GetExpences = async (token) =>
   await API.get("/expense/get", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  export const AddGoal = async (data, token) =>
+export const AddGoal = async (data, token) =>
   await API.post("/goal/add", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -47,5 +47,15 @@ export const GetGoals = async (token) =>
 //Predictions
 export const PredictInvestment = async (data, token) =>
   await API.post("/predict/invest", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+// Savings
+export const GetGoalSavings = async (id, data, token) =>
+  await API.post(`/goal/progress?id=${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+export const AddSavingsToGoal = async (id, data, token) =>
+  await API.post(`/goal/progress?id=${id}`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });

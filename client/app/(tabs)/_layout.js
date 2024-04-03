@@ -33,7 +33,7 @@ export default function TabsLayout() {
             position: "absolute",
             backgroundColor: theme.bottomBar,
             padding: 2,
-            height: 60,
+            height: Platform.OS === "ios" ? 100 : 60,
           },
         }}
         tabBar={(props) =>

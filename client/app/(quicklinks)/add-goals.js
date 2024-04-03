@@ -12,6 +12,7 @@ import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
 import { AddGoal } from "../../api";
+import moment from "moment";
 import Toast from "react-native-toast-message";
 
 const Container = styled.View`
@@ -92,7 +93,7 @@ export default function AddGoals() {
     name: "",
     description: "",
     target_amount: "",
-    target_date: "",
+    target_date: moment().format("YYYY-MM-DD"),
     priority_level: "",
     status: "IN_PROGRESS",
   });

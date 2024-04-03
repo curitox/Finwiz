@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
 import { AddExpence } from "../../api";
 import Toast from "react-native-toast-message";
+import moment from "moment";
 
 const Container = styled.View`
   flex: 1;
@@ -209,7 +210,7 @@ export default function AddTransactions() {
   const [stages, setStages] = useState(0);
   const [transactionData, setTransactionData] = useState({
     amount: "",
-    transactionDate: "",
+    transactionDate: moment().format("YYYY-MM-DD"),
     category: "",
     description: "",
     paymentMethod: "ONLINE",

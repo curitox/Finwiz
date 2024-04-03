@@ -11,6 +11,9 @@ import TransactionsCard from "./cards/Transactions";
 import moment from "moment";
 import InputText from "./text_fields/inputText";
 import DateInput from "./text_fields/dateInput";
+import { AddSavingsToGoal } from "../api";
+import { useAuthContext } from "../context/auth";
+import Toast from "react-native-toast-message";
 
 const Card = styled.View`
   flex: 1;
@@ -151,16 +154,48 @@ const TransactionsContent = [
 ];
 
 const GoalsDetails = ({ item }) => {
+  const { currentUser } = useAuthContext();
   const theme = useTheme();
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [state, setState] = useState(0);
   const [newSavings, setNewSavings] = useState({
     amount: "",
-    date: "",
+    date: moment().format("YYYY-MM-DD"),
     description: "",
   });
 
   const handleInputChange = (value, name) => {
     setNewSavings({ ...newSavings, [name]: value });
+  };
+
+  const addNewSaving = async () => {
+    if (
+      newSavings.date !== "" &&
+      newSavings.amount !== "" &&
+      newSavings.description !== ""
+    ) {
+      setButtonLoading(true);
+      await AddSavingsToGoal(item?.id, newSavings, currentUser?.token)
+        .then(async (res) => {
+          console.log(res);
+          Toast.show({
+            type: "success",
+            text1: "New Goal Created",
+            text2: "New Goal created successfully 👋",
+          });
+          setButtonLoading(false);
+          setState(0);
+        })
+        .catch((err) => {
+          alert({ message: err.response.data.message });
+          Toast.show({
+            type: "error",
+            text1: "Something went wrong",
+            text2: err.response.data.message,
+          });
+          setButtonLoading(false);
+        });
+    }
   };
 
   return (
@@ -380,6 +415,21 @@ const GoalsDetails = ({ item }) => {
               placeholder="Enter your savings date"
               name="date"
             />
+            <Button
+              small
+              type="filled"
+              color={theme.white}
+              bgcolor={theme.primary}
+              loading={buttonLoading}
+              onPress={() => addNewSaving()}
+              disabled={
+                newSavings.date === "" ||
+                newSavings.description === "" ||
+                newSavings.amount === ""
+              }
+            >
+              Add Amount
+            </Button>
           </Transactions>
         )}
       </Wrapper>
