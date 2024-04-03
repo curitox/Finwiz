@@ -165,7 +165,7 @@ const Home = () => {
     await GetGoals(currentUser?.token)
       .then((res) => {
         setLoading(false);
-        setGoals(res?.data?.Expenses);
+        setGoals(res?.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -212,22 +212,9 @@ const Home = () => {
             </Section>
             <Section>
               <Title>Quick Links</Title>
-              <CardWrapper
-              // data={categories}
-              // renderItem={({ item }) => (
-              //   <NavigationCards data={item} onPress={() => toggleTheme()} />
-              // )}
-              // horizontal
-              // showsVerticalScrollIndicator={false}
-              // keyExtractor={(item) => item.id}
-              // contentContainerStyle={{ columnGap: 8 }}
-              >
+              <CardWrapper>
                 {categories.map((item) => (
-                  <NavigationCards
-                    data={item}
-                    onPress={() => toggleTheme()}
-                    key={item.id}
-                  />
+                  <NavigationCards data={item} key={item.id} />
                 ))}
               </CardWrapper>
             </Section>
@@ -248,8 +235,8 @@ const Home = () => {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
               >
-                {goals.map((item) => (
-                  <GoalCard key={`goal-home-${item?.id}`} />
+                {goals?.map((item) => (
+                  <GoalCard key={`goal-home-${item?.id}`} item={item} />
                 ))}
               </GoalsWrapper>
             </Section>

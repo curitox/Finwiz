@@ -117,8 +117,8 @@ const GoalCard = ({ item }) => {
                 gap: 2,
               }}
             >
-              <Title>Iphone 15</Title>
-              <Desc>Buy a new iphone in big billion sale</Desc>
+              <Title>{item?.name}</Title>
+              <Desc>{item?.description}</Desc>
             </View>
             <View
               style={{
@@ -134,7 +134,7 @@ const GoalCard = ({ item }) => {
                 }}
               >
                 {renderDot(theme.text_secondary)}
-                <Date>1 Oct 2025 </Date>
+                <Date>{item?.target_date}</Date>
               </View>
               <View
                 style={{
@@ -143,7 +143,7 @@ const GoalCard = ({ item }) => {
                 }}
               >
                 {renderDot(theme.text_secondary)}
-                <Date>$50000</Date>
+                <Date>{item?.target_amount}</Date>
               </View>
             </View>
           </Left>
