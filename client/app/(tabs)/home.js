@@ -35,6 +35,8 @@ import TextButton from "../../components/buttons/textButton";
 import TransactionsCard from "../../components/cards/Transactions";
 import { GetExpences, GetGoals, TodaysChart } from "../../api";
 import Loader from "../../components/Loader";
+import { useBottomSheetContext } from "../../context/bottomSheetContext";
+import InvestmentPredictor from "../../components/InvestmentPredictor";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -133,7 +135,8 @@ const Home = () => {
     {
       id: 4,
       text: "Investment",
-      link: "/investment",
+      link: null,
+      bottomSheet: <InvestmentPredictor />,
       icon: (
         <MaterialCommunityIcons
           name="hand-coin"
@@ -164,6 +167,7 @@ const Home = () => {
     setLoading(true);
     await GetGoals(currentUser?.token)
       .then((res) => {
+        console.log("Goals", res.data);
         setLoading(false);
         setGoals(res?.data);
       })

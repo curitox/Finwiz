@@ -435,20 +435,20 @@ export default function AddTransactions() {
                 >
                   {TransactionCategories.map((transactionCategories, index) => (
                     <SelectableChip
-                      key={`transactionCategories-${index}`}
-                      selected={
-                        transactionCategories.value === transactionData.category
-                      }
-                      onPress={() =>
-                        setTransactionData({
-                          ...transactionData,
-                          category: transactionCategories.value,
-                        })
-                      }
-                      startIcon={transactionCategories.icon}
-                      color={transactionCategories.color}
+                    // key={`transactionCategories-${index}`}
+                    // selected={
+                    //   transactionCategories.value === transactionData.category
+                    // }
+                    // onPress={() =>
+                    //   setTransactionData({
+                    //     ...transactionData,
+                    //     category: transactionCategories.value,
+                    //   })
+                    // }
+                    // startIcon={transactionCategories.icon}
+                    // color={transactionCategories.color}
                     >
-                      {transactionCategories.name}
+                      <Text> {transactionCategories.name}</Text>
                     </SelectableChip>
                   ))}
                 </View>

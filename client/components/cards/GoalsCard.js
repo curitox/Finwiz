@@ -14,6 +14,8 @@ import { ProgressBar, Colors } from "react-native-paper";
 import { Card } from "react-native-paper";
 import { useBottomSheetContext } from "../../context/bottomSheetContext";
 import GoalsDetails from "../GoalsDetails";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import moment from "moment";
 
 const CardContainer = styled(Card)`
   flex: 1;
@@ -77,20 +79,6 @@ const CompletePercent = styled.Text`
   color: ${({ theme }) => theme.primary};
 `;
 
-const renderDot = (color) => {
-  return (
-    <View
-      style={{
-        height: 4,
-        width: 4,
-        borderRadius: 5,
-        backgroundColor: color,
-        marginRight: 5,
-      }}
-    />
-  );
-};
-
 const GoalCard = ({ item }) => {
   const { setOpenBottomSheet } = useBottomSheetContext();
   const theme = useTheme();
@@ -123,7 +111,7 @@ const GoalCard = ({ item }) => {
             <View
               style={{
                 flexDirection: "row",
-                gap: 8,
+                gap: 10,
                 alignItems: "center",
               }}
             >
@@ -131,25 +119,32 @@ const GoalCard = ({ item }) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  gap: 6,
                 }}
               >
-                {renderDot(theme.text_secondary)}
-                <Date>{item?.target_date}</Date>
+                <MaterialCommunityIcons
+                  name="calendar-week-begin"
+                  size={13}
+                  color={theme.text_secondary}
+                />
+                <Date>{moment(item?.target_date).format("MMMM Do YYYY")}</Date>
               </View>
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  gap: 6,
                 }}
               >
-                {renderDot(theme.text_secondary)}
-                <Date>{item?.target_amount}</Date>
+                <MaterialCommunityIcons
+                  name="bullseye-arrow"
+                  size={14}
+                  color={theme.text_secondary}
+                />
+                <Date>₹{Math.trunc(item?.target_amount)}</Date>
               </View>
             </View>
           </Left>
-          {/* <Right>
-            <Amount>$50000</Amount>
-          </Right> */}
         </View>
         <Bottom>
           <CompletePercent>60%</CompletePercent>

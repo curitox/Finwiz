@@ -1,7 +1,8 @@
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import React from "react";
 import { TouchableOpacity, ActivityIndicator, View, Text } from "react-native";
 import styled, { css } from "styled-components/native";
+import { useBottomSheetContext } from "../../context/bottomSheetContext";
 
 const Card = styled.TouchableOpacity`
   flex: 1;
@@ -27,8 +28,21 @@ const CardText = styled.Text`
   color: ${({ theme }) => theme.text_secondary};
 `;
 const NavigationCards = ({ data }) => {
+  const { setOpenBottomSheet } = useBottomSheetContext();
+  const router = useRouter()
+  const OpenLink = () => {
+    if (data?.link !== null) {
+      router.replace(data?.link)
+    } else {
+      setOpenBottomSheet({
+        open: true,
+        content: data?.bottomSheet,
+        snapPoint: ["60%"],
+      })
+    }
+  }
   return (
-    <Card onPress={() => router.replace(data?.link)}>
+    <Card onPress={() => OpenLink()}>
       <CardIcon background={data.background} color={data.color}>
         {data.icon}
       </CardIcon>
