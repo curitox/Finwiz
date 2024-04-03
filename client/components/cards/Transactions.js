@@ -15,6 +15,7 @@ import BottomSheetContext, {
 } from "../../context/bottomSheetContext";
 import TransactionDetails from "../TransactionDetails";
 import { getCategoryByValue } from "../../utils/data";
+import moment from "moment";
 
 const Card = styled.TouchableOpacity`
   flex: 1;
@@ -57,16 +58,9 @@ const Amount = styled.Text`
   color: ${({ theme }) => theme.text_primary};
 `;
 
-const Tag = styled.View`
-  width: fit-content;
-  padding: 2px 6px;
-  border-radius: 8px;
-  background-color: ${({ expence, theme }) =>
-    expence ? theme.red + 20 : theme.green + 20};
-`;
 const TagText = styled.Text`
-  font-size: 12px;
-  color: ${({ expence, theme }) => (expence ? theme.red : theme.green)};
+  font-size: 10px;
+  color: ${({ theme }) => theme.text_secondary};
 `;
 const TransactionsCard = ({ item }) => {
   const { setOpenBottomSheet } = useBottomSheetContext();
@@ -102,18 +96,19 @@ const TransactionsCard = ({ item }) => {
             }}
           >
             <Desc>{item?.description}</Desc>
-            <Date>{item?.transactionDate}</Date>
+            <Date>
+              {moment(item?.transactionDate).calendar()} -
+              <TagText> {item?.paymentMethod}</TagText>
+            </Date>
           </View>
           <View
             style={{
               gap: 6,
               justifyContent: "space-between",
+              alignItems: "flex-end",
             }}
           >
             <Amount>₹{item?.amount}</Amount>
-            {/* <Tag expence={true}>
-              <TagText expence={true}>Expence</TagText>
-            </Tag> */}
           </View>
         </Right>
       </Wrapper>

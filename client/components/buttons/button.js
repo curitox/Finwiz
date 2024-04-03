@@ -10,9 +10,20 @@ const StyledButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  padding-vertical: ${({ small }) => (small ? `8px` : `16px`)};
-  padding-horizontal: ${({ small }) => (small ? `12px` : `18px`)};
+  padding-vertical: 16px;
+  padding-horizontal: 18px;
   gap: 10px;
+  ${({ small }) => small && `padding-vertical: 8px`};
+  ${({ small }) =>
+    small &&
+    `padding-horizontal: 14px;
+  border-radius: 10px;`};
+  ${({ micro }) => micro && `padding-vertical: 4px`};
+  ${({ micro }) =>
+    micro &&
+    `padding-horizontal: 12px;
+  border-radius: 8px;
+  gap: 6px;`};
 
   ${({ type, bgcolor, bordercolor }) => {
     if (type === "outlined") {
@@ -36,7 +47,9 @@ const StyledButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled.Text`
-  font-size: ${({ small }) => (small ? `12px` : `14px`)};
+  font-size: 14px;
+  ${({ small }) => small && `font-size: 12px`};
+  ${({ micro }) => micro && `font-size: 10px`};
   font-weight: 600;
   line-height: 24px;
   color: ${({ color }) => color};
@@ -62,6 +75,7 @@ const Button = ({
   children,
   loading = false,
   small,
+  micro,
   ...props
 }) => {
   return (
@@ -73,11 +87,12 @@ const Button = ({
       disabled={disabled || loading} // Disable the button when loading is true
       onPress={onPress}
       small={small}
+      micro={micro}
       {...props}
     >
       {loading && <LoadingIndicator size="small" color={color} />}
       {startIcon && startIcon}
-      <ButtonText type={type} color={color} small={small}>
+      <ButtonText type={type} color={color} small={small} micro={micro}>
         {children}
       </ButtonText>
       {endIcon && endIcon}

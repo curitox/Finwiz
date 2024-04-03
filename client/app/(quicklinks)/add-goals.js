@@ -112,6 +112,7 @@ export default function AddGoals() {
       setLoading(true);
       await AddGoal(goalData, currentUser?.token)
         .then(async (res) => {
+          console.log(res);
           Toast.show({
             type: "success",
             text1: "New Goal Created",
