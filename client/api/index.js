@@ -45,3 +45,9 @@ export const GetGoals = async (token) =>
   await API.get("/goal/get", {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+//Predictions
+export const PredictInvestment = async (data, token) =>
+  await API.post("/predict/invest", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

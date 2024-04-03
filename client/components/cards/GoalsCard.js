@@ -141,7 +141,7 @@ const GoalCard = ({ item }) => {
                   size={14}
                   color={theme.text_secondary}
                 />
-                <Date>₹{item?.target_amount}</Date>
+                <Date>₹{Math.trunc(item?.target_amount)}</Date>
               </View>
             </View>
           </Left>
