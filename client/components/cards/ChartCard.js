@@ -129,7 +129,7 @@ const ChartCard = ({ chartData }) => {
                   gap: 12,
                 }}
               >
-                <Value>₹{chartData?.total_amount}</Value>
+                <Value>₹{Math.trunc(chartData?.total_amount)}</Value>
                 <Feather
                   name="arrow-down-circle"
                   size={18}
@@ -144,8 +144,8 @@ const ChartCard = ({ chartData }) => {
                   gap: 8,
                 }}
               >
-                {chartData?.data?.map((item) => (
-                  <Item>
+                {chartData?.data?.map((item, index) => (
+                  <Item key={`chart-card-home-${item?.name}-${index}`}>
                     {renderDot(getCategoryByValue(item?.name)?.color)}
                     <Text
                       style={{

@@ -425,7 +425,7 @@ export default function AddTransactions() {
                 type={"default"}
               />
               <SelectagleItem>
-                <InputName>Gender</InputName>
+                <InputName>Transaction Category</InputName>
                 <View
                   style={{
                     flexDirection: "row",

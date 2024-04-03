@@ -20,6 +20,7 @@ export const generateOtp = async (data) =>
 export const verifyOtp = async (data) =>
   await API.get(`/auth/verifyOTP?code=${data}`);
 
+//Expences
 export const TodaysChart = async (token) =>
   await API.get("/expenseDaily", {
     headers: { Authorization: `Bearer ${token}` },
@@ -31,5 +32,16 @@ export const AddExpence = async (data, token) =>
   });
 export const GetExpences = async (token) =>
   await API.get("/expense/get", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+//Goals
+export const AddGoal = async (data, token) =>
+  await API.post("/goal/add", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const GetGoals = async (token) =>
+  await API.get("/goal/get", {
     headers: { Authorization: `Bearer ${token}` },
   });
