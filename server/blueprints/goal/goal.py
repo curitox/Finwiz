@@ -51,7 +51,7 @@ def addGoal():
         db.session.rollback()
         return create_error(500, str(e))
     
-@goal_bp.route('/goal/get', methods=['POST'])
+@goal_bp.route('/goal/get', methods=['GET'])
 @verifyToken
 def goalGet():
     user_id = request.user.get('id')
