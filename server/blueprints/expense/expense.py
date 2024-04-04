@@ -18,18 +18,20 @@ def addExpense():
     expense_input = request.json
     
     try:
-        # Check if transactionDate is provided in the request
         if 'transactionDate' in expense_input:
-            transaction_date = expense_input['transactionDate']
+            # Parse the provided date string to datetime object
+            transaction_date = datetime.strptime(expense_input['transactionDate'], '%Y-%m-%d')
+            # Add current time to the provided date
+            transaction_date = transaction_date.replace(hour=datetime.now().hour, minute=datetime.now().minute, second=datetime.now().second)
+            # Convert to ISO 8601 format
+            transaction_date_iso = transaction_date.isoformat()
         else:
             # If transactionDate is not provided, use current UTC date and time
-            utc_date = datetime.utcnow()
-            local_time = datetime.now().time()
-            transaction_date = datetime.combine(utc_date.date(), local_time)
+            transaction_date_iso = datetime.now().isoformat()
 
         # Create a new Expense object
         new_expense = Expense(
-            transactionDate=transaction_date,
+            transactionDate=transaction_date_iso,
             category=expense_input['category'],
             amount=expense_input['amount'],
             description=expense_input['description'],
@@ -117,13 +119,11 @@ def getExpenses():
             'category': expense.category,
             'amount': expense.amount,
             'description': expense.description,
-            'paymentMethod': expense.paymentMethod
+            'paymentMethod': expense.paymentMethod,
         }
         expenses_data.append(expense_data)
     
     return jsonify({'Expenses': expenses_data})
-
-from flask import jsonify
 
 @expense_bp.route('/expense/yearly', methods=['GET'])
 @verifyToken

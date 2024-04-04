@@ -49,7 +49,7 @@ class User(db.Model):
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    transactionDate=db.Column(db.Date)
+    transactionDate=db.Column(db.DateTime)
     category = db.Column(db.String(150))
     amount=db.Column(db.Numeric(10, 2), nullable=False)
     description=db.Column(db.String(200))
@@ -122,7 +122,7 @@ class Savings(db.Model):
     week = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     goal_id = db.Column(db.Integer, db.ForeignKey('goal.id'), nullable=False)
-    date=db.Column(db.Date)
+    date=db.Column(db.DateTime)
     description=db.Column(db.String(200))
     category = db.Column(db.String(50), default='savings')
 
