@@ -15,11 +15,21 @@ def addExpense():
     if not user:
         return create_error(404, "User not found")
     
-    expense_input=request.json
+    expense_input = request.json
+    
     try:
+        # Check if transactionDate is provided in the request
+        if 'transactionDate' in expense_input:
+            transaction_date = expense_input['transactionDate']
+        else:
+            # If transactionDate is not provided, use current UTC date and time
+            utc_date = datetime.utcnow()
+            local_time = datetime.now().time()
+            transaction_date = datetime.combine(utc_date.date(), local_time)
+
         # Create a new Expense object
         new_expense = Expense(
-            transactionDate=expense_input['transactionDate'],
+            transactionDate=transaction_date,
             category=expense_input['category'],
             amount=expense_input['amount'],
             description=expense_input['description'],
@@ -33,8 +43,16 @@ def addExpense():
         # Commit changes to the database
         db.session.add(new_expense)
         db.session.commit()
+        expense_data = {
+            'id': new_expense.id,
+            'transactionDate': new_expense.transactionDate.strftime('%Y-%m-%dT%H:%M:%S'),
+            'category': new_expense.category,
+            'amount': str(new_expense.amount),
+            'description': new_expense.description,
+            'paymentMethod': new_expense.paymentMethod
+        }
 
-        return jsonify({'message': 'Expense added successfully'}), 201
+        return jsonify({'message': 'Expense added successfully', 'expense': expense_data}), 201
 
     except KeyError as e:
         return jsonify({'message': f'Missing required field: {str(e)}'}), 400
@@ -42,7 +60,7 @@ def addExpense():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error adding expense: {}'.format(str(e))}), 500
-    
+  
 @expense_bp.route('/expense/get', methods=['GET'])
 @verifyToken
 def getExpenses():

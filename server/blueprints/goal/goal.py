@@ -15,6 +15,9 @@ def addGoal():
         return create_error(404, "User not found")
 
     goal_input=request.json
+    if(goal_input['target_amount']==0):
+        return create_error(500, "Target amount can not be 0 for a goal.")
+    
     try:
         # Create a new goal object
         new_goal = Goal(
@@ -73,12 +76,48 @@ def goalGet():
         'name': goal.name,
         'description': goal.description,
         'target_amount': str(goal.target_amount),
+        'achieved_amount': str(goal.achieved_amount),
         'target_date': goal.target_date.strftime('%Y-%m-%d'),
         'priority_level': goal.priority_level,
-        'status': goal.status
+        'status': goal.status,
+        'progress': goal.achieved_amount/goal.target_amount,
     } for goal in goals]
 
     return jsonify(goals_data), 200
+
+@goal_bp.route('/goal/savings', methods=['GET'])
+@verifyToken
+def goalGetSavings():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+    
+    goal_id = request.args.get('id')
+    goal = Goal.query.filter_by(id=goal_id, user_id=user_id).first()
+    if not goal:
+        return create_error(404, "Goal not found")
+    if goal.user_id != user_id:
+        return create_error(403, "You do not have permission to access this goal")
+
+    # Fetch savings related to the goal
+    savings = Savings.query.filter_by(goal_id=goal_id).all()
+
+    # Construct response data
+    savings_data = []
+    for saving in savings:
+        saving_data = {
+            'id': saving.id,
+            'week': saving.week,
+            'amount': str(saving.amount),
+            'date': saving.date.strftime('%Y-%m-%d'),
+            'description': saving.description,
+            'category': saving.category
+        }
+        savings_data.append(saving_data)
+
+    return jsonify(savings_data), 200
+
 
 @goal_bp.route('/goal/update', methods=['PATCH'])
 @verifyToken
@@ -130,22 +169,31 @@ def goalProgress():
     goal = Goal.query.filter_by(id=goal_id, user_id=user_id).first()
     if not goal:
         return create_error(404, "Goal not found")
-    created_on = goal.createdOn
-    week_number = created_on.isocalendar()[1] 
-    amount = request.json.get('amount')
-    desc = request.json.get('description')
-    date = request.json.get('date')
+    date_obj = datetime.fromisoformat(goal.createdOn.isoformat())
+    current_date = datetime.now()
+    weeks_passed = (current_date - date_obj).days // 7
+    savings_data = request.json;
+    amount = savings_data.get('amount')
+    date = savings_data.get('date')
     if not date:
        date=datetime.today().strftime('%Y-%m-%d')
-    savings_entry = Savings(week=week_number, amount=amount, goal_id=goal.id, description=desc, date=date)
+    savings_entry = Savings(week=weeks_passed, amount=amount, goal_id=goal.id, description=savings_data.get('description'), date=date)
+    goal.achieved_amount = goal.achieved_amount+amount
     goal.savings.append(savings_entry)
     db.session.add(savings_entry)
     db.session.commit()
-    total_savings = sum(entry.amount for entry in goal.savings)
-    if total_savings >= goal.target_amount:
+    if goal.achieved_amount >= goal.target_amount:
         goal.status = 'COMPLETE'
         db.session.commit()
-    return jsonify({"message": "Savings entry created successfully."}), 201
+    return jsonify({
+                "amount": savings_entry.amount,
+                "category": savings_entry.category,
+                "date": savings_entry.date.isoformat(),
+                "description": savings_entry.description,
+                "id": savings_entry.id,
+                "week": savings_entry.week,
+                "category": savings_entry.category
+            }), 201
     
 @goal_bp.route('/goal/delete', methods=['DELETE'])
 @verifyToken
@@ -174,3 +222,35 @@ def deleteGoal():
     except Exception as e:
         db.session.rollback()
         return create_error(500, str(e))
+    
+@goal_bp.route('/goal/savings/delete', methods=['DELETE'])
+@verifyToken
+def deleteSavings():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+
+    goal_id = request.args.get('gid')
+    goal = Goal.query.filter_by(id=goal_id, user_id=user_id).first()
+    if not goal:
+        return create_error(404, "Goal not found")
+    if goal.user_id != user_id:
+        return create_error(403, "You do not have permission to delete this goal")
+
+    savings_id = request.args.get('sid')
+    savings = Savings.query.filter_by(id=savings_id, goal_id=goal_id).first()
+    if not savings:
+        return create_error(404, "Savings not found")
+
+    try:
+        # Delete the savings entry
+        goal.savings.remove(savings)
+        db.session.delete(savings)
+        db.session.commit()
+
+        return jsonify({"message": "Savings deleted successfully."}), 200
+    except Exception as e:
+        # Rollback changes if any error occurs
+        db.session.rollback()
+        return create_error(500, "An error occurred while deleting savings: " + str(e))

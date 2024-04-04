@@ -85,6 +85,7 @@ class Goal(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200))
     target_amount = db.Column(db.Numeric(10, 2), nullable=False)
+    achieved_amount = db.Column(db.Numeric(10, 2), nullable=False, default=0)
     target_date = db.Column(db.Date, nullable=False)
     priority_level = db.Column(Enum('HIGH', 'MEDIUM', 'LOW', name='priority_level_enum', default='LOW'))
     status = db.Column(Enum('COMPLETE', 'IN_PROGRESS', name='status_enum', default='IN_PROGRESS'))
