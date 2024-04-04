@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import {
   View,
+  RefreshControl,
   Text,
   StatusBar,
   TouchableHighlightBase,
@@ -83,11 +84,17 @@ const Home = () => {
   const router = useRouter();
   const theme = useTheme();
   const themeMode = useThemeContext();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toggleTheme } = useThemeContext();
   const [expences, setExpences] = useState([]);
   const [goals, setGoals] = useState([]);
   const [chartData, setChartData] = useState({});
+
+  const onRefresh = React.useCallback(() => {
+    getExpences();
+    getGoals();
+    getExpencesChart();
+  }, []);
 
   const categories = [
     {
@@ -197,14 +204,17 @@ const Home = () => {
   }, []);
 
   return (
-    <Container>
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={false} onRefresh={onRefresh} />
+      }
+    >
       <Wrapper>
         <StatusBar
           barStyle={"dark-content"}
           backgroundColor={theme.bg} // Set the status bar color based on the theme
         />
         <Topbar />
-
         {loading ? (
           <Loader />
         ) : (
