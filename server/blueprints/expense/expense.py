@@ -1,5 +1,6 @@
 from flask import request, jsonify, Blueprint
 from datetime import datetime, timedelta
+from collections import defaultdict
 from middleware.verifyToken import verifyToken
 from model import User, Expense, db
 from error import create_error
@@ -109,6 +110,50 @@ from flask import jsonify
 @expense_bp.route('/expense/yearly', methods=['GET'])
 @verifyToken
 def getYearlyExpenses():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+
+    year = request.args.get('year')
+    if not year:
+        return create_error(400, "Year parameter is required")
+
+    try:
+        year = int(year)
+    except ValueError:
+        return create_error(400, "Invalid year format")
+
+    expenses = Expense.query.filter(Expense.user_id == user_id)\
+                             .filter(db.extract('year', Expense.transactionDate) == year)\
+                             .order_by(db.extract('month', Expense.transactionDate).desc())\
+                             .all()
+
+    # Organize expenses month-wise
+    monthly_expenses = defaultdict(list)
+    for expense in expenses:
+        month_year = expense.transactionDate.strftime("%B %Y")
+        monthly_expenses[month_year].append({
+            'id': expense.id,
+            'transactionDate': expense.transactionDate.strftime('%Y-%m-%d'),
+            'category': expense.category,
+            'amount': str(expense.amount),
+            'description': expense.description,
+            'paymentMethod': expense.paymentMethod
+        })
+
+    # Sort the dictionary by keys (month_year) in descending order
+    sorted_monthly_expenses = sorted(monthly_expenses.items(), key=lambda x: datetime.strptime(x[0], "%B %Y"), reverse=True)
+
+    # Transform the data into the desired format
+    response_data = []
+    for month_year, transactions in sorted_monthly_expenses:
+        response_data.append({
+            "month": month_year,
+            "transactions": transactions
+        })
+
+    return jsonify(response_data)
     user_id = request.user.get('id')
     user = User.query.get(user_id)
     if not user:
