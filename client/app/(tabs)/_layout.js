@@ -33,17 +33,18 @@ export default function TabsLayout() {
             position: "absolute",
             backgroundColor: theme.bottomBar,
             padding: 2,
-            height: 60,
+            height: Platform.OS === "ios" ? 100 : 60,
           },
         }}
         tabBar={(props) =>
           Platform.OS === "ios" ? (
-            <BlurView
-              style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-              intensity={95}
-            >
-              <BottomTabBar {...props} />
-            </BlurView>
+            // <BlurView
+            //   style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
+            //   intensity={95}
+            // >
+            //   <BottomTabBar {...props} />
+            // </BlurView>
+            <BottomTabBar {...props} />
           ) : (
             <BottomTabBar {...props} />
           )

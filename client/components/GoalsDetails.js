@@ -1,12 +1,19 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Text, View } from "react-native";
 import styled, { css, useTheme } from "styled-components/native";
 import Button from "../components/buttons/button";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ProgressBar } from "react-native-paper";
 import TransactionsCard from "./cards/Transactions";
+import moment from "moment";
+import InputText from "./text_fields/inputText";
+import DateInput from "./text_fields/dateInput";
+import { AddSavingsToGoal } from "../api";
+import { useAuthContext } from "../context/auth";
+import Toast from "react-native-toast-message";
 
 const Card = styled.View`
   flex: 1;
@@ -75,7 +82,7 @@ const Bottom = styled.View`
 `;
 
 const Amount = styled.Text`
-  font-size: 28px;
+  font-size: 22px;
   text-align: center;
   font-weight: 700;
   color: ${({ theme }) => theme.green};
@@ -147,30 +154,59 @@ const TransactionsContent = [
 ];
 
 const GoalsDetails = ({ item }) => {
+  const { currentUser } = useAuthContext();
   const theme = useTheme();
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [state, setState] = useState(0);
+  const [newSavings, setNewSavings] = useState({
+    amount: "",
+    date: moment().format("YYYY-MM-DD"),
+    description: "",
+  });
+
+  const handleInputChange = (value, name) => {
+    setNewSavings({ ...newSavings, [name]: value });
+  };
+
+  const addNewSaving = async () => {
+    if (
+      newSavings.date !== "" &&
+      newSavings.amount !== "" &&
+      newSavings.description !== ""
+    ) {
+      setButtonLoading(true);
+      await AddSavingsToGoal(item?.id, newSavings, currentUser?.token)
+        .then(async (res) => {
+          console.log(res);
+          Toast.show({
+            type: "success",
+            text1: "New Goal Created",
+            text2: "New Goal created successfully 👋",
+          });
+          setButtonLoading(false);
+          setState(0);
+        })
+        .catch((err) => {
+          alert({ message: err.response.data.message });
+          Toast.show({
+            type: "error",
+            text1: "Something went wrong",
+            text2: err.response.data.message,
+          });
+          setButtonLoading(false);
+        });
+    }
+  };
+
   return (
     <Card>
       <Title color={item?.color}>Goal Details</Title>
       <Wrapper>
         <DetailsWrapper color={item?.color}>
-          {/* <View
-            style={{
-              alignItems: "flex-start",
-              justifyContent: "flex-end",
-              flexDirection: "row",
-              width: "100%",
-            }}
-          >
-            <MaterialCommunityIcons
-              name="check-decagram"
-              size={28}
-              color={theme.categoryGreen}
-            />
-          </View> */}
           <View style={{ gap: 12, flexDirection: "row" }}>
             <View style={{ flex: 1, gap: 3 }}>
-              <GoalTitle>Iphone 15</GoalTitle>
-              <Desc>Buy a new iphone in big billion sale</Desc>
+              <GoalTitle>{item?.name}</GoalTitle>
+              <Desc>{item?.description}</Desc>
             </View>
             <View style={{ gap: 4, flexDirection: "row" }}>
               <IconButton>
@@ -194,7 +230,10 @@ const GoalsDetails = ({ item }) => {
                 color={theme.text_secondary}
               />
               <Date>
-                Target Date: <Span color={theme.text_primary}>1 Oct 2025</Span>
+                Target Date:{" "}
+                <Span color={theme.text_primary}>
+                  {moment(item?.target_date).format("MMMM Do YYYY")}
+                </Span>
               </Date>
             </IconText>
             <IconText>
@@ -204,7 +243,10 @@ const GoalsDetails = ({ item }) => {
                 color={theme.text_secondary}
               />
               <Date>
-                Target Amount: <Span color={theme.primary}>$50000</Span>
+                Target Amount:{" "}
+                <Span color={theme.primary}>
+                  ₹{Math.trunc(item?.target_amount)}
+                </Span>
               </Date>
             </IconText>
           </View>
@@ -238,18 +280,27 @@ const GoalsDetails = ({ item }) => {
               }}
             ></View>
           </View>
-          <Text
+
+          <View
             style={{
-              fontWeight: "500",
-              fontSize: 14,
-              color: theme.text_secondary,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
             }}
           >
-            Currently Saved
-          </Text>
+            <Text
+              style={{
+                fontWeight: "500",
+                fontSize: 14,
+                color: theme.text_secondary,
+              }}
+            >
+              Currently Saved:
+            </Text>
+            <Amount>₹30000</Amount>
+          </View>
 
           <View style={{ gap: 5 }}>
-            <Amount>$30000</Amount>
             <View style={{ flex: 1 }}>
               <ProgressBar
                 progress={0.5}
@@ -258,20 +309,129 @@ const GoalsDetails = ({ item }) => {
               />
             </View>
             <Bottom>
-              <Marker>$0</Marker>
+              <Marker>₹0</Marker>
               <CompletePercent>60%</CompletePercent>
-              <Marker style={{ textAlign: "right" }}>$50000</Marker>
+              <Marker style={{ textAlign: "right" }}>
+                ₹{item?.target_amount}
+              </Marker>
             </Bottom>
           </View>
         </DetailsWrapper>
-        <Transactions>
-          <GoalTitle>Savings Transactions</GoalTitle>
-          <TransactionCardWrapper>
-            {TransactionsContent.map((item) => (
-              <TransactionsCard item={item} key={item.value} />
-            ))}
-          </TransactionCardWrapper>
-        </Transactions>
+        {state === 0 ? (
+          <Transactions>
+            <View
+              style={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <GoalTitle>Savings Transactions</GoalTitle>
+              <View>
+                <Button
+                  micro
+                  filled
+                  color={theme.white}
+                  bgcolor={theme.primary}
+                  startIcon={
+                    <MaterialIcons name="add" size={12} color={theme.white} />
+                  }
+                  onPress={() => setState(1)}
+                >
+                  Add Savings
+                </Button>
+              </View>
+            </View>
+            <TransactionCardWrapper>
+              {TransactionsContent.map((item) => (
+                <TransactionsCard item={item} key={item.value} />
+              ))}
+            </TransactionCardWrapper>
+          </Transactions>
+        ) : (
+          <Transactions>
+            <View
+              style={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <GoalTitle>Add New Savings</GoalTitle>
+            </View>
+            <InputText
+              startIcon={
+                <FontAwesome
+                  name="rupee"
+                  size={20}
+                  color={theme.text_secondary}
+                  style={{
+                    marginRight: 5,
+                    marginLeft: 5,
+                  }}
+                />
+              }
+              small
+              value={newSavings.amount}
+              onChangeText={handleInputChange}
+              placeholder="Enter Savings Amount"
+              label="Savings Amount"
+              name="amount"
+              type={"numeric"}
+            />
+            <InputText
+              startIcon={
+                <MaterialCommunityIcons
+                  name="notebook-edit"
+                  size={20}
+                  color={theme.text_secondary}
+                />
+              }
+              small
+              value={newSavings.description}
+              onChangeText={handleInputChange}
+              placeholder="Enter Savings Short Description"
+              label="Savings Description"
+              name="description"
+              type={"default"}
+            />
+            <DateInput
+              startIcon={
+                <Icon
+                  name="calendar-month-outline"
+                  size={20}
+                  color={theme.text_secondary}
+                />
+              }
+              small
+              value={newSavings.date}
+              onChange={(date, name) =>
+                setNewSavings({
+                  ...newSavings,
+                  date: date,
+                })
+              }
+              label="Savings Date"
+              placeholder="Enter your savings date"
+              name="date"
+            />
+            <Button
+              small
+              type="filled"
+              color={theme.white}
+              bgcolor={theme.primary}
+              loading={buttonLoading}
+              onPress={() => addNewSaving()}
+              disabled={
+                newSavings.date === "" ||
+                newSavings.description === "" ||
+                newSavings.amount === ""
+              }
+            >
+              Add Amount
+            </Button>
+          </Transactions>
+        )}
       </Wrapper>
     </Card>
   );

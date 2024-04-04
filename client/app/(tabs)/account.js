@@ -15,6 +15,7 @@ import { useState } from "react";
 import BgImage from "../../assets/icons/pattern.png";
 import { useThemeContext } from "../../context/themeContext";
 import { AntDesign } from "@expo/vector-icons";
+import moment from "moment";
 
 const MainContainer = styled.ScrollView`
   flex: 1;
@@ -155,7 +156,7 @@ export default function Account() {
               size={16}
               color={theme.primary}
             />
-            <Text>{currentUser?.user?.dob}</Text>
+            <Text>{moment(currentUser?.user?.dob).format("MMMM Do YYYY")}</Text>
           </Flex>
         </FlexContainer>
         <Finance>

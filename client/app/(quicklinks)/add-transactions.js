@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
 import { AddExpence } from "../../api";
 import Toast from "react-native-toast-message";
+import moment from "moment";
 
 const Container = styled.View`
   flex: 1;
@@ -209,7 +210,7 @@ export default function AddTransactions() {
   const [stages, setStages] = useState(0);
   const [transactionData, setTransactionData] = useState({
     amount: "",
-    transactionDate: "",
+    transactionDate: moment().format("YYYY-MM-DD"),
     category: "",
     description: "",
     paymentMethod: "ONLINE",
@@ -435,18 +436,18 @@ export default function AddTransactions() {
                 >
                   {TransactionCategories.map((transactionCategories, index) => (
                     <SelectableChip
-                    // key={`transactionCategories-${index}`}
-                    // selected={
-                    //   transactionCategories.value === transactionData.category
-                    // }
-                    // onPress={() =>
-                    //   setTransactionData({
-                    //     ...transactionData,
-                    //     category: transactionCategories.value,
-                    //   })
-                    // }
-                    // startIcon={transactionCategories.icon}
-                    // color={transactionCategories.color}
+                      key={`transactionCategories-${index}`}
+                      selected={
+                        transactionCategories.value === transactionData.category
+                      }
+                      onPress={() =>
+                        setTransactionData({
+                          ...transactionData,
+                          category: transactionCategories.value,
+                        })
+                      }
+                      startIcon={transactionCategories.icon}
+                      color={transactionCategories.color}
                     >
                       <Text> {transactionCategories.name}</Text>
                     </SelectableChip>

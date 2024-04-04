@@ -167,6 +167,7 @@ const Home = () => {
     setLoading(true);
     await GetGoals(currentUser?.token)
       .then((res) => {
+        console.log("Goals", res.data);
         setLoading(false);
         setGoals(res?.data);
       })
