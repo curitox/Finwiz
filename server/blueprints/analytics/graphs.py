@@ -102,7 +102,7 @@ def goalsGraph():
         return create_error(404, "User not found")
     user_goals = Goal.query.filter_by(user_id=user_id, status='IN_PROGRESS').all()
     all_lineData = []
-
+    lineData = []
     for goal in user_goals:
         savings_by_week = defaultdict(float)
         savings_entries = goal.savings
@@ -122,12 +122,22 @@ def expense_daily():
     user = User.query.get(user_id)
     if not user:
         return create_error(404, "User not found")
-    current_date = date.today()
 
-    # Query expenses for the user on the current day
+    # Check if 'm' (month) parameter is provided in the request args
+    if 'm' in request.args and request.args['m'] == "month":
+        # If 'm' parameter is 'month', query expenses for the current month
+        start_date = date.today().replace(day=1)  # First day of the current month
+        end_date = date.today()  # Current date
+    else:
+        # If 'm' parameter is not provided or not equal to 'month', query expenses for the current day
+        start_date = date.today()
+        end_date = date.today()
+
+    # Query expenses for the user within the specified date range
     expenses = db.session.query(Expense.category, func.sum(Expense.amount)).filter(
         Expense.user_id == user_id,
-        func.date(Expense.transactionDate) == current_date
+        func.date(Expense.transactionDate) >= start_date,
+        func.date(Expense.transactionDate) <= end_date
     ).group_by(Expense.category).all()
 
     # Create dictionary to map category names to their hex colors
@@ -150,14 +160,14 @@ def expense_daily():
 
     # Prepare response data
     response_data = []
-    total_amount=0
+    total_amount = 0
     for category, amount in expenses:
         response_data.append({
             "name": category,
             "color": category_colors.get(category, "#000000"),  # Default color if not found
             "value": float(amount)  # Convert amount to float
         })
-        total_amount=total_amount+amount
+        total_amount += amount
     
     response = {
         "data": response_data,
