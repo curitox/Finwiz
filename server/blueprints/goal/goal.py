@@ -178,7 +178,7 @@ def goalProgress():
     if not date:
        date=datetime.today().strftime('%Y-%m-%d')
     savings_entry = Savings(week=weeks_passed, amount=amount, goal_id=goal.id, description=savings_data.get('description'), date=date)
-    goal.achieved_amount = goal.achieved_amount+amount
+    goal.achieved_amount = float(goal.achieved_amount)+float(amount)
     goal.savings.append(savings_entry)
     db.session.add(savings_entry)
     db.session.commit()
