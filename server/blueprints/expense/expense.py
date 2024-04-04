@@ -104,6 +104,49 @@ def getExpenses():
     
     return jsonify({'Expenses': expenses_data})
 
+from flask import jsonify
+
+@expense_bp.route('/expense/yearly', methods=['GET'])
+@verifyToken
+def getYearlyExpenses():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    if not user:
+        return create_error(404, "User not found")
+
+    year = request.args.get('year')
+    if not year:
+        return create_error(400, "Year parameter is required")
+
+    try:
+        year = int(year)
+    except ValueError:
+        return create_error(400, "Invalid year format")
+
+    expenses = Expense.query.filter(Expense.user_id == user_id)\
+                             .filter(db.extract('year', Expense.transactionDate) == year)\
+                             .order_by(db.extract('month', Expense.transactionDate).desc())\
+                             .all()
+
+    # Organize expenses month-wise
+    monthly_expenses = {}
+    for expense in expenses:
+        month_year = expense.transactionDate.strftime("%B %Y")
+        if month_year not in monthly_expenses:
+            monthly_expenses[month_year] = []
+        monthly_expenses[month_year].append({
+            'id': expense.id,
+            'transactionDate': expense.transactionDate.strftime('%Y-%m-%d'),
+            'category': expense.category,
+            'amount': str(expense.amount),
+            'description': expense.description,
+            'paymentMethod': expense.paymentMethod
+        })
+
+    # Sort the dictionary by keys (month_year) in descending order
+    sorted_monthly_expenses = sorted(monthly_expenses.items(), key=lambda x: datetime.strptime(x[0], "%B %Y"), reverse=True)
+
+    return jsonify(sorted_monthly_expenses)
 
 
 @expense_bp.route('/expense/update', methods=['PATCH'])
