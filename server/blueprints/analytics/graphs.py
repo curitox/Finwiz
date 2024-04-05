@@ -7,6 +7,7 @@ from error import create_error
 from datetime import date
 from model import User, Expense, Goal, db
 from app import app
+from utils.category_colors import category_colors
 
 graphs_bp=Blueprint("graphs", __name__, template_folder="graphs")
 
@@ -24,11 +25,12 @@ def expense_category():
     # Query to get expenses grouped by category
     category_expenses = db.session.query(Expense.category, func.sum(Expense.amount)).filter(Expense.user_id == user_id).group_by(Expense.category).all()
     
-    # Calculate percentage for each category
+    # Calculate percentage and assign color for each category
     category_percentage = []
     for category, amount in category_expenses:
         percentage = round((amount / total_expenses) * 100, 2)
-        category_percentage.append({"value": percentage, "text": category})
+        color = category_colors.get(category.lower(), "#CCCCCC")  # Default color if category not found
+        category_percentage.append({"value": float(percentage), "text": category, "color": color})
     
     return jsonify(category_percentage)
 
@@ -64,7 +66,7 @@ def expense_weekly():
     user = User.query.get(user_id)
     if not user:
         return create_error(404, "User not found")
-    endDay = datetime.now().date()
+    endDay = datetime.now().date()+timedelta(days=1)
     present_day_of_week = endDay.weekday()  
     startDay = endDay - timedelta(days=6)
 
@@ -91,6 +93,7 @@ def expense_weekly():
     ])
     bar_data.rotate(6-present_day_of_week)
     bar_data = list(bar_data)
+    bar_data.pop()
     return jsonify(bar_data)
 
 @graphs_bp.route('/get/goalsGraph', methods=['GET'])
@@ -102,7 +105,7 @@ def goalsGraph():
         return create_error(404, "User not found")
     user_goals = Goal.query.filter_by(user_id=user_id, status='IN_PROGRESS').all()
     all_lineData = []
-
+    lineData = []
     for goal in user_goals:
         savings_by_week = defaultdict(float)
         savings_entries = goal.savings
@@ -122,42 +125,34 @@ def expense_daily():
     user = User.query.get(user_id)
     if not user:
         return create_error(404, "User not found")
-    current_date = date.today()
 
-    # Query expenses for the user on the current day
+    # Check if 'm' (month) parameter is provided in the request args
+    if 'm' in request.args and request.args['m'] == "month":
+        # If 'm' parameter is 'month', query expenses for the current month
+        start_date = date.today().replace(day=1)  # First day of the current month
+        end_date = date.today()  # Current date
+    else:
+        # If 'm' parameter is not provided or not equal to 'month', query expenses for the current day
+        start_date = date.today()
+        end_date = date.today()
+
+    # Query expenses for the user within the specified date range
     expenses = db.session.query(Expense.category, func.sum(Expense.amount)).filter(
         Expense.user_id == user_id,
-        func.date(Expense.transactionDate) == current_date
+        func.date(Expense.transactionDate) >= start_date,
+        func.date(Expense.transactionDate) <= end_date
     ).group_by(Expense.category).all()
-
-    # Create dictionary to map category names to their hex colors
-    category_colors = {
-        "food": "#FF6F61",
-        "shopping": "#FFD166",
-        "transportation": "#4CAF50",
-        "housing": "#5DADE2",
-        "utilities": "#FFA07A",
-        "health_fitness": "#AF7AC5",
-        "personal_care": "#AED6F1",
-        "entertainment": "#F5B041",
-        "education": "#76D7C4",
-        "travel": "#FAD7A0",
-        "savings_investments": "#F1948A",
-        "debt_payments": "#85C1E9",
-        "gifts_donations": "#D7BDE2",
-        "miscellaneous": "#E59866"
-    }
 
     # Prepare response data
     response_data = []
-    total_amount=0
+    total_amount = 0
     for category, amount in expenses:
         response_data.append({
             "name": category,
             "color": category_colors.get(category, "#000000"),  # Default color if not found
             "value": float(amount)  # Convert amount to float
         })
-        total_amount=total_amount+amount
+        total_amount += amount
     
     response = {
         "data": response_data,
