@@ -62,7 +62,7 @@ const TagText = styled.Text`
   font-size: 10px;
   color: ${({ theme }) => theme.text_secondary};
 `;
-const TransactionsCard = ({ item }) => {
+const TransactionsCard = ({ savings, item }) => {
   const { setOpenBottomSheet } = useBottomSheetContext();
 
   return (
@@ -72,10 +72,15 @@ const TransactionsCard = ({ item }) => {
           open: true,
           content: (
             <TransactionDetails
+              savings={savings}
               item={{
                 ...item,
-                color: getCategoryByValue(item?.category)?.color,
-                icon: getCategoryByValue(item?.category)?.icon,
+                color: savings
+                  ? getCategoryByValue(savings)?.color
+                  : getCategoryByValue(item?.category)?.color,
+                icon: savings
+                  ? getCategoryByValue(savings)?.icon
+                  : getCategoryByValue(item?.category)?.icon,
               }}
             />
           ),
@@ -84,8 +89,16 @@ const TransactionsCard = ({ item }) => {
       }
     >
       <Wrapper>
-        <Left color={getCategoryByValue(item?.category)?.color}>
-          {getCategoryByValue(item?.category)?.icon}
+        <Left
+          color={
+            savings
+              ? getCategoryByValue(savings)?.color
+              : getCategoryByValue(item?.category)?.color
+          }
+        >
+          {savings
+            ? getCategoryByValue(savings)?.icon
+            : getCategoryByValue(item?.category)?.icon}
         </Left>
         <Right>
           <View
@@ -96,10 +109,14 @@ const TransactionsCard = ({ item }) => {
             }}
           >
             <Desc>{item?.description}</Desc>
-            <Date>
-              {moment(item?.transactionDate).calendar()} -
-              <TagText> {item?.paymentMethod}</TagText>
-            </Date>
+            {savings ? (
+              <Date>{moment(item?.date).format("MMMM Do YYYY")}</Date>
+            ) : (
+              <Date>
+                {moment(item?.transactionDate).calendar()} -
+                <TagText> {item?.paymentMethod}</TagText>
+              </Date>
+            )}
           </View>
           <View
             style={{

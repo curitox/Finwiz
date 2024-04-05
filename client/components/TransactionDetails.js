@@ -5,6 +5,7 @@ import Button from "../components/buttons/button";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import moment from "moment";
 
 const Card = styled.View`
   flex: 1;
@@ -66,7 +67,7 @@ const ButtonWrapper = styled.View`
   flex-direction: row;
 `;
 
-const TransactionDetails = ({ item }) => {
+const TransactionDetails = ({ item, savings }) => {
   const theme = useTheme();
   return (
     <Card>
@@ -102,7 +103,11 @@ const TransactionDetails = ({ item }) => {
               gap: 14,
             }}
           >
-            <Date>{item?.transactionDate}</Date>
+            <Date>
+              {savings
+                ? moment(item?.date).format("MMMM Do YYYY")
+                : moment(item?.transactionDate).calendar()}
+            </Date>
             <Desc> Note: {item?.description}</Desc>
           </View>
         </Bottom>

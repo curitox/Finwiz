@@ -19,7 +19,10 @@ import moment from "moment";
 
 const CardContainer = styled(Card)`
   flex: 1;
-  width: 280px;
+  ${({ full }) =>
+    !full &&
+    `
+  width: 280px;`}
   margin: 2px 12px 8px 4px;
   flex-direction: column;
   border-radius: 12px;
@@ -79,11 +82,12 @@ const CompletePercent = styled.Text`
   color: ${({ theme }) => theme.primary};
 `;
 
-const GoalCard = ({ item }) => {
+const GoalCard = ({ full, item }) => {
   const { setOpenBottomSheet } = useBottomSheetContext();
   const theme = useTheme();
   return (
     <CardContainer
+      full={full}
       onPress={() =>
         setOpenBottomSheet({
           open: true,
@@ -147,15 +151,19 @@ const GoalCard = ({ item }) => {
           </Left>
         </View>
         <Bottom>
-          <CompletePercent>60%</CompletePercent>
+          <CompletePercent>
+            {((item?.achieved_amount * 100) / item?.target_amount).toFixed(1)}%
+          </CompletePercent>
           <View style={{ flex: 1 }}>
             <ProgressBar
-              progress={0.5}
+              progress={item?.achieved_amount / item?.target_amount}
               color={theme.primary}
               style={{ borderRadius: 12, height: 6 }}
             />
           </View>
-          <CompletedAmount>$30000</CompletedAmount>
+          <CompletedAmount>
+            ₹{Math.trunc(item?.achieved_amount)}
+          </CompletedAmount>
         </Bottom>
       </Wrapper>
     </CardContainer>

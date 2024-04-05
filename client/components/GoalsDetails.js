@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import styled, { css, useTheme } from "styled-components/native";
 import Button from "../components/buttons/button";
@@ -11,9 +11,11 @@ import TransactionsCard from "./cards/Transactions";
 import moment from "moment";
 import InputText from "./text_fields/inputText";
 import DateInput from "./text_fields/dateInput";
-import { AddSavingsToGoal } from "../api";
+import { AddSavingsToGoal, GetGoalSavings } from "../api";
 import { useAuthContext } from "../context/auth";
 import Toast from "react-native-toast-message";
+import Loader from "./Loader";
+import { getCategoryByValue } from "../utils/data";
 
 const Card = styled.View`
   flex: 1;
@@ -156,6 +158,8 @@ const TransactionsContent = [
 const GoalsDetails = ({ item }) => {
   const { currentUser } = useAuthContext();
   const theme = useTheme();
+  const [loading, setLoading] = useState(true);
+  const [savings, setSavings] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [state, setState] = useState(0);
   const [newSavings, setNewSavings] = useState({
@@ -184,6 +188,7 @@ const GoalsDetails = ({ item }) => {
             text2: "New Goal created successfully 👋",
           });
           setButtonLoading(false);
+          getSavingsOfGoals();
           setState(0);
         })
         .catch((err) => {
@@ -197,6 +202,23 @@ const GoalsDetails = ({ item }) => {
         });
     }
   };
+
+  const getSavingsOfGoals = async () => {
+    setLoading(true);
+    await GetGoalSavings(item?.id, currentUser?.token)
+      .then((res) => {
+        setLoading(false);
+        setSavings(res?.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getSavingsOfGoals();
+  }, []);
 
   return (
     <Card>
@@ -297,22 +319,27 @@ const GoalsDetails = ({ item }) => {
             >
               Currently Saved:
             </Text>
-            <Amount>₹30000</Amount>
+            <Amount>₹{Math.trunc(item?.achieved_amount)}</Amount>
           </View>
 
           <View style={{ gap: 5 }}>
             <View style={{ flex: 1 }}>
               <ProgressBar
-                progress={0.5}
+                progress={item?.achieved_amount / item?.target_amount}
                 color={theme.primary}
                 style={{ borderRadius: 12, height: 6 }}
               />
             </View>
             <Bottom>
               <Marker>₹0</Marker>
-              <CompletePercent>60%</CompletePercent>
+              <CompletePercent>
+                {((item?.achieved_amount * 100) / item?.target_amount).toFixed(
+                  1
+                )}
+                %
+              </CompletePercent>
               <Marker style={{ textAlign: "right" }}>
-                ₹{item?.target_amount}
+                ₹{Math.trunc(item?.target_amount)}
               </Marker>
             </Bottom>
           </View>
@@ -342,11 +369,19 @@ const GoalsDetails = ({ item }) => {
                 </Button>
               </View>
             </View>
-            <TransactionCardWrapper>
-              {TransactionsContent.map((item) => (
-                <TransactionsCard item={item} key={item.value} />
-              ))}
-            </TransactionCardWrapper>
+            {loading ? (
+              <Text>Loading...</Text>
+            ) : (
+              <TransactionCardWrapper>
+                {savings.map((item) => (
+                  <TransactionsCard
+                    item={item}
+                    key={`savings-${item.id}`}
+                    savings="savings_investments"
+                  />
+                ))}
+              </TransactionCardWrapper>
+            )}
           </Transactions>
         ) : (
           <Transactions>
