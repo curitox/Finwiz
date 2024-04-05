@@ -14,3 +14,19 @@ category_colors = {
         "gifts_donations": "#D7BDE2",
         "miscellaneous": "#E59866"
     }
+expense_categories = {
+    "food",
+    "shopping",
+    "transportation",
+    "housing",
+    "utilities",
+    "health_fitness",
+    "personal_care",
+    "entertainment",
+    "education",
+    "travel",
+    "savings_investments",
+    "debt_payments",
+    "gifts_donations",
+    "miscellaneous"
+}
