@@ -1,4 +1,11 @@
-import { View, Text, Pressable, RefreshControl, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  RefreshControl,
+  Image,
+  StatusBar,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
@@ -19,9 +26,9 @@ import CategoryWiseExpence from "../../components/cards/CategoryWiseExpenceCard"
 import WeeklyExpence from "../../components/cards/WeeklyExpenceCard";
 import CategoryWiseGoal from "../../components/cards/CategoryWiseGoalCard";
 import GoalCompletionChart from "../../components/cards/GoalCompletionChart";
+import Oops from "../../assets/images/Oops.png";
 
 const Container = styled.ScrollView`
-  flex: 1;
   padding: 32px 0px;
   padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
@@ -51,110 +58,68 @@ const Title = styled.Text`
 
 export default function Analytics() {
   const theme = useTheme();
-  const [loading, setLoading] = useState(false);
-  const [categoryExpence, setCategoryExpence] = useState([
-    {
-      text: "entertainment",
-      value: 33.33,
-    },
-    {
-      text: "food",
-      value: 66.67,
-    },
-  ]);
+  const [error, setError] = useState();
+  const [loading, setLoading] = useState(true);
+  const [categoryExpence, setCategoryExpence] = useState([]);
   const [weeklyExpence, setweeklyExpence] = useState([]);
-
-  const [categoryGoal, setCategoryGoal] = useState([
-    {
-      color: "#90EE90",
-      text: "COMPLETE",
-      value: 33.33,
-    },
-    {
-      color: "#FFA500",
-      text: "IN_PROGRESS",
-      value: 66.67,
-    },
-  ]);
-  const [goalCompletion, setGoalCompletion] = useState([
-    [
-      {
-        dataPointText: "300.0",
-        value: 300.0,
-      },
-      {
-        dataPointText: "300.0",
-        value: 900.0,
-      },
-      {
-        dataPointText: "300.0",
-        value: 300.0,
-      },
-    ],
-    [
-      {
-        dataPointText: "200.0",
-        value: 200.0,
-      },
-      {
-        dataPointText: "300.0",
-        value: 600.0,
-      },
-      {
-        dataPointText: "300.0",
-        value: 900.0,
-      },
-    ],
-  ]);
+  const [categoryGoal, setCategoryGoal] = useState([]);
+  const [goalCompletion, setGoalCompletion] = useState([]);
   const { signOut, currentUser } = useAuthContext();
 
   const getWeeklyExpences = async () => {
+    setError("");
     setLoading(true);
     await GetWeeklyExpence(currentUser?.token)
       .then((res) => {
-        setLoading(false);
         setweeklyExpence(res?.data);
+        setLoading(false);
+        setError("");
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
   const getExpenceCategory = async () => {
     setLoading(true);
+    setError("");
     await GetExpenceCategory(currentUser?.token)
       .then((res) => {
-        setLoading(false);
         setCategoryExpence(res?.data);
+        setLoading(false);
+        setError("");
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
   const getGoalStatus = async () => {
+    setError("");
     setLoading(true);
     await GetGoalStatus(currentUser?.token)
       .then((res) => {
-        setLoading(false);
         setCategoryGoal(res?.data);
+        setLoading(false);
+        setError("");
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
   const getGoalGraph = async () => {
+    setError("");
     setLoading(true);
     await GetGoalsGraph(currentUser?.token)
       .then((res) => {
-        setLoading(false);
-        console.log(res?.data);
         setGoalCompletion(res?.data?.lineData);
+        setLoading(false);
+        setError("");
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
 
@@ -194,15 +159,54 @@ export default function Analytics() {
           <Loader />
         ) : (
           <>
-            <Section>
-              <TitleWrapper>
-                <Title>Analytics</Title>
-              </TitleWrapper>
-              <WeeklyExpence data={weeklyExpence} />
-              <CategoryWiseExpence data={categoryExpence} />
-              <GoalCompletionChart data={goalCompletion} />
-              <CategoryWiseGoal data={categoryGoal} />
-            </Section>
+            {error ? (
+              <>
+                <View style={{ flex: 1 }}>
+                  <Section
+                    style={{
+                      gap: 12,
+                      height: 600,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{
+                        width: 300,
+                        height: 300,
+                      }}
+                      source={Oops}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: theme.red,
+                      }}
+                    >
+                      {error}
+                    </Text>
+                    <Text
+                      style={{
+                        color: theme.text_primary,
+                      }}
+                    >
+                      Please refresh the page again !
+                    </Text>
+                  </Section>
+                </View>
+              </>
+            ) : (
+              <Section>
+                <TitleWrapper>
+                  <Title>Analytics</Title>
+                </TitleWrapper>
+                <WeeklyExpence data={weeklyExpence} />
+                <CategoryWiseExpence data={categoryExpence} />
+                <GoalCompletionChart data={goalCompletion} />
+                <CategoryWiseGoal data={categoryGoal} />
+              </Section>
+            )}
           </>
         )}
 

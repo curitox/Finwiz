@@ -1,17 +1,27 @@
-import { View, Text, Pressable, StatusBar, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StatusBar,
+  RefreshControl,
+  Image,
+} from "react-native";
 import { Link } from "expo-router";
 import moment from "moment";
 import { useAuthContext } from "../../context/auth";
 import Loader from "../../components/Loader";
-import { useTheme } from "react-native-paper";
+import { useTheme } from "styled-components";
 import Topbar from "../../components/Topbar";
 import styled from "styled-components";
+import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import TransactionsCard from "../../components/cards/Transactions";
 import { GetYearlyExpences } from "../../api";
+import Button from "../../components/buttons/button";
+import NoTransactionsFound from "../../assets/images/NoTransactionsFound.png";
+import Oops from "../../assets/images/Oops.png";
 
 const Container = styled.ScrollView`
-  flex: 1;
   padding: 32px 0px;
   padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
@@ -55,22 +65,24 @@ const TransactionCardWrapper = styled.View`
 
 export default function Transactions() {
   const theme = useTheme();
+  const [error, setError] = useState();
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(moment().format("YYYY"));
   const [expences, setExpences] = useState([]);
   const { signOut, currentUser } = useAuthContext();
 
   const getExpences = async () => {
+    setError("");
     setLoading(true);
     await GetYearlyExpences(year, currentUser?.token)
       .then((res) => {
-        setLoading(false);
         setExpences(res?.data);
-        console.log(res.data);
+        setError("");
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
 
@@ -104,25 +116,105 @@ export default function Transactions() {
           <Loader />
         ) : (
           <>
-            <Section>
-              <Title>Transaction History</Title>
-              <TransactionCardWrapper>
-                {expences?.map((item) => (
-                  <Monthcard key={`expence-transactions-${item?.month}`}>
-                    <Month>{item?.month}</Month>
-
-                    <TransactionCardWrapper style={{ gap: 0 }}>
-                      {item?.transactions?.map((transactions) => (
-                        <TransactionsCard
-                          item={transactions}
-                          key={`expence-transactions-${transactions?.category}-${transactions?.id}`}
+            {error ? (
+              <>
+                <View style={{ flex: 1 }}>
+                  <TransactionCardWrapper
+                    style={{
+                      gap: 12,
+                      height: 600,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{
+                        width: 300,
+                        height: 300,
+                      }}
+                      source={Oops}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: theme.red,
+                      }}
+                    >
+                      {error}
+                    </Text>
+                    <Text
+                      style={{
+                        color: theme.text_primary,
+                      }}
+                    >
+                      Please refresh the page again !
+                    </Text>
+                  </TransactionCardWrapper>
+                </View>
+              </>
+            ) : (
+              <Section>
+                <Title>Transaction History</Title>
+                {expences.length === 0 ? (
+                  <TransactionCardWrapper
+                    style={{
+                      gap: 12,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{
+                        width: 200,
+                        height: 200,
+                      }}
+                      source={NoTransactionsFound}
+                    />
+                    <Text
+                      style={{
+                        color: theme.text_secondary,
+                      }}
+                    >
+                      No Transactions History Found
+                    </Text>
+                    <Button
+                      micro
+                      filled
+                      color={theme.white}
+                      bgcolor={theme.primary}
+                      startIcon={
+                        <MaterialIcons
+                          name="add"
+                          size={14}
+                          color={theme.white}
                         />
-                      ))}
-                    </TransactionCardWrapper>
-                  </Monthcard>
-                ))}
-              </TransactionCardWrapper>
-            </Section>
+                      }
+                      onPress={() => router.replace("/add-transactions")}
+                    >
+                      Add new Transaction
+                    </Button>
+                  </TransactionCardWrapper>
+                ) : (
+                  <TransactionCardWrapper>
+                    {expences?.map((item) => (
+                      <Monthcard key={`expence-transactions-${item?.month}`}>
+                        <Month>{item?.month}</Month>
+
+                        <TransactionCardWrapper style={{ gap: 0 }}>
+                          {item?.transactions?.map((transactions) => (
+                            <TransactionsCard
+                              item={transactions}
+                              key={`expence-transactions-${transactions?.category}-${transactions?.id}`}
+                            />
+                          ))}
+                        </TransactionCardWrapper>
+                      </Monthcard>
+                    ))}
+                  </TransactionCardWrapper>
+                )}
+              </Section>
+            )}
           </>
         )}
 

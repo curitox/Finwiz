@@ -28,10 +28,11 @@ const Title = styled.Text`
   text-align: center;
   font-weight: 600;
   font-size: 24px;
+  margin-top: 12px;
   color: ${({ theme }) => theme.text_primary};
 `;
 
-const Other = () => {
+const QRScanner = () => {
   const router = useRouter();
   const theme = useTheme();
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -108,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Other;
+export default QRScanner;

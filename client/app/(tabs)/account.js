@@ -18,7 +18,6 @@ import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 
 const MainContainer = styled.ScrollView`
-  flex: 1;
   background-color: ${({ theme }) => theme.bg};
 `;
 const Card = styled.View`
