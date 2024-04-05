@@ -64,3 +64,22 @@ export const AddSavingsToGoal = async (id, data, token) =>
   await API.post(`/goal/progress?id=${id}`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+//Analytics
+export const GetExpenceCategory = async (token) =>
+  await API.get("/get/expenseCategory", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+export const GetWeeklyExpence = async (token) =>
+  await API.get("/get/expenseWeekly", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const GetGoalStatus = async (token) =>
+  await API.get("/get/goalStatus", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+export const GetGoalsGraph = async (token) =>
+  await API.get("/get/goalsGraph", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
