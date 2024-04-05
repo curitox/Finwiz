@@ -63,8 +63,8 @@ const BudgetRecomendations = ({ budgetRecomendation }) => {
         >
           <Title>Budget Recomendations</Title>
           <Desc>
-            Our recomendations to optimize your budgets based on spending
-            categories
+            Our recomendations to optimize your budgets based on spending habits
+            categories on which your most spending takes places.
           </Desc>
         </View>
         <View

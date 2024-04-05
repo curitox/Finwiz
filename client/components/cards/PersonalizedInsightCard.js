@@ -56,8 +56,8 @@ const PersonalizedInsight = ({ personalizedInsight }) => {
         >
           <Title>Personalized Insights</Title>
           <Desc>
-            Based on your spending habits, here are some insights to help you
-            manage your finance better:
+            Based on your spending habits amount, here are some insights to help
+            you manage your finance better.
           </Desc>
         </View>
         {personalizedInsight?.showData ? (
