@@ -7,7 +7,7 @@ from error import create_error
 from datetime import date
 from model import User, Expense, Goal, db
 from app import app
-from utils.category_colors import category_colors
+from server.utils.categories import category_colors
 
 graphs_bp=Blueprint("graphs", __name__, template_folder="graphs")
 
