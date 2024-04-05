@@ -87,7 +87,7 @@ const renderDot = (color) => {
   );
 };
 
-const ChartCard = ({ chartData }) => {
+const ExpencePredictionCard = ({ chartData }) => {
   const theme = useTheme();
 
   return (
@@ -99,8 +99,11 @@ const ChartCard = ({ chartData }) => {
             gap: 2,
           }}
         >
-          <Title>Todays Expences</Title>
-          <Desc>Detailed insight of your todays Expences </Desc>
+          <Title>Expence Prediction</Title>
+          <Desc>
+            Based on your past expences, here are your projected expence for
+            next month.
+          </Desc>
         </View>
         <Section>
           <Left>
@@ -108,8 +111,8 @@ const ChartCard = ({ chartData }) => {
               <PieChart
                 data={(chartData?.data && chartData?.data) || []}
                 donut
-                radius={50}
-                innerRadius={34}
+                radius={60}
+                innerRadius={40}
                 focusOnPress
                 innerCircleColor={theme.mainCard}
               />
@@ -123,20 +126,6 @@ const ChartCard = ({ chartData }) => {
             >
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 12,
-                }}
-              >
-                <Value>₹{Math.trunc(chartData?.total_amount)}</Value>
-                <Feather
-                  name="arrow-down-circle"
-                  size={18}
-                  color={theme.green}
-                />
-              </View>
-              <View
-                style={{
                   flex: 1,
                   flexWrap: "wrap",
                   flexDirection: "row",
@@ -144,7 +133,7 @@ const ChartCard = ({ chartData }) => {
                 }}
               >
                 {chartData?.data?.map((item, index) => (
-                  <Item key={`chart-card-home-${item?.name}-${index}`}>
+                  <Item key={`chart-card-insight-${item?.name}-${index}`}>
                     {renderDot(getCategoryByValue(item?.name)?.color)}
                     <Text
                       style={{
@@ -165,4 +154,4 @@ const ChartCard = ({ chartData }) => {
   );
 };
 
-export default ChartCard;
+export default ExpencePredictionCard;

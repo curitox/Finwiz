@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Linking } from "react-native";
 import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -32,6 +32,7 @@ const Title = styled.Text`
   text-align: center;
   font-weight: 600;
   font-size: 24px;
+  margin-bottom: 12px;
   color: ${({ theme }) => theme.text_primary};
 `;
 
@@ -141,127 +142,129 @@ export default function AddGoals() {
           <Ionicons name="chevron-back" size={22} color={theme.text_primary} />
         </Back>
         <Toast />
-        <Title>Create New Goal 🎯</Title>
-        <Wrapper>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
-            <InputText
-              startIcon={
-                <MaterialCommunityIcons
-                  name="bullseye-arrow"
-                  size={24}
-                  color={theme.text_secondary}
-                />
-              }
-              value={goalData.name}
-              onChangeText={handleInputChange}
-              placeholder="Enter Goal Title"
-              label="Goal Title"
-              name="name"
-              type={"default"}
-            />
-            <InputText
-              startIcon={
-                <MaterialCommunityIcons
-                  name="notebook-edit"
-                  size={24}
-                  color={theme.text_secondary}
-                />
-              }
-              value={goalData.description}
-              onChangeText={handleInputChange}
-              placeholder="Enter Goal Short Description"
-              label="Goal Description"
-              name="description"
-              type={"default"}
-            />
-            <DateInput
-              startIcon={
-                <Icon
-                  name="calendar-month-outline"
-                  size={24}
-                  color={theme.text_secondary}
-                />
-              }
-              value={goalData.target_date}
-              onChange={(date, name) =>
-                setGoalData({
-                  ...goalData,
-                  target_date: date,
-                })
-              }
-              label="Target Date"
-              placeholder="Goal Completion Date"
-              name="target_date"
-            />
-            <InputText
-              startIcon={
-                <FontAwesome
-                  name="rupee"
-                  size={22}
-                  color={theme.text_secondary}
+        <ScrollView>
+          <Title>Create New Goal 🎯</Title>
+          <Wrapper>
+            <View
+              style={{
+                gap: 10,
+              }}
+            >
+              <InputText
+                startIcon={
+                  <MaterialCommunityIcons
+                    name="bullseye-arrow"
+                    size={24}
+                    color={theme.text_secondary}
+                  />
+                }
+                value={goalData.name}
+                onChangeText={handleInputChange}
+                placeholder="Enter Goal Title"
+                label="Goal Title"
+                name="name"
+                type={"default"}
+              />
+              <InputText
+                startIcon={
+                  <MaterialCommunityIcons
+                    name="notebook-edit"
+                    size={24}
+                    color={theme.text_secondary}
+                  />
+                }
+                value={goalData.description}
+                onChangeText={handleInputChange}
+                placeholder="Enter Goal Short Description"
+                label="Goal Description"
+                name="description"
+                type={"default"}
+              />
+              <DateInput
+                startIcon={
+                  <Icon
+                    name="calendar-month-outline"
+                    size={24}
+                    color={theme.text_secondary}
+                  />
+                }
+                value={goalData.target_date}
+                onChange={(date, name) =>
+                  setGoalData({
+                    ...goalData,
+                    target_date: date,
+                  })
+                }
+                label="Target Date"
+                placeholder="Goal Completion Date"
+                name="target_date"
+              />
+              <InputText
+                startIcon={
+                  <FontAwesome
+                    name="rupee"
+                    size={22}
+                    color={theme.text_secondary}
+                    style={{
+                      marginRight: 5,
+                      marginLeft: 5,
+                    }}
+                  />
+                }
+                value={goalData.target_amount}
+                onChangeText={handleInputChange}
+                placeholder="Enter Target Amount"
+                label="Target Amount"
+                name="target_amount"
+                type={"numeric"}
+              />
+              <SelectagleItem>
+                <InputName>Priority Level</InputName>
+                <View
                   style={{
-                    marginRight: 5,
-                    marginLeft: 5,
+                    flexDirection: "row",
+                    gap: 10,
                   }}
-                />
-              }
-              value={goalData.target_amount}
-              onChangeText={handleInputChange}
-              placeholder="Enter Target Amount"
-              label="Target Amount"
-              name="target_amount"
-              type={"numeric"}
-            />
-            <SelectagleItem>
-              <InputName>Priority Level</InputName>
-              <View
-                style={{
-                  flexDirection: "row",
-                  gap: 10,
-                }}
-              >
-                {PriorityList.map((priorityItem, index) => (
-                  <SelectableChip
-                    key={`priorityItem-${index}`}
-                    flex
-                    selected={priorityItem.value === goalData.priority_level}
-                    onPress={() =>
-                      setGoalData({
-                        ...goalData,
-                        priority_level: priorityItem.value,
-                      })
-                    }
-                    startIcon={priorityItem.icon}
-                    color={priorityItem.color}
-                  >
-                    {priorityItem.label}
-                  </SelectableChip>
-                ))}
-              </View>
-            </SelectagleItem>
-          </View>
+                >
+                  {PriorityList.map((priorityItem, index) => (
+                    <SelectableChip
+                      key={`priorityItem-${index}`}
+                      flex
+                      selected={priorityItem.value === goalData.priority_level}
+                      onPress={() =>
+                        setGoalData({
+                          ...goalData,
+                          priority_level: priorityItem.value,
+                        })
+                      }
+                      startIcon={priorityItem.icon}
+                      color={priorityItem.color}
+                    >
+                      {priorityItem.label}
+                    </SelectableChip>
+                  ))}
+                </View>
+              </SelectagleItem>
+            </View>
+          </Wrapper>
+        </ScrollView>
 
-          <Button
-            type="filled"
-            color={theme.white}
-            bgcolor={theme.primary}
-            loading={loading}
-            onPress={() => handelAddGoal()}
-            disabled={
-              goalData.target_amount === "" ||
-              goalData.target_date === "" ||
-              goalData.priority_level === "" ||
-              goalData.name === "" ||
-              goalData.description === ""
-            }
-          >
-            Continue
-          </Button>
-        </Wrapper>
+        <Button
+          type="filled"
+          color={theme.white}
+          bgcolor={theme.primary}
+          loading={loading}
+          onPress={() => handelAddGoal()}
+          disabled={
+            goalData.target_amount === "" ||
+            goalData.target_date === "" ||
+            goalData.priority_level === "" ||
+            goalData.name === "" ||
+            goalData.description === ""
+          }
+        >
+          Continue
+        </Button>
       </Container>
     </>
   );

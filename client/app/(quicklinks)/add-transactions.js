@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Linking } from "react-native";
 import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -32,6 +32,7 @@ const Title = styled.Text`
   text-align: center;
   font-weight: 600;
   font-size: 24px;
+  margin-bottom: 12px;
   color: ${({ theme }) => theme.text_primary};
 `;
 
@@ -329,49 +330,52 @@ export default function AddTransactions() {
               color={theme.text_primary}
             />
           </Back>
-          <Title>Add New Transaction</Title>
-          {data !== "" && data !== undefined && data !== null && (
-            <UPIID>
-              {extractUpiDetails(data).name} - {extractUpiDetails(data).upiId}
-            </UPIID>
-          )}
-          <Wrapper>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <FontAwesome
-                name="rupee"
-                size={28}
-                color={theme.text_secondary}
-              />
-              <InputField
-                value={transactionData.amount}
-                placeholder="0"
-                name="amount"
-                onChangeText={(text) => handleInputChange(text, "amount")}
-                placeholderTextColor={"#777"}
-                keyboardType="numeric"
-                autoFocus
-              />
-            </View>
-            <Button
-              type="filled"
-              color={theme.white}
-              bgcolor={theme.primary}
-              // loading={loading}
-              onPress={() => handelNext()}
-              disabled={
-                transactionData.amount === "" || transactionData.amount === "0"
-              }
-            >
-              Continue
-            </Button>
-          </Wrapper>
+          <ScrollView>
+            <Title>Add New Transaction</Title>
+            {data !== "" && data !== undefined && data !== null && (
+              <UPIID>
+                {extractUpiDetails(data).name} - {extractUpiDetails(data).upiId}
+              </UPIID>
+            )}
+            <Wrapper>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <FontAwesome
+                  name="rupee"
+                  size={28}
+                  color={theme.text_secondary}
+                />
+                <InputField
+                  value={transactionData.amount}
+                  placeholder="0"
+                  name="amount"
+                  onChangeText={(text) => handleInputChange(text, "amount")}
+                  placeholderTextColor={"#777"}
+                  keyboardType="numeric"
+                  autoFocus
+                />
+              </View>
+            </Wrapper>
+          </ScrollView>
+
+          <Button
+            type="filled"
+            color={theme.white}
+            bgcolor={theme.primary}
+            // loading={loading}
+            onPress={() => handelNext()}
+            disabled={
+              transactionData.amount === "" || transactionData.amount === "0"
+            }
+          >
+            Continue
+          </Button>
           <Toast />
         </Container>
       ) : (
@@ -384,93 +388,98 @@ export default function AddTransactions() {
             />
           </Back>
           <Toast />
-          <Title>Transaction Details</Title>
-          <Wrapper>
-            <View
-              style={{
-                gap: 10,
-              }}
-            >
-              <DateInput
-                startIcon={
-                  <Icon
-                    name="calendar-month-outline"
-                    size={24}
-                    color={theme.text_secondary}
-                  />
-                }
-                value={transactionData.transactionDate}
-                onChange={(date, name) =>
-                  setTransactionData({
-                    ...transactionData,
-                    transactionDate: date,
-                  })
-                }
-                label="Transaction Date"
-                placeholder="Enter your transaction date"
-                name="transactionDate"
-              />
-              <InputText
-                startIcon={
-                  <MaterialCommunityIcons
-                    name="notebook-edit"
-                    size={24}
-                    color={theme.text_secondary}
-                  />
-                }
-                value={transactionData.description}
-                onChangeText={handleInputChange}
-                placeholder="Enter a note"
-                label="Transaction Decription"
-                name="description"
-                type={"default"}
-              />
-              <SelectagleItem>
-                <InputName>Transaction Category</InputName>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    gap: 10,
-                  }}
-                >
-                  {TransactionCategories.map((transactionCategories, index) => (
-                    <SelectableChip
-                      key={`transactionCategories-${index}`}
-                      selected={
-                        transactionCategories.value === transactionData.category
-                      }
-                      onPress={() =>
-                        setTransactionData({
-                          ...transactionData,
-                          category: transactionCategories.value,
-                        })
-                      }
-                      startIcon={transactionCategories.icon}
-                      color={transactionCategories.color}
-                    >
-                      <Text> {transactionCategories.name}</Text>
-                    </SelectableChip>
-                  ))}
-                </View>
-              </SelectagleItem>
-            </View>
+          <ScrollView>
+            <Title>Transaction Details</Title>
+            <Wrapper>
+              <View
+                style={{
+                  gap: 10,
+                }}
+              >
+                <DateInput
+                  startIcon={
+                    <Icon
+                      name="calendar-month-outline"
+                      size={24}
+                      color={theme.text_secondary}
+                    />
+                  }
+                  value={transactionData.transactionDate}
+                  onChange={(date, name) =>
+                    setTransactionData({
+                      ...transactionData,
+                      transactionDate: date,
+                    })
+                  }
+                  label="Transaction Date"
+                  placeholder="Enter your transaction date"
+                  name="transactionDate"
+                />
+                <InputText
+                  startIcon={
+                    <MaterialCommunityIcons
+                      name="notebook-edit"
+                      size={24}
+                      color={theme.text_secondary}
+                    />
+                  }
+                  value={transactionData.description}
+                  onChangeText={handleInputChange}
+                  placeholder="Enter a note"
+                  label="Transaction Decription"
+                  name="description"
+                  type={"default"}
+                />
+                <SelectagleItem>
+                  <InputName>Transaction Category</InputName>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      gap: 10,
+                    }}
+                  >
+                    {TransactionCategories.map(
+                      (transactionCategories, index) => (
+                        <SelectableChip
+                          key={`transactionCategories-${index}`}
+                          selected={
+                            transactionCategories.value ===
+                            transactionData.category
+                          }
+                          onPress={() =>
+                            setTransactionData({
+                              ...transactionData,
+                              category: transactionCategories.value,
+                            })
+                          }
+                          startIcon={transactionCategories.icon}
+                          color={transactionCategories.color}
+                        >
+                          <Text> {transactionCategories.name}</Text>
+                        </SelectableChip>
+                      )
+                    )}
+                  </View>
+                </SelectagleItem>
+              </View>
+            </Wrapper>
+          </ScrollView>
 
-            <Button
-              type="filled"
-              color={theme.white}
-              bgcolor={theme.primary}
-              loading={loading}
-              onPress={() => handelNext()}
-              disabled={
-                transactionData.transactionDate === "" ||
-                transactionData.category === "" ||
-                transactionData.description === ""
-              }
-            >
-              Continue
-            </Button>
-          </Wrapper>
+          <Button
+            type="filled"
+            color={theme.white}
+            bgcolor={theme.primary}
+            loading={loading}
+            onPress={() => handelNext()}
+            disabled={
+              transactionData.transactionDate === "" ||
+              transactionData.category === "" ||
+              transactionData.description === ""
+            }
+          >
+            Continue
+          </Button>
         </Container>
       )}
     </>
