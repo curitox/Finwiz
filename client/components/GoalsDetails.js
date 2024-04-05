@@ -208,6 +208,7 @@ const GoalsDetails = ({ item }) => {
     await GetGoalSavings(item?.id, currentUser?.token)
       .then((res) => {
         setLoading(false);
+        console.log(res?.data);
         setSavings(res?.data);
       })
       .catch((err) => {
