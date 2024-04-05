@@ -30,3 +30,20 @@ expense_categories = {
     "gifts_donations",
     "miscellaneous"
 }
+
+priority_scale = {
+        'food': 3,
+        'shopping': 1,
+        'transportation': 2,
+        'housing': 5,
+        'utilities': 4,
+        'health_fitness': 3,
+        'personal_care': 3,
+        'entertainment': 1,
+        'education': 5,
+        'travel': 2,
+        'savings_investments': 4,
+        'debt_payments': 5,
+        'gifts_donations': 1,
+        'miscellaneous': 2
+    }

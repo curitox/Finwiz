@@ -6,7 +6,7 @@ from sqlalchemy import func
 from middleware.verifyToken import verifyToken
 from error import create_error
 from model import User, Expense
-from utils.categories import expense_categories
+from utils.categories import expense_categories, priority_scale
 
 predictions_bp=Blueprint("predictions", __name__, template_folder="predictions")
 model = pickle.load(open('random_forest_model.pkl', 'rb'))
@@ -44,22 +44,6 @@ def maxExpense_predict():
         category_totals[expense.category] += expense.amount
     
     # Define the priority scale for categories
-    priority_scale = {
-        'food': 3,
-        'shopping': 1,
-        'transportation': 2,
-        'housing': 5,
-        'utilities': 4,
-        'health_fitness': 3,
-        'personal_care': 3,
-        'entertainment': 1,
-        'education': 5,
-        'travel': 2,
-        'savings_investments': 4,
-        'debt_payments': 5,
-        'gifts_donations': 1,
-        'miscellaneous': 2
-    }
     
     # Sort categories by total expenditure
     sorted_categories = sorted(category_totals.items(), key=lambda x: x[1], reverse=True)
