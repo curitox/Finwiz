@@ -11,7 +11,7 @@ import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
-import { AddGoal, BudgetAnalysis } from "../../api";
+import { AddGoal, BudgetAnalysis, GetPersonalizedInsight } from "../../api";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 import ExpencePredictionCard from "../../components/cards/ExpencePredictionCard";
@@ -68,7 +68,54 @@ export default function AIinsights() {
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [budgetRecomendation, setBudgetRecomendation] = useState([]);
+  const [personalizedInsight, setPersonalizedInsight] = useState({
+    insights: [
+      {
+        category: "entertainment",
+        total_expense: "400.00",
+      },
+      {
+        category: "transportation",
+        total_expense: "200.00",
+      },
+      {
+        category: "gifts_donations",
+        total_expense: "50.00",
+      },
+      {
+        category: "miscellaneous",
+        total_expense: 0,
+      },
+      {
+        category: "shopping",
+        total_expense: 0,
+      },
+      {
+        category: "travel",
+        total_expense: 0,
+      },
+    ],
+    max_category: "food",
+    max_expense: "950.00",
+    message: "Expenditure is within limits.",
+    showData: true,
+  });
   const { currentUser } = useAuthContext();
+
+  const getPersonalizedInsight = async () => {
+    setError("");
+    setLoading(true);
+    await GetPersonalizedInsight(currentUser?.token)
+      .then((res) => {
+        setError("");
+        setPersonalizedInsight(res?.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message);
+      });
+  };
 
   const getBudgetRecomendation = async () => {
     setError("");
@@ -87,6 +134,7 @@ export default function AIinsights() {
 
   useEffect(() => {
     getBudgetRecomendation();
+    // getPersonalizedInsight();
   }, []);
 
   return (
@@ -108,7 +156,9 @@ export default function AIinsights() {
                 }}
               >
                 <ExpencePredictionCard />
-                <PersonalizedInsight />
+                <PersonalizedInsight
+                  personalizedInsight={personalizedInsight}
+                />
                 <BudgetRecomendations
                   budgetRecomendation={budgetRecomendation}
                 />

@@ -60,6 +60,11 @@ export const BudgetAnalysis = async (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+export const GetPersonalizedInsight = async (token) =>
+  await API.get("/predict/maxExpenses", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 // Savings
 export const GetGoalSavings = async (id, token) =>
   await API.get(`/goal/savings?id=${id}`, {

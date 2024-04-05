@@ -88,7 +88,6 @@ const BudgetRecomendations = ({ budgetRecomendation }) => {
               {renderDot(getCategoryByValue(item[0])?.color)}
               <View
                 style={{
-                  backgroundColor: "#00000",
                   flex: 1,
                 }}
               >
