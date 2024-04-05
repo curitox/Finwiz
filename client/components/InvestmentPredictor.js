@@ -73,38 +73,66 @@ const Suggestion = styled.Text`
 const InvestmentPredictor = ({ item }) => {
     const theme = useTheme();
     const [loading, setLoading] = useState();
-    const [predictData, setPredictData] = useState({ minimum_investment: 0, potential_return: "", risk: 0, liquidity: 0, best_investment: 1})
+    const [predictData, setPredictData] = useState({ minimum_investment: 0, potential_return: "", risk: 0, liquidity: 0, best_investment: 1 })
     const [predictedData, setPredictedData] = useState("");
     const { currentUser } = useAuthContext();
     const [result, setResult] = useState(false);
-    useEffect(()=>{
-        if(predictedData!=="") setResult(true);
+    useEffect(() => {
+        if (predictedData !== "") setResult(true);
         else setResult(false);
-    },[predictedData])
-    const handleSubmit = async() => {
+    }, [predictedData])
+    const handleSubmit = async () => {
         setLoading(true)
         const response = await PredictInvestment(predictData, currentUser.token)
         setPredictedData(response.data[0])
         setLoading(false)
     }
-    const potentialReturn = [
+    const options_return = [
         {
-            name: "High",
+            name: "high",
             value: "🤑 High"
         },
         {
-            name: "Average",
-            value: "💼 Average"
+            name: "medium",
+            value: "💼 Medium"
         },
         {
-            name: "Low",
+            name: "low",
             value: "📈 Low"
+        }
+    ]
+    const options_risk = [
+        {
+            name: "high",
+            value: "🔥 High"
+        },
+        {
+            name: "medium",
+            value: "⚠️ Medium"
+        },
+        {
+            name: "low",
+            value: "🛡️ Low"
+        }
+    ]
+    const options_liquidity = [
+        {
+            name: "high",
+            value: "💎 High"
+        },
+        {
+            name: "medium",
+            value: "💰 Medium"
+        },
+        {
+            name: "low",
+            value: "💸 Low"
         }
     ]
     const range = [1, 2, 3, 4, 5]
 
     return (
-            <Card>
+        <Card>
             <Title color={item?.color}>Investment Predictor</Title>
             {result && (
                 <ResultWrapper>
@@ -116,10 +144,11 @@ const InvestmentPredictor = ({ item }) => {
                 <FormContainer>
                     <InputText
                         startIcon={
-                            <FontAwesome name="money" size={24} color={theme.text_secondary} />
+                            <FontAwesome name="money" size={18} color={theme.text_secondary} />
                         }
+                        small
                         value={predictData?.minimum_investment === 0 ? '' : predictData.minimum_investment}
-                        onChangeText={(value)=>setPredictData({...predictData, minimum_investment: value})}
+                        onChangeText={(value) => setPredictData({ ...predictData, minimum_investment: value })}
                         placeholder="Enter an amount"
                         label="Minimum Investment"
                         name="Minimum Investment"
@@ -134,7 +163,7 @@ const InvestmentPredictor = ({ item }) => {
                                 gap: 10,
                             }}
                         >
-                            {potentialReturn.map((value, index) => (
+                            {options_return.map((value, index) => (
                                 <SelectableChip
                                     flex
                                     key={index}
@@ -164,22 +193,23 @@ const InvestmentPredictor = ({ item }) => {
                                 gap: 20,
                             }}
                         >
-                            {range.map((r, index) => (
-                                <CircularChip
+                            {options_risk.map((r, index) => (
+                                <SelectableChip
+                                    flex
                                     key={index}
                                     selected={
-                                        r === predictData.risk
+                                        r.name === predictData.risk
                                     }
                                     onPress={() =>
                                         setPredictData({
                                             ...predictData,
-                                            risk: r,
+                                            risk: r.name,
                                         })
                                     }
                                     color={theme.primary}
                                 >
-                                    {r}
-                                </CircularChip>
+                                    {r.value}
+                                </SelectableChip>
                             ))}
                         </View>
                     </SelectableItem>
@@ -192,22 +222,23 @@ const InvestmentPredictor = ({ item }) => {
                                 gap: 20,
                             }}
                         >
-                            {range.map((l, index) => (
-                                <CircularChip
+                            {options_liquidity.map((l, index) => (
+                                <SelectableChip
+                                    flex
                                     key={index}
                                     selected={
-                                        l === predictData.liquidity
+                                        l.name === predictData.liquidity
                                     }
                                     onPress={() =>
                                         setPredictData({
                                             ...predictData,
-                                            liquidity: l,
+                                            liquidity: l.name,
                                         })
                                     }
                                     color={theme.primary}
                                 >
-                                    {l}
-                                </CircularChip>
+                                    {l.value}
+                                </SelectableChip>
                             ))}
                         </View>
                     </SelectableItem>

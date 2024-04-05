@@ -7,6 +7,7 @@ from error import create_error
 from datetime import date
 from model import User, Expense, Goal, db
 from app import app
+from utils.category_colors import category_colors
 
 graphs_bp=Blueprint("graphs", __name__, template_folder="graphs")
 
@@ -24,11 +25,12 @@ def expense_category():
     # Query to get expenses grouped by category
     category_expenses = db.session.query(Expense.category, func.sum(Expense.amount)).filter(Expense.user_id == user_id).group_by(Expense.category).all()
     
-    # Calculate percentage for each category
+    # Calculate percentage and assign color for each category
     category_percentage = []
     for category, amount in category_expenses:
         percentage = round((amount / total_expenses) * 100, 2)
-        category_percentage.append({"value": float(percentage), "text": category})
+        color = category_colors.get(category.lower(), "#CCCCCC")  # Default color if category not found
+        category_percentage.append({"value": float(percentage), "text": category, "color": color})
     
     return jsonify(category_percentage)
 
@@ -140,24 +142,6 @@ def expense_daily():
         func.date(Expense.transactionDate) >= start_date,
         func.date(Expense.transactionDate) <= end_date
     ).group_by(Expense.category).all()
-
-    # Create dictionary to map category names to their hex colors
-    category_colors = {
-        "food": "#FF6F61",
-        "shopping": "#FFD166",
-        "transportation": "#4CAF50",
-        "housing": "#5DADE2",
-        "utilities": "#FFA07A",
-        "health_fitness": "#AF7AC5",
-        "personal_care": "#AED6F1",
-        "entertainment": "#F5B041",
-        "education": "#76D7C4",
-        "travel": "#FAD7A0",
-        "savings_investments": "#F1948A",
-        "debt_payments": "#85C1E9",
-        "gifts_donations": "#D7BDE2",
-        "miscellaneous": "#E59866"
-    }
 
     # Prepare response data
     response_data = []
