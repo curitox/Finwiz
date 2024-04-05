@@ -31,8 +31,8 @@ def maxExpense_predict():
     
     # Calculate the start and end date of the last month
     today = datetime.now()
-    last_month_start = today.replace(day=1) - timedelta(days=1)
     last_month_end = today.replace(day=1) - timedelta(days=1)
+    last_month_start = last_month_end.replace(day=1)
     
     # Filter expenses for the last month
     expenses = Expense.query.filter(Expense.user_id == user_id,
