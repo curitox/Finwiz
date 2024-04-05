@@ -29,38 +29,54 @@ def maxExpense_predict():
     if not user:
         return create_error(404, "User not found")
     
-    # Calculate the date 2 months ago
-    two_months_ago = datetime.now() - timedelta(days=60)
+    # Calculate the start and end date of the last month
+    today = datetime.now()
+    last_month_start = today.replace(day=1) - timedelta(days=1)
+    last_month_end = today.replace(day=1) - timedelta(days=1)
     
-    # Filter expenses for the last 2 months
+    # Filter expenses for the last month
     expenses = Expense.query.filter(Expense.user_id == user_id,
-                                     Expense.transactionDate >= two_months_ago).all()
+                                     Expense.transactionDate >= last_month_start,
+                                     Expense.transactionDate <= last_month_end).all()
     
-    # Initialize a dictionary to store total expenditures for each category
-    category_totals = {category: 0 for category in expense_categories}
+    # Calculate total expenditure for the last month
+    total_expense_last_month = sum(expense.amount for expense in expenses)
     
-    # Calculate total expenditure for each category
-    for expense in expenses:
-        category_totals[expense.category] += expense.amount
+    # Check if the expenditure exceeds 60% of monthly income
+    show_data = total_expense_last_month > (0.6 * user.monthlyIncome)
     
-    # Define the priority scale for categories
-    
-    # Sort categories by total expenditure
-    sorted_categories = sorted(category_totals.items(), key=lambda x: x[1], reverse=True)
-    
-    # Get the highest expenditure category
-    max_category, max_expense = sorted_categories[0]
-    
-    # Get insights based on priority scale
+    # Initialize insights list
     insights = []
     
-    for category, total_expense in sorted_categories:
-        priority = priority_scale.get(category, 0)
-        if priority < 3:  # Low priority categories
-            insights.append({"category": category, "total_expense": total_expense})
+    if show_data:
+        # Initialize a dictionary to store total expenditures for each category
+        category_totals = {category: 0 for category in expense_categories}
+        
+        # Calculate total expenditure for each category
+        for expense in expenses:
+            category_totals[expense.category] += expense.amount
+        
+        # Sort categories by total expenditure
+        sorted_categories = sorted(category_totals.items(), key=lambda x: x[1], reverse=True)
+        
+        # Get the highest expenditure category
+        max_category, max_expense = sorted_categories[0]
+        
+        # Get insights based on priority scale
+        for category, total_expense in sorted_categories:
+            priority = priority_scale.get(category, 0)
+            if priority < 3:  # Low priority categories
+                insights.append({"category": category, "total_expense": total_expense})
+    else:
+        max_category = None
+        max_expense = None
+    
+    message = "Expenditure is within limits." if not show_data else None
     
     return jsonify({
         "max_category": max_category,
         "max_expense": max_expense,
-        "insights": insights
+        "insights": insights,
+        "showData": show_data,
+        "message": message
     })
