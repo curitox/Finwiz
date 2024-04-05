@@ -56,8 +56,8 @@ export const PredictInvestment = async (data, token) =>
   });
 
 // Savings
-export const GetGoalSavings = async (id, data, token) =>
-  await API.post(`/goal/progress?id=${id}`, data, {
+export const GetGoalSavings = async (id, token) =>
+  await API.get(`/goal/savings?id=${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 export const AddSavingsToGoal = async (id, data, token) =>
