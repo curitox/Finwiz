@@ -1,21 +1,16 @@
 import pickle
 from flask import request, jsonify, Blueprint
 import pandas as pd
-import numpy as np
-from app import app
 from middleware.verifyToken import verifyToken
 
 predictions_bp=Blueprint("predictions", __name__, template_folder="predictions")
-model = pickle.load(open('investment_model.pkl', 'rb'))
-
-potential_return_mapping = {"Low": 1, "Average": 2, "High": 3}
-type_mapping = {"Financial": 1, "Property": 2, "Commodity": 3, "Entrepreneurship": 4, "Hobby": 5, "Personal": 6}
+model = pickle.load(open('random_forest_model.pkl', 'rb'))
 
 @predictions_bp.route('/predict/invest', methods=['POST'])
 @verifyToken
 def invest_predict():
     input_data = request.json
-    potential_return_value = potential_return_mapping.get(input_data['potential_return'], 2)  
-    input_data_array = np.array([[input_data['minimum_investment'], input_data['risk'], input_data['best_investment'], input_data['liquidity'], potential_return_value]])
-    prediction = model.predict(input_data_array)
+    input_data_array = {key: [value] for key, value in input_data.items()}
+    user_input = pd.DataFrame(input_data_array)
+    prediction = model.predict(user_input)
     return jsonify(prediction.tolist())
