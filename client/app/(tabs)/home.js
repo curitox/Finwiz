@@ -379,7 +379,7 @@ const Home = () => {
                     </TransactionCardWrapper>
                   ) : (
                     <>
-                      <Month>{prevMonth[0]?.month}</Month>
+                      <Month>Today</Month>
                       <TransactionCardWrapper>
                         {expences?.map((item) => (
                           <TransactionsCard
