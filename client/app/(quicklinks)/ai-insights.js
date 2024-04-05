@@ -15,6 +15,8 @@ import { AddGoal } from "../../api";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 import ExpencePredictionCard from "../../components/cards/ExpencePredictionCard";
+import PersonalizedInsight from "../../components/cards/PersonalizedInsightCard";
+import BudgetRecomendations from "../../components/cards/BudgetRecomendations";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -140,6 +142,8 @@ export default function AIinsights() {
             }}
           >
             <ExpencePredictionCard />
+            <PersonalizedInsight />
+            <BudgetRecomendations />
           </View>
         </Wrapper>
       </Container>
