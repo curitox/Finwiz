@@ -28,7 +28,7 @@ def expense_category():
     category_percentage = []
     for category, amount in category_expenses:
         percentage = round((amount / total_expenses) * 100, 2)
-        category_percentage.append({"value": percentage, "text": category})
+        category_percentage.append({"value": float(percentage), "text": category})
     
     return jsonify(category_percentage)
 
@@ -64,7 +64,7 @@ def expense_weekly():
     user = User.query.get(user_id)
     if not user:
         return create_error(404, "User not found")
-    endDay = datetime.now().date()
+    endDay = datetime.now().date()+timedelta(days=1)
     present_day_of_week = endDay.weekday()  
     startDay = endDay - timedelta(days=6)
 
@@ -91,6 +91,7 @@ def expense_weekly():
     ])
     bar_data.rotate(6-present_day_of_week)
     bar_data = list(bar_data)
+    bar_data.pop()
     return jsonify(bar_data)
 
 @graphs_bp.route('/get/goalsGraph', methods=['GET'])
