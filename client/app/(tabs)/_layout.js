@@ -28,6 +28,7 @@ export default function TabsLayout() {
       <Tabs
         initialRouteName="home"
         screenOptions={{
+          tabBarActiveTintColor: theme.primary,
           headerShown: false,
           tabBarStyle: {
             position: "absolute",
@@ -35,15 +36,13 @@ export default function TabsLayout() {
             padding: 2,
             height: Platform.OS === "ios" ? 100 : 60,
           },
+          tabBarLabelStyle: {
+            color: theme.text_primary,
+            fontWeight: "bold",
+          },
         }}
         tabBar={(props) =>
           Platform.OS === "ios" ? (
-            // <BlurView
-            //   style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-            //   intensity={95}
-            // >
-            //   <BottomTabBar {...props} />
-            // </BlurView>
             <BottomTabBar {...props} />
           ) : (
             <BottomTabBar {...props} />
@@ -75,6 +74,7 @@ export default function TabsLayout() {
                     marginTop: 5,
                     fontSize: 12,
                     opacity: 1,
+                    fontWeight: 500,
                     color: color,
                   }}
                 >
@@ -109,6 +109,7 @@ export default function TabsLayout() {
                     marginTop: 5,
                     fontSize: 12,
                     opacity: 1,
+                    fontWeight: 500,
                     color: color,
                   }}
                 >
@@ -143,6 +144,7 @@ export default function TabsLayout() {
                     marginTop: 5,
                     fontSize: 12,
                     opacity: 1,
+                    fontWeight: 500,
                     color: color,
                   }}
                 >
@@ -177,6 +179,7 @@ export default function TabsLayout() {
                     marginTop: 5,
                     fontSize: 12,
                     opacity: 1,
+                    fontWeight: 500,
                     color: color,
                   }}
                 >
@@ -211,6 +214,7 @@ export default function TabsLayout() {
                     marginTop: 5,
                     fontSize: 12,
                     opacity: 1,
+                    fontWeight: 500,
                     color: color,
                   }}
                 >

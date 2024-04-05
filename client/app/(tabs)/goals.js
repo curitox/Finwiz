@@ -1,4 +1,11 @@
-import { View, Text, Pressable, RefreshControl, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  RefreshControl,
+  StatusBar,
+  Image,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
@@ -9,9 +16,10 @@ import Loader from "../../components/Loader";
 import GoalCard from "../../components/cards/GoalsCard";
 import Button from "../../components/buttons/button";
 import { router } from "expo-router";
+import NoGoalImage from "../../assets/images/Goal.png";
+import Oops from "../../assets/images/Oops.png";
 
 const Container = styled.ScrollView`
-  flex: 1;
   padding: 32px 0px;
   padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
@@ -48,19 +56,21 @@ export default function Accout() {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [goals, setGoals] = useState([]);
+  const [error, setError] = useState();
   const { signOut, currentUser } = useAuthContext();
 
   const getGoals = async () => {
+    setError("");
     setLoading(true);
     await GetGoals(currentUser?.token)
       .then((res) => {
-        console.log("Goals", res.data);
+        setError("");
         setLoading(false);
         setGoals(res?.data);
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
 
@@ -94,30 +104,106 @@ export default function Accout() {
           <Loader />
         ) : (
           <>
-            <Section>
-              <TitleWrapper>
-                <Title>Current Goals ({goals?.length})</Title>
-                <View>
-                  <Button
-                    micro
-                    filled
-                    color={theme.white}
-                    bgcolor={theme.primary}
-                    startIcon={
-                      <MaterialIcons name="add" size={14} color={theme.white} />
-                    }
-                    onPress={() => router.replace("/add-goals")}
+            {error ? (
+              <>
+                <View style={{ flex: 1 }}>
+                  <GoalsCardWrapper
+                    style={{
+                      gap: 12,
+                      height: 600,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
                   >
-                    New Goal
-                  </Button>
+                    <Image
+                      style={{
+                        width: 300,
+                        height: 300,
+                      }}
+                      source={Oops}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: theme.red,
+                      }}
+                    >
+                      {error}
+                    </Text>
+                    <Text
+                      style={{
+                        color: theme.text_primary,
+                      }}
+                    >
+                      Please refresh the page again !
+                    </Text>
+                  </GoalsCardWrapper>
                 </View>
-              </TitleWrapper>
-              <GoalsCardWrapper>
-                {goals?.map((item) => (
-                  <GoalCard key={`goal-goals-${item?.id}`} item={item} full />
-                ))}
-              </GoalsCardWrapper>
-            </Section>
+              </>
+            ) : (
+              <>
+                <Section>
+                  <TitleWrapper>
+                    <Title>Current Goals ({goals?.length})</Title>
+                    <View>
+                      <Button
+                        micro
+                        filled
+                        color={theme.white}
+                        bgcolor={theme.primary}
+                        startIcon={
+                          <MaterialIcons
+                            name="add"
+                            size={14}
+                            color={theme.white}
+                          />
+                        }
+                        onPress={() => router.replace("/add-goals")}
+                      >
+                        New Goal
+                      </Button>
+                    </View>
+                  </TitleWrapper>
+
+                  {goals.length === 0 ? (
+                    <GoalsCardWrapper
+                      style={{
+                        gap: 12,
+                        height: 500,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        style={{
+                          width: 200,
+                          height: 200,
+                        }}
+                        source={NoGoalImage}
+                      />
+                      <Text
+                        style={{
+                          color: theme.text_secondary,
+                        }}
+                      >
+                        No Current Goals Found
+                      </Text>
+                    </GoalsCardWrapper>
+                  ) : (
+                    <GoalsCardWrapper>
+                      {goals?.map((item) => (
+                        <GoalCard
+                          key={`goal-goals-${item?.id}`}
+                          item={item}
+                          full
+                        />
+                      ))}
+                    </GoalsCardWrapper>
+                  )}
+                </Section>
+              </>
+            )}
           </>
         )}
 

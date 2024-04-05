@@ -63,7 +63,7 @@ const Topbar = () => {
             gap: 16,
           }}
         >
-          <IconButton onPress={() => router.replace("/other")}>
+          <IconButton onPress={() => router.replace("/scan-code")}>
             <MaterialCommunityIcons
               name="qrcode-scan"
               color={theme.text_primary}

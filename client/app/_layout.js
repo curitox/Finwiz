@@ -24,7 +24,6 @@ const Layout = () => {
 
   // return <Stack onLayout={onLayoutRootView} />;
 
-
   return (
     <ThemeProvider>
       <Provider>
@@ -49,7 +48,7 @@ const Layout = () => {
               }}
             />
             <Stack.Screen
-              name="other"
+              name="scan-code"
               options={{
                 headerShown: false,
               }}

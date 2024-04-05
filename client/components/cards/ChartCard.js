@@ -108,6 +108,7 @@ const ChartCard = ({ chartData }) => {
               <PieChart
                 data={(chartData?.data && chartData?.data) || []}
                 donut
+                isAnimated
                 radius={50}
                 innerRadius={34}
                 focusOnPress
@@ -128,7 +129,12 @@ const ChartCard = ({ chartData }) => {
                   gap: 12,
                 }}
               >
-                <Value>₹{Math.trunc(chartData?.total_amount)}</Value>
+                <Value>
+                  ₹
+                  {chartData?.total_amount > 0
+                    ? Math.trunc(chartData?.total_amount)
+                    : 0}
+                </Value>
                 <Feather
                   name="arrow-down-circle"
                   size={18}

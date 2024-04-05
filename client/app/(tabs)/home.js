@@ -13,6 +13,7 @@ import {
   TouchableHighlightBase,
   Linking,
   ScrollView,
+  Image,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import styled, { useTheme } from "styled-components/native";
@@ -34,13 +35,20 @@ import {
 import GoalCard from "../../components/cards/GoalsCard";
 import TextButton from "../../components/buttons/textButton";
 import TransactionsCard from "../../components/cards/Transactions";
-import { GetExpences, GetGoals, TodaysChart } from "../../api";
+import {
+  GetExpences,
+  GetGoals,
+  GetYearlyExpences,
+  TodaysChart,
+} from "../../api";
 import Loader from "../../components/Loader";
 import { useBottomSheetContext } from "../../context/bottomSheetContext";
 import InvestmentPredictor from "../../components/InvestmentPredictor";
+import NoTransactionsFound from "../../assets/images/NoTransactionsFound.png";
+import Oops from "../../assets/images/Oops.png";
+import moment from "moment";
 
 const Container = styled.ScrollView`
-  flex: 1;
   padding: 32px 0px;
   padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
@@ -80,13 +88,22 @@ const TransactionCardWrapper = styled.View`
   flex-direction: column;
 `;
 
+const Month = styled.Text`
+  font-weight: 500;
+  font-size: 14px;
+  color: ${({ theme }) => theme.text_secondary};
+`;
+
 const Home = () => {
   const router = useRouter();
   const theme = useTheme();
   const themeMode = useThemeContext();
   const [loading, setLoading] = useState(true);
   const { toggleTheme } = useThemeContext();
+  const [year, setYear] = useState(moment().format("YYYY"));
+  const [error, setError] = useState();
   const [expences, setExpences] = useState([]);
+  const [prevMonth, setPrevMonth] = useState([]);
   const [goals, setGoals] = useState([]);
   const [chartData, setChartData] = useState({});
 
@@ -94,6 +111,7 @@ const Home = () => {
     getExpences();
     getGoals();
     getExpencesChart();
+    getPreviousMonth();
   }, []);
 
   const categories = [
@@ -159,41 +177,62 @@ const Home = () => {
   const { currentUser } = useAuthContext();
 
   const getExpences = async () => {
+    setError("");
     setLoading(true);
     await GetExpences(currentUser?.token)
       .then((res) => {
-        setLoading(false);
+        setError("");
         setExpences(res?.data?.Expenses);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
+
+  const getPreviousMonth = async () => {
+    setError("");
+    setLoading(true);
+    await GetYearlyExpences(year, currentUser?.token)
+      .then((res) => {
+        setError("");
+        setPrevMonth(res?.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message);
+      });
+  };
+
   const getGoals = async () => {
+    setError("");
     setLoading(true);
     await GetGoals(currentUser?.token)
       .then((res) => {
-        console.log("Goals", res.data);
-        setLoading(false);
         setGoals(res?.data);
+        setError("");
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
 
   const getExpencesChart = async () => {
+    setError("");
     setLoading(true);
     await TodaysChart(currentUser?.token)
       .then((res) => {
-        setLoading(false);
+        setError("");
         setChartData(res?.data);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
+        setError(err.message);
       });
   };
 
@@ -201,6 +240,7 @@ const Home = () => {
     getExpences();
     getGoals();
     getExpencesChart();
+    getPreviousMonth();
   }, []);
 
   return (
@@ -219,52 +259,154 @@ const Home = () => {
           <Loader />
         ) : (
           <>
-            <Section>
-              {chartData !== null && chartData !== undefined && (
-                <ChartCard chartData={chartData} />
-              )}
-            </Section>
-            <Section>
-              <Title>Quick Links</Title>
-              <CardWrapper>
-                {categories.map((item) => (
-                  <NavigationCards data={item} key={item.id} />
-                ))}
-              </CardWrapper>
-            </Section>
-            <Section>
-              <TitleWrapper>
-                <Title>Goals</Title>
+            {error ? (
+              <>
+                <View style={{ flex: 1 }}>
+                  <TransactionCardWrapper
+                    style={{
+                      gap: 12,
+                      height: 600,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{
+                        width: 300,
+                        height: 300,
+                      }}
+                      source={Oops}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: theme.red,
+                      }}
+                    >
+                      {error}
+                    </Text>
+                    <Text
+                      style={{
+                        color: theme.text_primary,
+                      }}
+                    >
+                      Please refresh the page again !
+                    </Text>
+                  </TransactionCardWrapper>
+                </View>
+              </>
+            ) : (
+              <>
+                <Section>
+                  {chartData !== null && chartData !== undefined && (
+                    <ChartCard chartData={chartData} />
+                  )}
+                </Section>
+                <Section>
+                  <Title>Quick Links</Title>
+                  <CardWrapper>
+                    {categories.map((item) => (
+                      <NavigationCards data={item} key={item.id} />
+                    ))}
+                  </CardWrapper>
+                </Section>
+                {goals?.length > 0 && (
+                  <Section>
+                    <TitleWrapper>
+                      <Title>Goals</Title>
 
-                <TextButton
-                  small
-                  label="View All"
-                  color={theme.primary}
-                  disabled={false}
-                  enabled={true}
-                  onPress={() => router.replace("/goals")}
-                />
-              </TitleWrapper>
-              <GoalsWrapper
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-              >
-                {goals?.map((item) => (
-                  <GoalCard key={`goal-home-${item?.id}`} item={item} />
-                ))}
-              </GoalsWrapper>
-            </Section>
-            <Section>
-              <Title>Transactions</Title>
-              <TransactionCardWrapper>
-                {expences?.map((item) => (
-                  <TransactionsCard
-                    item={item}
-                    key={`expence-home-${item?.category}-${item?.id}`}
-                  />
-                ))}
-              </TransactionCardWrapper>
-            </Section>
+                      <TextButton
+                        small
+                        label="View All"
+                        color={theme.primary}
+                        disabled={false}
+                        enabled={true}
+                        onPress={() => router.replace("/goals")}
+                      />
+                    </TitleWrapper>
+                    <GoalsWrapper
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                    >
+                      {goals?.map((item) => (
+                        <GoalCard key={`goal-home-${item?.id}`} item={item} />
+                      ))}
+                    </GoalsWrapper>
+                  </Section>
+                )}
+                <Section>
+                  <Title>Transactions</Title>
+
+                  {expences.length === 0 ? (
+                    <TransactionCardWrapper
+                      style={{
+                        gap: 12,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        style={{
+                          width: 200,
+                          height: 200,
+                        }}
+                        source={NoTransactionsFound}
+                      />
+                      <Text
+                        style={{
+                          color: theme.text_secondary,
+                        }}
+                      >
+                        No Transactions Found Today
+                      </Text>
+                      <Button
+                        micro
+                        filled
+                        color={theme.white}
+                        bgcolor={theme.primary}
+                        startIcon={
+                          <MaterialIcons
+                            name="add"
+                            size={14}
+                            color={theme.white}
+                          />
+                        }
+                        onPress={() => router.replace("/add-transactions")}
+                      >
+                        Add new Transaction
+                      </Button>
+                    </TransactionCardWrapper>
+                  ) : (
+                    <>
+                      <Month>{prevMonth[0]?.month}</Month>
+                      <TransactionCardWrapper>
+                        {expences?.map((item) => (
+                          <TransactionsCard
+                            item={item}
+                            key={`expence-home-${item?.category}-${item?.id}`}
+                          />
+                        ))}
+                      </TransactionCardWrapper>
+                    </>
+                  )}
+                  {prevMonth.length > 0 && (
+                    <>
+                      <Month>{prevMonth[0]?.month}</Month>
+
+                      <TransactionCardWrapper style={{ gap: 0 }}>
+                        {prevMonth[0]?.transactions?.map((transactions) => (
+                          <TransactionsCard
+                            item={transactions}
+                            key={`expence-transactions-${transactions?.category}-${transactions?.id}`}
+                          />
+                        ))}
+                      </TransactionCardWrapper>
+                    </>
+                  )}
+                </Section>
+              </>
+            )}
           </>
         )}
 
