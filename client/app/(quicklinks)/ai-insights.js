@@ -1,11 +1,18 @@
-import { View, Text, Pressable, Linking } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Linking,
+  RefreshControl,
+  Image,
+} from "react-native";
 import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputText from "../../components/text_fields/inputText";
 import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
@@ -18,6 +25,7 @@ import ExpencePredictionCard from "../../components/cards/ExpencePredictionCard"
 import PersonalizedInsight from "../../components/cards/PersonalizedInsightCard";
 import BudgetRecomendations from "../../components/cards/BudgetRecomendations";
 import Loader from "../../components/Loader";
+import Oops from "../../assets/images/Oops.png";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -46,60 +54,13 @@ const Wrapper = styled.View`
   gap: 22px;
 `;
 
-const SelectagleItem = styled.View`
-  flex-direction: column;
-  padding: 4px 4px;
-  gap: 8px;
-`;
-
-const InputName = styled.Text`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.text_secondary};
-`;
-
-const IconContainer = styled.View`
-  padding: 0px 6px;
-`;
-
 export default function AIinsights() {
   const router = useRouter();
   const theme = useTheme();
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [budgetRecomendation, setBudgetRecomendation] = useState([]);
-  const [personalizedInsight, setPersonalizedInsight] = useState({
-    insights: [
-      {
-        category: "entertainment",
-        total_expense: "400.00",
-      },
-      {
-        category: "transportation",
-        total_expense: "200.00",
-      },
-      {
-        category: "gifts_donations",
-        total_expense: "50.00",
-      },
-      {
-        category: "miscellaneous",
-        total_expense: 0,
-      },
-      {
-        category: "shopping",
-        total_expense: 0,
-      },
-      {
-        category: "travel",
-        total_expense: 0,
-      },
-    ],
-    max_category: "food",
-    max_expense: "950.00",
-    message: "Expenditure is within limits.",
-    showData: true,
-  });
+  const [personalizedInsight, setPersonalizedInsight] = useState();
   const { currentUser } = useAuthContext();
 
   const getPersonalizedInsight = async () => {
@@ -134,12 +95,21 @@ export default function AIinsights() {
 
   useEffect(() => {
     getBudgetRecomendation();
-    // getPersonalizedInsight();
+    getPersonalizedInsight();
+  }, []);
+
+  const onRefresh = React.useCallback(() => {
+    getBudgetRecomendation();
+    getPersonalizedInsight();
   }, []);
 
   return (
     <>
-      <Container>
+      <Container
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={onRefresh} />
+        }
+      >
         <Back onPress={() => router.replace("/home")}>
           <Ionicons name="chevron-back" size={22} color={theme.text_primary} />
         </Back>
@@ -148,22 +118,64 @@ export default function AIinsights() {
           <Loader />
         ) : (
           <>
-            <Title>AI Insights</Title>
-            <Wrapper>
-              <View
-                style={{
-                  gap: 10,
-                }}
-              >
-                <ExpencePredictionCard />
-                <PersonalizedInsight
-                  personalizedInsight={personalizedInsight}
-                />
-                <BudgetRecomendations
-                  budgetRecomendation={budgetRecomendation}
-                />
-              </View>
-            </Wrapper>
+            {error ? (
+              <>
+                <View style={{ flex: 1 }}>
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      gap: 12,
+                      height: 600,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{
+                        width: 300,
+                        height: 300,
+                      }}
+                      source={Oops}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: theme.red,
+                      }}
+                    >
+                      {error}
+                    </Text>
+                    <Text
+                      style={{
+                        color: theme.text_primary,
+                      }}
+                    >
+                      Please refresh the page again !
+                    </Text>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <>
+                <Title>AI Insights</Title>
+                <Wrapper>
+                  <View
+                    style={{
+                      gap: 10,
+                    }}
+                  >
+                    <ExpencePredictionCard />
+                    <PersonalizedInsight
+                      personalizedInsight={personalizedInsight}
+                    />
+                    <BudgetRecomendations
+                      budgetRecomendation={budgetRecomendation}
+                    />
+                  </View>
+                </Wrapper>
+              </>
+            )}
           </>
         )}
       </Container>

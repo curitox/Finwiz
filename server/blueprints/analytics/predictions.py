@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from error import create_error
 from utils.categories import expense_categories, priority_scale
+import numpy as np
 
 predictions_bp=Blueprint("predictions", __name__, template_folder="predictions")
 model = pickle.load(open('random_forest_model.pkl', 'rb'))
@@ -98,16 +99,32 @@ def build_recommendation_model(user_id):
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
     return cosine_sim
 
-# Function to recommend categories based on user's spending habits
-def recommend_categories(user_id, user_expenses, cosine_sim, categories_mapping):
-    tfidf_vectorizer = TfidfVectorizer()
-    tfidf_matrix = tfidf_vectorizer.fit_transform(user_expenses)
-    sim_scores = linear_kernel(tfidf_matrix, tfidf_matrix)
-    sim_scores = list(enumerate(sim_scores[user_id]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:6] 
-    category_indices = [i[0] for i in sim_scores]
-    recommended_categories = [categories_mapping[idx] for idx in category_indices]
+# # Function to recommend categories based on user's spending habits
+# def recommend_categories(user_id, user_expenses, cosine_sim, categories_mapping):
+#     tfidf_vectorizer = TfidfVectorizer()
+#     tfidf_matrix = tfidf_vectorizer.fit_transform(user_expenses)
+#     sim_scores = linear_kernel(tfidf_matrix, tfidf_matrix)
+#     sim_scores = list(enumerate(sim_scores[user_id]))
+#     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+#     # print(sim_scores)
+#     sim_scores = sim_scores[1:6] 
+#     category_indices = [i[0] for i in sim_scores]
+#     recommended_categories = [categories_mapping[idx] for idx in category_indices]
+#     return recommended_categories
+
+# Function to recommend categories based on all users' spending habits
+def recommend_categories(cosine_sim,categories_mapping, num_categories=10):
+    # Sum up similarity scores across all users
+    total_sim_scores = np.sum(cosine_sim, axis=0)
+    
+    # Enumerate and sort similarity scores
+    indexed_sim_scores = list(enumerate(total_sim_scores))
+    sorted_sim_scores = sorted(indexed_sim_scores, key=lambda x: x[1], reverse=True)
+    
+    # Get top frequent category indices
+    top_category_indices = [i[0] for i in sorted_sim_scores[:num_categories]]
+    recommended_categories = [categories_mapping[idx] for idx in top_category_indices]
+    
     return recommended_categories
 
 # API endpoint to get budget recommendations for a user
@@ -123,9 +140,9 @@ def get_recommendations():
 
     # Build recommendation model
     cosine_sim = build_recommendation_model(user_id)
-
     # Get recommendations
-    recommended_categories = recommend_categories(user_id, user_expenses, cosine_sim, categories_mapping)
+    # recommended_categories = recommend_categories(user_id, user_expenses, cosine_sim, categories_mapping)
+    recommended_categories = recommend_categories(cosine_sim,categories_mapping)
     
     # Count occurrences of each category
     category_counts = {}
