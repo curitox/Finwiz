@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import styled, { css, useTheme } from "styled-components/native";
 import { Card } from "react-native-paper";
+import { getCategoryByValue } from "../../utils/data";
 
 const CardContainer = styled(Card)`
   flex: 1;
@@ -27,15 +28,30 @@ const Wrapper = styled(Card.Content)`
 
 const Title = styled.Text`
   font-weight: 500;
-  font-size: 15px;
-  color: ${({ theme }) => theme.text_secondary};
+  font-size: 16px;
+  color: ${({ theme }) => theme.text_primary};
 `;
 const Desc = styled.Text`
   font-size: 12px;
   color: ${({ theme }) => theme.text_secondary};
 `;
 
-const BudgetRecomendations = ({ data }) => {
+const renderDot = (color) => {
+  return (
+    <View
+      style={{
+        height: 8,
+        width: 8,
+        borderRadius: 5,
+        backgroundColor: color,
+        marginRight: 5,
+        marginTop: 10,
+      }}
+    />
+  );
+};
+
+const BudgetRecomendations = ({ budgetRecomendation }) => {
   const theme = useTheme();
   return (
     <CardContainer elevation={0.5}>
@@ -46,14 +62,71 @@ const BudgetRecomendations = ({ data }) => {
           }}
         >
           <Title>Budget Recomendations</Title>
-          <Desc>Our recomendations to optimize your budgets</Desc>
+          <Desc>
+            Our recomendations to optimize your budgets based on spending
+            categories
+          </Desc>
         </View>
         <View
           style={{
             gap: 1,
-            flexDirection: "row",
+            flexDirection: "column",
+            gap: 4,
+            padding: 4,
           }}
-        ></View>
+        >
+          {budgetRecomendation?.map((item, index) => (
+            <View
+              key={`budget+${index}`}
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                gap: 12,
+                alignItems: "flex-start",
+              }}
+            >
+              {renderDot(getCategoryByValue(item[0])?.color)}
+              <View
+                style={{
+                  backgroundColor: "#00000",
+                  flex: 1,
+                }}
+              >
+                <Text
+                  style={{
+                    flex: 1,
+                    fontSize: 13,
+                    color: theme.text_primary,
+                  }}
+                >
+                  {index === 0
+                    ? "Your frequently spend in the"
+                    : "Next spending is"}{" "}
+                  <Text
+                    style={{
+                      fontWeight: 500,
+                      fontSize: 14,
+                      color: theme.text_primary,
+                    }}
+                  >
+                    {getCategoryByValue(item[0])?.name}
+                  </Text>{" "}
+                  category which is around{" "}
+                  <Text
+                    style={{
+                      fontWeight: 500,
+                      fontSize: 14,
+                      color: theme.text_primary,
+                    }}
+                  >
+                    {item[1]}%
+                  </Text>{" "}
+                  of your top spended category.
+                </Text>
+              </View>
+            </View>
+          ))}
+        </View>
       </Wrapper>
     </CardContainer>
   );

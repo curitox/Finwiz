@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  TouchableOpacity,
-  ActivityIndicator,
-  View,
-  Text,
-  ImageBackground,
-} from "react-native";
-import styled, { css, useTheme } from "styled-components/native";
+import { View } from "react-native";
+import styled, { useTheme } from "styled-components/native";
 import { Card } from "react-native-paper";
 
 const CardContainer = styled(Card)`
@@ -27,8 +21,8 @@ const Wrapper = styled(Card.Content)`
 
 const Title = styled.Text`
   font-weight: 500;
-  font-size: 15px;
-  color: ${({ theme }) => theme.text_secondary};
+  font-size: 16px;
+  color: ${({ theme }) => theme.text_primary};
 `;
 const Desc = styled.Text`
   font-size: 12px;

@@ -1,8 +1,8 @@
 import axios from "axios";
 //http://10.0.2.2:8000
 const API = axios.create({
-  baseURL: "https://expense-tracker-9kx3.onrender.com/",
-  // baseURL: "http://10.0.2.2:8000/",
+  // baseURL: "https://expense-tracker-9kx3.onrender.com/",
+  baseURL: "http://10.0.2.2:8000/",
 });
 
 export const UserSignUp = async (data) => await API.post("/auth/signup", data);
@@ -52,6 +52,11 @@ export const GetGoals = async (token) =>
 //Predictions
 export const PredictInvestment = async (data, token) =>
   await API.post("/predict/invest", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const BudgetAnalysis = async (token) =>
+  await API.get("/predict/budget_recommendations", {
     headers: { Authorization: `Bearer ${token}` },
   });
 

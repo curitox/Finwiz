@@ -11,12 +11,13 @@ import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
-import { AddGoal } from "../../api";
+import { AddGoal, BudgetAnalysis } from "../../api";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 import ExpencePredictionCard from "../../components/cards/ExpencePredictionCard";
 import PersonalizedInsight from "../../components/cards/PersonalizedInsightCard";
 import BudgetRecomendations from "../../components/cards/BudgetRecomendations";
+import Loader from "../../components/Loader";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -64,68 +65,29 @@ const IconContainer = styled.View`
 export default function AIinsights() {
   const router = useRouter();
   const theme = useTheme();
+  const [error, setError] = useState();
   const [loading, setLoading] = useState();
+  const [budgetRecomendation, setBudgetRecomendation] = useState([]);
   const { currentUser } = useAuthContext();
 
-  const PriorityList = [
-    {
-      label: "🔴 High",
-      value: "HIGH",
-    },
-    {
-      label: "🟡 Medium",
-      value: "MEDIUM",
-    },
-    {
-      label: "🟢 Low",
-      value: "LOW",
-    },
-  ];
-
-  const [goalData, setGoalData] = useState({
-    name: "",
-    description: "",
-    target_amount: "",
-    target_date: moment().format("YYYY-MM-DD"),
-    priority_level: "",
-    status: "IN_PROGRESS",
-  });
-
-  const handleInputChange = (value, name) => {
-    setGoalData({ ...goalData, [name]: value });
+  const getBudgetRecomendation = async () => {
+    setError("");
+    setLoading(true);
+    await BudgetAnalysis(currentUser?.token)
+      .then((res) => {
+        setError("");
+        setBudgetRecomendation(res?.data?.recommended_categories);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message);
+      });
   };
 
-  const handelAddGoal = async () => {
-    if (
-      goalData.target_amount !== "" &&
-      goalData.target_date !== "" &&
-      goalData.priority_level !== "" &&
-      goalData.name !== "" &&
-      goalData.description !== ""
-    ) {
-      setLoading(true);
-      await AddGoal(goalData, currentUser?.token)
-        .then(async (res) => {
-          console.log(res);
-          Toast.show({
-            type: "success",
-            text1: "New Goal Created",
-            text2: "New Goal created successfully 👋",
-          });
-          setLoading(false);
-          router.replace("/home");
-        })
-        .catch((err) => {
-          console.log(err.response.data.message);
-          Toast.show({
-            type: "error",
-            text1: "Something went wrong",
-            text2: err.response.data.message,
-          });
-          setLoading(false);
-        });
-    }
-  };
+  useEffect(() => {
+    getBudgetRecomendation();
+  }, []);
 
   return (
     <>
@@ -134,18 +96,26 @@ export default function AIinsights() {
           <Ionicons name="chevron-back" size={22} color={theme.text_primary} />
         </Back>
         <Toast />
-        <Title>AI Insights</Title>
-        <Wrapper>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
-            <ExpencePredictionCard />
-            <PersonalizedInsight />
-            <BudgetRecomendations />
-          </View>
-        </Wrapper>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <Title>AI Insights</Title>
+            <Wrapper>
+              <View
+                style={{
+                  gap: 10,
+                }}
+              >
+                <ExpencePredictionCard />
+                <PersonalizedInsight />
+                <BudgetRecomendations
+                  budgetRecomendation={budgetRecomendation}
+                />
+              </View>
+            </Wrapper>
+          </>
+        )}
       </Container>
     </>
   );

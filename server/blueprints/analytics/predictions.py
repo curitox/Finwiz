@@ -1,11 +1,14 @@
 import pickle
 from flask import request, jsonify, Blueprint
 import pandas as pd
+from datetime import datetime, timedelta
+from sqlalchemy import func
 from middleware.verifyToken import verifyToken
 from model import User, Expense, db
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from error import create_error
+from utils.categories import expense_categories, priority_scale
 
 predictions_bp=Blueprint("predictions", __name__, template_folder="predictions")
 model = pickle.load(open('random_forest_model.pkl', 'rb'))
@@ -19,6 +22,50 @@ def invest_predict():
     prediction = model.predict(user_input)
     return jsonify(prediction.tolist())
 
+@predictions_bp.route('/predict/maxExpenses', methods=['GET'])
+@verifyToken
+def maxExpense_predict():
+    user_id = request.user.get('id')
+    user = User.query.get(user_id)
+    
+    if not user:
+        return create_error(404, "User not found")
+    
+    # Calculate the date 2 months ago
+    two_months_ago = datetime.now() - timedelta(days=60)
+    
+    # Filter expenses for the last 2 months
+    expenses = Expense.query.filter(Expense.user_id == user_id,
+                                     Expense.transactionDate >= two_months_ago).all()
+    
+    # Initialize a dictionary to store total expenditures for each category
+    category_totals = {category: 0 for category in expense_categories}
+    
+    # Calculate total expenditure for each category
+    for expense in expenses:
+        category_totals[expense.category] += expense.amount
+    
+    # Define the priority scale for categories
+    
+    # Sort categories by total expenditure
+    sorted_categories = sorted(category_totals.items(), key=lambda x: x[1], reverse=True)
+    
+    # Get the highest expenditure category
+    max_category, max_expense = sorted_categories[0]
+    
+    # Get insights based on priority scale
+    insights = []
+    
+    for category, total_expense in sorted_categories:
+        priority = priority_scale.get(category, 0)
+        if priority < 3:  # Low priority categories
+            insights.append({"category": category, "total_expense": total_expense})
+    
+    return jsonify({
+        "max_category": max_category,
+        "max_expense": max_expense,
+        "insights": insights
+    })
 
 # Load expense data from database and preprocess
 def load_expense_data(user_id):
@@ -42,15 +89,13 @@ def recommend_categories(user_id, user_expenses, cosine_sim, categories_mapping)
     sim_scores = linear_kernel(tfidf_matrix, tfidf_matrix)
     sim_scores = list(enumerate(sim_scores[user_id]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:6]  # Exclude the user's own expense
+    sim_scores = sim_scores[1:6] 
     category_indices = [i[0] for i in sim_scores]
-    print(category_indices)
-    print(categories_mapping)
     recommended_categories = [categories_mapping[idx] for idx in category_indices]
     return recommended_categories
 
 # API endpoint to get budget recommendations for a user
-@predictions_bp.route('/budget_recommendations', methods=['GET'])
+@predictions_bp.route('/predict/budget_recommendations', methods=['GET'])
 @verifyToken
 def get_recommendations():
     user_id = request.user.get('id')
@@ -78,13 +123,15 @@ def get_recommendations():
     # Sort categories by occurrence percentage
     sorted_categories = sorted(category_percentages.items(), key=lambda x: x[1], reverse=True)
 
-    # Generate sentences describing the most frequent spending categories
-    sentences = []
-    for i, (category, percentage) in enumerate(sorted_categories):
-        if i == 0:
-            sentence = f'You most frequently spend in the {categories_mapping[category]} category, approx {percentage:.2f}% of the top categories.'
-        else:
-            sentence = f'Your next most frequent spending category is {categories_mapping[category]}, approx {percentage:.2f}% of the top categories.'
-        sentences.append(sentence)
+    return jsonify({'recommended_categories': sorted_categories})
 
-    return jsonify({'user_id': user_id, 'recommended_categories': sentences})
+    # Generate sentences describing the most frequent spending categories
+    # sentences = []
+    # for i, (category, percentage) in enumerate(sorted_categories):
+    #     if i == 0:
+    #         sentence = f'You most frequently spend is in the {category} category, approx {percentage:.2f}% of the top categories.'
+    #     else:
+    #         sentence = f'Your next most frequent spending category is {category}, approx {percentage:.2f}% of the top categories.'
+    #     sentences.append(sentence)
+
+    # return jsonify({'user_id': user_id, 'recommended_categories': sentences})
