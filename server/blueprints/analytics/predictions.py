@@ -66,9 +66,10 @@ def maxExpense_predict():
         
         # Get insights based on priority scale
         for category, total_expense in sorted_categories:
-            priority = priority_scale.get(category, 0)
-            if priority < 3:  # Low priority categories
-                insights.append({"category": category, "total_expense": total_expense})
+            if total_expense != 0:  # Exclude categories with total expense of 0
+                priority = priority_scale.get(category, 0)
+                if priority < 3:  # Low priority categories
+                    insights.append({"category": category, "total_expense": total_expense})
     else:
         max_category = None
         max_expense = None
