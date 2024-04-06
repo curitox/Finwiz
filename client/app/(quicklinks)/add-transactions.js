@@ -11,7 +11,7 @@ import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
-import { AddExpence } from "../../api";
+import { AddExpence, UpdateExpence } from "../../api";
 import Toast from "react-native-toast-message";
 import moment from "moment";
 
@@ -77,7 +77,7 @@ const IconContainer = styled.View`
 `;
 
 export default function AddTransactions() {
-  const { data } = useLocalSearchParams();
+  const { data, updateTransactionData, edit } = useLocalSearchParams();
   const router = useRouter();
   const theme = useTheme();
   const [loading, setLoading] = useState();
@@ -217,6 +217,12 @@ export default function AddTransactions() {
     paymentMethod: "ONLINE",
   });
 
+  useEffect(() => {
+    if (edit) {
+      setTransactionData(JSON.parse(updateTransactionData));
+    }
+  }, []);
+
   const handleInputChange = (value, name) => {
     setTransactionData({ ...transactionData, [name]: value });
   };
@@ -260,7 +266,11 @@ export default function AddTransactions() {
       transactionData.category !== "" ||
       transactionData.description !== ""
     ) {
-      await handelAddTransaction();
+      if (edit) {
+        await handelUpdateTransaction(JSON.parse(updateTransactionData)?.id);
+      } else {
+        await handelAddTransaction();
+      }
     }
   };
 
@@ -273,9 +283,31 @@ export default function AddTransactions() {
     await Linking.openURL(modifyUpiUrl(upiUrl, additionalParams));
   };
 
+  const handelUpdateTransaction = async (id) => {
+    setLoading(true);
+    await UpdateExpence(id, transactionData, currentUser?.token)
+      .then(async (res) => {
+        Toast.show({
+          type: "success",
+          text1: "Transaction Updated",
+          text2: "Transaction Updated successfully 👋",
+        });
+        setLoading(false);
+        router.replace("/home");
+      })
+      .catch((err) => {
+        console.log(err);
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+        setLoading(false);
+      });
+  };
+
   const handelAddTransaction = async () => {
     setLoading(true);
-    console.log(transactionData);
     await AddExpence(transactionData, currentUser?.token)
       .then(async (res) => {
         Toast.show({

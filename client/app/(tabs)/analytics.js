@@ -203,7 +203,7 @@ export default function Analytics() {
                 </TitleWrapper>
                 <WeeklyExpence data={weeklyExpence} />
                 <CategoryWiseExpence data={categoryExpence} />
-                <GoalCompletionChart data={goalCompletion} />
+                {/* <GoalCompletionChart data={goalCompletion} /> */}
                 <CategoryWiseGoal data={categoryGoal} />
               </Section>
             )}

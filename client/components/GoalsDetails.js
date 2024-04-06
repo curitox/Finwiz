@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import styled, { css, useTheme } from "styled-components/native";
 import Button from "../components/buttons/button";
 import { FontAwesome } from "@expo/vector-icons";
@@ -11,11 +11,11 @@ import TransactionsCard from "./cards/Transactions";
 import moment from "moment";
 import InputText from "./text_fields/inputText";
 import DateInput from "./text_fields/dateInput";
-import { AddSavingsToGoal, GetGoalSavings } from "../api";
+import { AddSavingsToGoal, DeleteGoal, GetGoalSavings } from "../api";
 import { useAuthContext } from "../context/auth";
 import Toast from "react-native-toast-message";
-import Loader from "./Loader";
-import { getCategoryByValue } from "../utils/data";
+import { useRouter } from "expo-router";
+import { useBottomSheetContext } from "../context/bottomSheetContext";
 
 const Card = styled.View`
   flex: 1;
@@ -156,6 +156,8 @@ const TransactionsContent = [
 ];
 
 const GoalsDetails = ({ item }) => {
+  const { setOpenBottomSheet } = useBottomSheetContext();
+  const router = useRouter();
   const { currentUser } = useAuthContext();
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
@@ -217,6 +219,35 @@ const GoalsDetails = ({ item }) => {
       });
   };
 
+  const createAlert = () =>
+    Alert.alert("Delete Goal", "Your Goal will be deleted", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      { text: "Delete", onPress: () => handelDelete() },
+    ]);
+
+  const handelDelete = async () => {
+    await DeleteGoal(item?.id, currentUser?.token)
+      .then(async (res) => {
+        Toast.show({
+          type: "success",
+          text1: "Goal Deleted",
+          text2: "Goal Deleted successfully 👋",
+        });
+        setOpenBottomSheet({ open: false, content: null });
+      })
+      .catch((err) => {
+        console.log(err);
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+      });
+  };
+
   useEffect(() => {
     getSavingsOfGoals();
   }, []);
@@ -232,14 +263,36 @@ const GoalsDetails = ({ item }) => {
               <Desc>{item?.description}</Desc>
             </View>
             <View style={{ gap: 4, flexDirection: "row" }}>
-              <IconButton>
+              <IconButton onPress={() => createAlert()}>
                 <MaterialIcons
                   name="delete-outline"
                   size={14}
                   color={theme.text_primary}
                 />
               </IconButton>
-              <IconButton>
+              <IconButton
+                onPress={() =>
+                  router.replace({
+                    pathname: `/add-goals`,
+                    params: {
+                      edit: true,
+                      updateGoals: JSON.stringify({
+                        id: item?.id,
+                        name: item?.name,
+                        description: item?.description,
+                        target_amount: Math.trunc(
+                          item?.target_amount
+                        ).toString(),
+                        target_date: moment(item?.target_date).format(
+                          "YYYY-MM-DD"
+                        ),
+                        priority_level: item?.priority_level,
+                        status: item?.status,
+                      }),
+                    },
+                  })
+                }
+              >
                 <FontAwesome name="edit" size={14} color={theme.text_primary} />
               </IconButton>
             </View>
