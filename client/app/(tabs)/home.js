@@ -265,7 +265,7 @@ const Home = () => {
                   <TransactionCardWrapper
                     style={{
                       gap: 12,
-                      height: 600,
+                      height: 700,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
