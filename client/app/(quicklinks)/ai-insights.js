@@ -18,7 +18,12 @@ import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
-import { AddGoal, BudgetAnalysis, GetPersonalizedInsight } from "../../api";
+import {
+  AddGoal,
+  BudgetAnalysis,
+  GetPersonalizedInsight,
+  Predict_Future_expences,
+} from "../../api";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 import ExpencePredictionCard from "../../components/cards/ExpencePredictionCard";
@@ -61,7 +66,24 @@ export default function AIinsights() {
   const [loading, setLoading] = useState();
   const [budgetRecomendation, setBudgetRecomendation] = useState([]);
   const [personalizedInsight, setPersonalizedInsight] = useState();
+  const [futureExpence, setfutureExpence] = useState();
   const { currentUser } = useAuthContext();
+
+  const getFutureExpences = async () => {
+    setError("");
+    setLoading(true);
+    await Predict_Future_expences(currentUser?.token)
+      .then((res) => {
+        setError("");
+        setfutureExpence(res?.data);
+        console.log(res?.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message);
+      });
+  };
 
   const getPersonalizedInsight = async () => {
     setError("");
@@ -96,11 +118,13 @@ export default function AIinsights() {
   useEffect(() => {
     getBudgetRecomendation();
     getPersonalizedInsight();
+    getFutureExpences();
   }, []);
 
   const onRefresh = React.useCallback(() => {
     getBudgetRecomendation();
     getPersonalizedInsight();
+    getFutureExpences();
   }, []);
 
   return (
@@ -165,7 +189,7 @@ export default function AIinsights() {
                       gap: 10,
                     }}
                   >
-                    <ExpencePredictionCard />
+                    <ExpencePredictionCard futureExpence={futureExpence} />
                     <PersonalizedInsight
                       personalizedInsight={personalizedInsight}
                     />
@@ -176,7 +200,7 @@ export default function AIinsights() {
                 </Wrapper>
               </>
             )}
-            <View style={{ marginBottom: 780 }}></View>
+            <View style={{ marginBottom: 70 }}></View>
           </>
         )}
       </Container>

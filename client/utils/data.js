@@ -113,6 +113,12 @@ const TransactionCategories = [
       <MaterialCommunityIcons name="atom-variant" size={24} color="#E59866" />
     ),
   },
+  {
+    name: "Unknown",
+    color: "#CCCCCC",
+    value: "Unknown",
+    icon: <MaterialCommunityIcons name="question" size={24} color="#E59866" />,
+  },
 ];
 
 export const getCategoryByValue = (value) => {
