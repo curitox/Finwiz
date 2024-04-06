@@ -9,6 +9,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from error import create_error
 from utils.categories import expense_categories, priority_scale
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from utils.categories import category_colors
 import numpy as np
 
 predictions_bp=Blueprint("predictions", __name__, template_folder="predictions")
@@ -169,3 +171,91 @@ def get_recommendations():
     #     sentences.append(sentence)
 
     # return jsonify({'user_id': user_id, 'recommended_categories': sentences})
+
+
+## Future month prediction
+def preprocess_data(user_id):
+    today = datetime.now().date()
+    two_months_ago = today - timedelta(days=60)
+    
+    # Query expenses for the last 60 days
+    expenses = Expense.query.filter_by(user_id=user_id).filter(Expense.transactionDate >= two_months_ago).all()
+    
+    # Extract categories and amounts for the last 60 days
+    categories = [exp.category for exp in expenses]
+    amounts = [float(exp.amount) for exp in expenses]  # Convert to float
+    
+    # Create a dictionary to store expenses by category
+    expenses_by_category = {}
+    category_indices = {}  # Dictionary to store category indices
+    
+    for idx, (category, amount) in enumerate(zip(categories, amounts)):
+        if category in expenses_by_category:
+            expenses_by_category[category] += amount
+        else:
+            expenses_by_category[category] = amount
+            category_indices[category] = idx
+    
+    # Convert expenses by category to a numpy array
+    X = np.array(list(expenses_by_category.values()))
+    
+    return X, category_indices
+
+def forecast_future_expenses(sarima_model, steps=30):
+    # Forecast future values using SARIMA model
+    forecast = sarima_model.forecast(steps=steps)
+    return forecast
+
+def train_sarima_model(X):
+    # Convert input data to pandas Series
+    X_series = pd.Series(X)
+    
+    if not np.issubdtype(X_series.dtype, np.number):
+        raise ValueError("Input data must contain numeric values only.")
+
+    if X_series.isnull().values.any():
+        raise ValueError("Input data contains missing or NaN values.")
+    
+    # Convert data to a compatible dtype (float)
+    X_series = X_series.astype(float)
+    
+    order = (1, 1, 1)  # ARIMA order
+    seasonal_order = (1, 0, 1, 12)  # Seasonal order
+    
+    # Initialize SARIMA model
+    model = SARIMAX(X_series, order=order, seasonal_order=seasonal_order, enforce_stationarity=True)
+    
+    sarima_result = model.fit()
+    
+    accuracy = sarima_result.aic  #  BIC
+    
+    return sarima_result, accuracy
+
+@predictions_bp.route('/predict/future_expenses', methods=['GET'])
+@verifyToken
+def predict_expenses():
+    user_id = request.user.get('id')
+    if user_id is None:
+        return jsonify({'error': 'User ID is required.'}), 400
+    
+    # Preprocess data to get expenses and category indices
+    X, category_indices = preprocess_data(user_id)
+    
+    if len(X) == 0:  # Insufficient data for prediction
+        return jsonify({'message': 'Insufficient data for prediction'})
+    
+    sarima_model, accuracy = train_sarima_model(X)
+    
+    future_expenses = forecast_future_expenses(sarima_model, steps=30)
+    
+    # Map category indices to category names
+    category_names = {index: category for category, index in category_indices.items()}
+    
+    categories = list(sarima_model.data.row_labels)
+
+    result = {
+        'predictions': [{'name': category_names.get(category, 'Unknown'),'color': category_colors.get(category_names.get(category, 'Unknown'), "#CCCCCC"), 'value': float(amount)} for category, amount in zip(categories, future_expenses)],
+        'accuracy': accuracy
+    }
+
+    return jsonify(result)
