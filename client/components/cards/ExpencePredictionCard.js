@@ -58,7 +58,7 @@ const Title = styled.Text`
   color: ${({ theme }) => theme.gold};
 `;
 const Desc = styled.Text`
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
   color: ${({ theme }) => theme.white + 90};
 `;
@@ -77,8 +77,8 @@ const renderDot = (color) => {
   return (
     <View
       style={{
-        height: 6,
-        width: 6,
+        height: 8,
+        width: 8,
         borderRadius: 5,
         backgroundColor: color,
         marginRight: 5,
@@ -87,7 +87,7 @@ const renderDot = (color) => {
   );
 };
 
-const ExpencePredictionCard = ({ chartData }) => {
+const ExpencePredictionCard = ({ futureExpence }) => {
   const theme = useTheme();
 
   return (
@@ -101,18 +101,21 @@ const ExpencePredictionCard = ({ chartData }) => {
         >
           <Title>Expence Prediction</Title>
           <Desc>
-            Based on your past expences, here are your projected expence for
-            next month.
+            Based on your past 2 months expences, here are your projected
+            expence for next month.
           </Desc>
         </View>
         <Section>
           <Left>
-            {chartData && (
+            {futureExpence?.predictions && (
               <PieChart
-                data={(chartData?.data && chartData?.data) || []}
+                data={
+                  (futureExpence?.predictions && futureExpence?.predictions) ||
+                  []
+                }
                 donut
                 radius={60}
-                innerRadius={40}
+                innerRadius={30}
                 focusOnPress
                 innerCircleColor={theme.mainCard}
               />
@@ -124,24 +127,40 @@ const ExpencePredictionCard = ({ chartData }) => {
                 gap: 10,
               }}
             >
+              <Text
+                style={{
+                  color: theme.white,
+                  fontSize: 12,
+                }}
+              >
+                Accuracy:-{" "}
+                <Text
+                  style={{
+                    color: theme.green,
+                    fontSize: 12,
+                  }}
+                >
+                  {futureExpence?.accuracy?.toFixed(2)}%
+                </Text>
+              </Text>
               <View
                 style={{
                   flex: 1,
-                  flexWrap: "wrap",
-                  flexDirection: "row",
-                  gap: 8,
+                  flexDirection: "column",
+                  gap: 4,
                 }}
               >
-                {chartData?.data?.map((item, index) => (
+                {futureExpence?.predictions?.map((item, index) => (
                   <Item key={`chart-card-insight-${item?.name}-${index}`}>
-                    {renderDot(getCategoryByValue(item?.name)?.color)}
+                    {renderDot(item?.color)}
                     <Text
                       style={{
                         color: theme.white,
-                        fontSize: 10,
+                        fontSize: 11,
                       }}
                     >
-                      {getCategoryByValue(item?.name)?.name}
+                      {getCategoryByValue(item?.name)?.name} - ₹{""}
+                      {item?.value?.toFixed(2)}
                     </Text>
                   </Item>
                 ))}
