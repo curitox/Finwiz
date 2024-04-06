@@ -70,6 +70,10 @@ export const PredictInvestment = async (data, token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+export const Predict_Future_expences = async (token) =>
+  await API.get("/predict/future_expenses", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 export const BudgetAnalysis = async (token) =>
   await API.get("/predict/budget_recommendations", {
     headers: { Authorization: `Bearer ${token}` },
