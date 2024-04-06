@@ -109,7 +109,23 @@ const GoalCard = ({ full, item }) => {
                 gap: 2,
               }}
             >
-              <Title>{item?.name}</Title>
+              <View
+                style={{
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  flex: 1,
+                  flexDirection: "row",
+                }}
+              >
+                <Title>{item?.name}</Title>
+                {item?.status === "COMPLETE" && (
+                  <MaterialCommunityIcons
+                    name="check-circle"
+                    size={16}
+                    color={theme.green}
+                  />
+                )}
+              </View>
               <Desc>{item?.description}</Desc>
             </View>
             <View
@@ -157,11 +173,15 @@ const GoalCard = ({ full, item }) => {
           <View style={{ flex: 1 }}>
             <ProgressBar
               progress={item?.achieved_amount / item?.target_amount}
-              color={theme.primary}
+              color={item?.status === "COMPLETE" ? theme.green : theme.primary}
               style={{ borderRadius: 12, height: 6 }}
             />
           </View>
-          <CompletedAmount>
+          <CompletedAmount
+            style={{
+              color: item?.status === "COMPLETE" ? theme.green : theme.primary,
+            }}
+          >
             ₹{Math.trunc(item?.achieved_amount)}
           </CompletedAmount>
         </Bottom>

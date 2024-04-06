@@ -262,7 +262,9 @@ const GoalsDetails = ({ item }) => {
               <GoalTitle>{item?.name}</GoalTitle>
               <Desc>{item?.description}</Desc>
             </View>
-            <View style={{ gap: 4, flexDirection: "row" }}>
+            <View
+              style={{ gap: 4, flexDirection: "row", alignItems: "center" }}
+            >
               <IconButton onPress={() => createAlert()}>
                 <MaterialIcons
                   name="delete-outline"
@@ -295,6 +297,13 @@ const GoalsDetails = ({ item }) => {
               >
                 <FontAwesome name="edit" size={14} color={theme.text_primary} />
               </IconButton>
+              {item?.status === "COMPLETE" && (
+                <MaterialCommunityIcons
+                  name="check-circle"
+                  size={20}
+                  color={theme.green}
+                />
+              )}
             </View>
           </View>
 
@@ -322,6 +331,23 @@ const GoalsDetails = ({ item }) => {
                 Target Amount:{" "}
                 <Span color={theme.primary}>
                   ₹{Math.trunc(item?.target_amount)}
+                </Span>
+              </Date>
+            </IconText>
+            <IconText>
+              <MaterialCommunityIcons
+                name="progress-check"
+                size={18}
+                color={theme.text_secondary}
+              />
+              <Date>
+                Status:{" "}
+                <Span
+                  color={
+                    item?.status === "COMPLETE" ? theme.green : theme.yellow
+                  }
+                >
+                  {item?.status}
                 </Span>
               </Date>
             </IconText>
@@ -380,7 +406,9 @@ const GoalsDetails = ({ item }) => {
             <View style={{ flex: 1 }}>
               <ProgressBar
                 progress={item?.achieved_amount / item?.target_amount}
-                color={theme.primary}
+                color={
+                  item?.status === "COMPLETE" ? theme.green : theme.primary
+                }
                 style={{ borderRadius: 12, height: 6 }}
               />
             </View>
