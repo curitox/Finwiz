@@ -63,13 +63,18 @@ def goalGet():
     user = User.query.get(user_id)
     if not user:
         return create_error(404, "User not found")
-    status_filter =  request.args.get('status')
+    
+    status_filter = request.args.get('status')
+    
     if status_filter == 'ALL':
         goals = Goal.query.filter_by(user_id=user_id).all()
     elif status_filter == 'COMPLETE':
         goals = Goal.query.filter_by(user_id=user_id, status='COMPLETE').all()
     else:
         goals = Goal.query.filter_by(user_id=user_id).all()
+
+    # Sort goals by target date in descending order
+    goals.sort(key=lambda x: x.target_date, reverse=True)
 
     goals_data = [{
         'id': goal.id,
@@ -80,7 +85,7 @@ def goalGet():
         'target_date': goal.target_date.strftime('%Y-%m-%d'),
         'priority_level': goal.priority_level,
         'status': goal.status,
-        'progress': goal.achieved_amount/goal.target_amount,
+        'progress': goal.achieved_amount / goal.target_amount if goal.target_amount != 0 else 0,
     } for goal in goals]
 
     return jsonify(goals_data), 200

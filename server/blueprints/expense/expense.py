@@ -111,6 +111,9 @@ def getExpenses():
                              .filter(Expense.transactionDate < end_date) \
                              .all()
     
+    # Sort expenses by transaction date and time within each date
+    expenses.sort(key=lambda x: x.transactionDate, reverse=True)
+    
     expenses_data = []
     for expense in expenses:
         expense_data = {
