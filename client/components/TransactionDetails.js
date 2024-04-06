@@ -1,11 +1,16 @@
 import React, { useContext } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import styled, { css, useTheme } from "styled-components/native";
 import Button from "../components/buttons/button";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import moment from "moment";
+import { DeleteExpence } from "../api";
+import Toast from "react-native-toast-message";
+import { useAuthContext } from "../context/auth";
+import { useBottomSheetContext } from "../context/bottomSheetContext";
 
 const Card = styled.View`
   flex: 1;
@@ -68,10 +73,43 @@ const ButtonWrapper = styled.View`
 `;
 
 const TransactionDetails = ({ item, savings }) => {
+  const { setOpenBottomSheet } = useBottomSheetContext();
+  const { currentUser } = useAuthContext();
+  const router = useRouter();
   const theme = useTheme();
+
+  const createAlert = () =>
+    Alert.alert("Delete Transaction", "Your Transaction will be deleted", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      { text: "Delete", onPress: () => handelDelete() },
+    ]);
+
+  const handelDelete = async () => {
+    await DeleteExpence(item?.id, currentUser?.token)
+      .then(async (res) => {
+        Toast.show({
+          type: "success",
+          text1: "Transaction Deleted",
+          text2: "Transaction Deleted successfully 👋",
+        });
+        setOpenBottomSheet({ open: false, content: null });
+      })
+      .catch((err) => {
+        console.log(err);
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong",
+          text2: err.response.data.message,
+        });
+      });
+  };
   return (
     <Card>
       <Title color={item?.color}>Transaction Details</Title>
+      <Toast />
       <Wrapper
         color={item?.color}
         style={{
@@ -125,6 +163,7 @@ const TransactionDetails = ({ item, savings }) => {
               color={theme.categoryRed + 90}
             />
           }
+          onPress={() => createAlert()}
         >
           Delete
         </Button>
@@ -134,6 +173,22 @@ const TransactionDetails = ({ item, savings }) => {
           color={theme.white}
           bgcolor={theme.primary}
           startIcon={<FontAwesome name="edit" size={16} color={theme.white} />}
+          onPress={() =>
+            router.replace({
+              pathname: `/add-transactions`,
+              params: {
+                edit: true,
+                updateTransactionData: JSON.stringify({
+                  id: item?.id,
+                  amount: Math.trunc(item?.amount).toString(),
+                  category: item?.category,
+                  description: item?.description,
+                  transactionDate: item?.transactionDate,
+                  paymentMethod: item?.paymentMethod,
+                }),
+              },
+            })
+          }
         >
           Edit
         </Button>

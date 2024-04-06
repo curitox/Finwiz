@@ -30,6 +30,14 @@ export const AddExpence = async (data, token) =>
   await API.post("/expense/add", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
+export const UpdateExpence = async (id, data, token) =>
+  await API.patch(`/expense/update?id=${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+export const DeleteExpence = async (id, token) =>
+  await API.delete(`/expense/delete?id=${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 export const GetExpences = async (token) =>
   await API.get("/expense/get", {
     headers: { Authorization: `Bearer ${token}` },
@@ -43,7 +51,14 @@ export const AddGoal = async (data, token) =>
   await API.post("/goal/add", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
-
+export const UpdateGoal = async (id, data, token) =>
+  await API.patch(`/goal/update?id=${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+export const DeleteGoal = async (id, token) =>
+  await API.delete(`/goal/delete?id=${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 export const GetGoals = async (token) =>
   await API.get("/goal/get", {
     headers: { Authorization: `Bearer ${token}` },

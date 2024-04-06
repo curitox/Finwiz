@@ -11,7 +11,7 @@ import Button from "../../components/buttons/button";
 import DateInput from "../../components/text_fields/dateInput";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SelectableChip from "../../components/selectable/SelectableChip";
-import { AddGoal } from "../../api";
+import { AddGoal, UpdateGoal } from "../../api";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 
@@ -70,6 +70,7 @@ const IconContainer = styled.View`
 `;
 
 export default function AddGoals() {
+  const { updateGoals, edit } = useLocalSearchParams();
   const router = useRouter();
   const theme = useTheme();
   const [loading, setLoading] = useState();
@@ -112,28 +113,61 @@ export default function AddGoals() {
       goalData.description !== ""
     ) {
       setLoading(true);
-      await AddGoal(goalData, currentUser?.token)
-        .then(async (res) => {
-          console.log(res);
-          Toast.show({
-            type: "success",
-            text1: "New Goal Created",
-            text2: "New Goal created successfully 👋",
+      if (edit) {
+        await UpdateGoal(
+          JSON.parse(updateGoals)?.id,
+          goalData,
+          currentUser?.token
+        )
+          .then(async (res) => {
+            console.log(res);
+            Toast.show({
+              type: "success",
+              text1: "Goal Updated",
+              text2: "Goal Updated successfully 👋",
+            });
+            setLoading(false);
+            router.replace("/home");
+          })
+          .catch((err) => {
+            console.log(err.response.data.message);
+            Toast.show({
+              type: "error",
+              text1: "Something went wrong",
+              text2: err.response.data.message,
+            });
+            setLoading(false);
           });
-          setLoading(false);
-          router.replace("/home");
-        })
-        .catch((err) => {
-          console.log(err.response.data.message);
-          Toast.show({
-            type: "error",
-            text1: "Something went wrong",
-            text2: err.response.data.message,
+      } else {
+        await AddGoal(goalData, currentUser?.token)
+          .then(async (res) => {
+            console.log(res);
+            Toast.show({
+              type: "success",
+              text1: "New Goal Created",
+              text2: "New Goal created successfully 👋",
+            });
+            setLoading(false);
+            router.replace("/home");
+          })
+          .catch((err) => {
+            console.log(err.response.data.message);
+            Toast.show({
+              type: "error",
+              text1: "Something went wrong",
+              text2: err.response.data.message,
+            });
+            setLoading(false);
           });
-          setLoading(false);
-        });
+      }
     }
   };
+
+  useEffect(() => {
+    if (edit) {
+      setGoalData(JSON.parse(updateGoals));
+    }
+  }, []);
 
   return (
     <>

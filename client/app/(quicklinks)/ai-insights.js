@@ -176,6 +176,7 @@ export default function AIinsights() {
                 </Wrapper>
               </>
             )}
+            <View style={{ marginBottom: 780 }}></View>
           </>
         )}
       </Container>

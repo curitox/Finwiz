@@ -20,6 +20,8 @@ export default function TabsLayout() {
   useEffect(() => {
     if (openBottomSheet?.open) {
       bottomSheetRef?.current.snapToIndex(0);
+    } else if (openBottomSheet?.open === false) {
+      bottomSheetRef?.current.close();
     }
   }, [openBottomSheet]);
 
