@@ -16,6 +16,8 @@ import BgImage from "../../assets/icons/pattern.png";
 import { useThemeContext } from "../../context/themeContext";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
+import { useBottomSheetContext } from "../../context/bottomSheetContext";
+import ProfileUpdate from "../../components/profileUpdate";
 
 const MainContainer = styled.ScrollView`
   background-color: ${({ theme }) => theme.bg};
@@ -110,6 +112,7 @@ const VerticalLine = styled.View`
 `;
 
 export default function Account() {
+  const { setOpenBottomSheet } = useBottomSheetContext();
   const { signOut, currentUser } = useAuthContext();
   const themeMode = useThemeContext();
   const theme = useTheme();
@@ -230,6 +233,19 @@ export default function Account() {
               height: 12,
             }}
           />
+        </Container>
+        <HorizontalLine />
+        <Container
+          onPress={() =>
+            setOpenBottomSheet({
+              open: true,
+              content: <ProfileUpdate />,
+              snapPoint: ["70%, 80%"],
+            })
+          }
+        >
+          <MaterialIcons name="update" size={22} color={theme.text_secondary} />
+          <Text style={{ fontSize: 16 }}>Update Profile</Text>
         </Container>
         <HorizontalLine />
         <Container>

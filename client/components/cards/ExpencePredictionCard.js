@@ -87,9 +87,8 @@ const renderDot = (color) => {
   );
 };
 
-const ExpencePredictionCard = ({ futureExpence }) => {
+const ExpencePredictionCard = ({ futureExpence, loading }) => {
   const theme = useTheme();
-
   return (
     <Card style={{ elevation: 1 }}>
       <ImageBg source={BgImage} resizeMode="cover" />
@@ -105,69 +104,94 @@ const ExpencePredictionCard = ({ futureExpence }) => {
             expence for next month.
           </Desc>
         </View>
-        <Section>
-          <Left>
-            {futureExpence?.predictions && (
-              <PieChart
-                data={
-                  (futureExpence?.predictions && futureExpence?.predictions) ||
-                  []
-                }
-                donut
-                radius={60}
-                innerRadius={30}
-                focusOnPress
-                innerCircleColor={theme.mainCard}
-              />
-            )}
-          </Left>
-          <Right>
-            <View
+        {loading ? (
+          <View
+            style={{
+              gap: 4,
+              flexDirection: "row",
+              height: 100,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator color={theme.white} />
+            <Text
               style={{
-                gap: 10,
+                fontSize: 12,
+                fontWeight: 500,
+                color: theme.white,
               }}
             >
-              <Text
+              Predicting your future expences
+            </Text>
+          </View>
+        ) : (
+          <Section>
+            <Left>
+              {futureExpence?.predictions && (
+                <PieChart
+                  data={
+                    (futureExpence?.predictions &&
+                      futureExpence?.predictions) ||
+                    []
+                  }
+                  donut
+                  radius={60}
+                  innerRadius={30}
+                  focusOnPress
+                  innerCircleColor={theme.mainCard}
+                />
+              )}
+            </Left>
+            <Right>
+              <View
                 style={{
-                  color: theme.white,
-                  fontSize: 12,
+                  gap: 10,
                 }}
               >
-                Accuracy:-{" "}
                 <Text
                   style={{
-                    color: theme.green,
+                    color: theme.white,
                     fontSize: 12,
                   }}
                 >
-                  {futureExpence?.accuracy?.toFixed(2)}%
+                  Accuracy:-{" "}
+                  <Text
+                    style={{
+                      color: theme.green,
+                      fontSize: 12,
+                    }}
+                  >
+                    {futureExpence?.accuracy?.toFixed(2)}%
+                  </Text>
                 </Text>
-              </Text>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  gap: 4,
-                }}
-              >
-                {futureExpence?.predictions?.map((item, index) => (
-                  <Item key={`chart-card-insight-${item?.name}-${index}`}>
-                    {renderDot(item?.color)}
-                    <Text
-                      style={{
-                        color: theme.white,
-                        fontSize: 11,
-                      }}
-                    >
-                      {getCategoryByValue(item?.name)?.name} - ₹{""}
-                      {item?.value?.toFixed(2)}
-                    </Text>
-                  </Item>
-                ))}
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    gap: 4,
+                  }}
+                >
+                  {futureExpence?.predictions?.map((item, index) => (
+                    <Item key={`chart-card-insight-${item?.name}-${index}`}>
+                      {renderDot(item?.color)}
+                      <Text
+                        style={{
+                          color: theme.white,
+                          fontSize: 11,
+                        }}
+                      >
+                        {getCategoryByValue(item?.name)?.name}: ₹{""}
+                        {item?.value?.toFixed(2)}
+                      </Text>
+                    </Item>
+                  ))}
+                </View>
               </View>
-            </View>
-          </Right>
-        </Section>
+            </Right>
+          </Section>
+        )}
       </Wrapper>
     </Card>
   );

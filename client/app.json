@@ -1,6 +1,7 @@
 {
   "expo": {
     "scheme": "acme",
+    "assetBundlePatterns": ["assets/*"],
     "web": {
       "bundler": "metro"
     },
@@ -14,6 +15,17 @@
           "recordAudioAndroid": true
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7b32aea3-217d-4399-9044-bd74ba418b13"
+      }
+    },
+    "android": {
+      "package": "com.rishavchanda.finwiz"
+    }
   }
 }

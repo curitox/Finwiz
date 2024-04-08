@@ -51,7 +51,7 @@ const renderDot = (color) => {
   );
 };
 
-const BudgetRecomendations = ({ budgetRecomendation }) => {
+const BudgetRecomendations = ({ budgetRecomendation, loading }) => {
   const theme = useTheme();
   return (
     <CardContainer elevation={0.5}>
@@ -67,65 +67,90 @@ const BudgetRecomendations = ({ budgetRecomendation }) => {
             categories on which your most spending takes places.
           </Desc>
         </View>
-        <View
-          style={{
-            gap: 1,
-            flexDirection: "column",
-            gap: 4,
-            padding: 4,
-          }}
-        >
-          {budgetRecomendation?.map((item, index) => (
-            <View
-              key={`budget+${index}`}
+
+        {loading ? (
+          <View
+            style={{
+              gap: 4,
+              flexDirection: "row",
+              height: 100,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator color={theme.text_primary} />
+            <Text
               style={{
-                flex: 1,
-                flexDirection: "row",
-                gap: 12,
-                alignItems: "flex-start",
+                fontSize: 12,
+                fontWeight: 500,
+                color: theme.text_primary,
               }}
             >
-              {renderDot(getCategoryByValue(item[0])?.color)}
+              Generating recomendations
+            </Text>
+          </View>
+        ) : (
+          <View
+            style={{
+              gap: 1,
+              flexDirection: "column",
+              gap: 4,
+              padding: 4,
+            }}
+          >
+            {budgetRecomendation?.map((item, index) => (
               <View
+                key={`budget+${index}`}
                 style={{
                   flex: 1,
+                  flexDirection: "row",
+                  gap: 12,
+                  alignItems: "flex-start",
                 }}
               >
-                <Text
+                {renderDot(getCategoryByValue(item[0])?.color)}
+                <View
                   style={{
                     flex: 1,
-                    fontSize: 13,
-                    color: theme.text_primary,
                   }}
                 >
-                  {index === 0
-                    ? "Your frequently spend in the"
-                    : "Next spending is"}{" "}
                   <Text
                     style={{
-                      fontWeight: 500,
-                      fontSize: 14,
+                      flex: 1,
+                      fontSize: 13,
                       color: theme.text_primary,
                     }}
                   >
-                    {getCategoryByValue(item[0])?.name}
-                  </Text>{" "}
-                  category which is around{" "}
-                  <Text
-                    style={{
-                      fontWeight: 500,
-                      fontSize: 14,
-                      color: theme.text_primary,
-                    }}
-                  >
-                    {item[1]}%
-                  </Text>{" "}
-                  of your top spended category.
-                </Text>
+                    {index === 0
+                      ? "Your frequently spend in the"
+                      : "Next spending is"}{" "}
+                    <Text
+                      style={{
+                        fontWeight: 500,
+                        fontSize: 14,
+                        color: theme.text_primary,
+                      }}
+                    >
+                      {getCategoryByValue(item[0])?.name}
+                    </Text>{" "}
+                    category which is around{" "}
+                    <Text
+                      style={{
+                        fontWeight: 500,
+                        fontSize: 14,
+                        color: theme.text_primary,
+                      }}
+                    >
+                      {item[1]?.toFixed(2)}%
+                    </Text>{" "}
+                    of your top spended category.
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
       </Wrapper>
     </CardContainer>
   );

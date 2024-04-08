@@ -1,11 +1,11 @@
 {
-  "name": "renegan-app",
+  "name": "fin-wiz",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -18,6 +18,7 @@
     "expo-blur": "~12.4.1",
     "expo-camera": "~13.4.4",
     "expo-constants": "~14.4.2",
+    "expo-dev-client": "~2.4.13",
     "expo-linear-gradient": "~12.3.0",
     "expo-linking": "~5.0.2",
     "expo-navigation-bar": "~2.3.0",
@@ -26,7 +27,7 @@
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "link": "^1.5.1",
-    "lottie-react-native": "^6.7.0",
+    "lottie-react-native": "5.1.6",
     "metro-source-map": "^0.80.5",
     "moment": "^2.30.1",
     "react": "18.2.0",
@@ -47,7 +48,6 @@
     "react-native-reanimated": "~3.3.0",
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
-    "react-native-skeleton-content": "^1.0.28",
     "react-native-svg": "13.9.0",
     "react-native-svg-transformer": "^1.3.0",
     "react-native-toast-message": "^2.2.0",

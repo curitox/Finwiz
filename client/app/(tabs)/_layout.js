@@ -56,7 +56,7 @@ export default function TabsLayout() {
           options={{
             href: "/home",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -66,7 +66,7 @@ export default function TabsLayout() {
                 }}
               >
                 <Ionicons
-                  name="home-outline"
+                  name={focused ? "home" : "home-outline"}
                   size={24}
                   style={{ marginBottom: -4 }}
                   color={color}
@@ -91,7 +91,7 @@ export default function TabsLayout() {
           options={{
             href: "/transactions",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -101,7 +101,7 @@ export default function TabsLayout() {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="bank-outline"
+                  name={focused ? "bank" : "bank-outline"}
                   size={24}
                   style={{ marginBottom: -5 }}
                   color={color}
@@ -161,7 +161,7 @@ export default function TabsLayout() {
           options={{
             href: "/analytics",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -170,9 +170,9 @@ export default function TabsLayout() {
                   backgroundColor: "transparent",
                 }}
               >
-                <SimpleLineIcons
-                  name="chart"
-                  size={20}
+                <Ionicons
+                  name={focused ? "stats-chart" : "stats-chart-outline"}
+                  size={24}
                   style={{ marginBottom: -1 }}
                   color={color}
                 />
@@ -196,7 +196,7 @@ export default function TabsLayout() {
           options={{
             href: "/account",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -208,7 +208,7 @@ export default function TabsLayout() {
                 <FontAwesome
                   size={21}
                   style={{ marginBottom: -4 }}
-                  name="user-o"
+                  name={focused ? "user" : "user-o"}
                   color={color}
                 />
                 <Text
