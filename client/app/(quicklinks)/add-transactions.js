@@ -318,7 +318,7 @@ export default function AddTransactions() {
         setLoading(false);
         console.log(data);
         if (data !== "" || data !== undefined || data !== null) {
-          // OpenUPIAPP();
+          OpenUPIAPP();
         }
         router.replace("/home");
       })

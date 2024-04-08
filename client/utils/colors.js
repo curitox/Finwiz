@@ -4,6 +4,7 @@ const commonColor = {
   black: "#000000",
   green: "#26C281",
   red: "#ff0000",
+  yellow: "#ffa31a",
   gold: "#E1C158",
   categoryGreen: "#17715F",
   categoryYellow: "#e39400",

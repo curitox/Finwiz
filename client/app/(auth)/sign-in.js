@@ -338,7 +338,7 @@ const SignIn = () => {
             bordercolor={theme.text_secondary_light}
             color={theme.text_secondary}
             loading={loading}
-            onPress={handleSignIn}
+            // onPress={() => _googlesignIn()}
           >
             Continue with Google
           </Button>
