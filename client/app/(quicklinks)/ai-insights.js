@@ -36,6 +36,7 @@ const Container = styled.ScrollView`
   flex: 1;
   gap: 12px;
   padding: 42px 16px 16px 16px;
+  background-color: ${({ theme }) => theme.bg};
 `;
 const Back = styled.TouchableOpacity`
   width: 46px;

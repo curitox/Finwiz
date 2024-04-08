@@ -100,7 +100,7 @@ const Home = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const [loading, setLoading] = useState(true);
-  const { toggleTheme } = useThemeContext();
+  const { appTheme } = useThemeContext();
   const [year, setYear] = useState(moment().format("YYYY"));
   const [error, setError] = useState();
   const [expences, setExpences] = useState([]);
@@ -269,7 +269,7 @@ const Home = () => {
     >
       <Wrapper>
         <StatusBar
-          barStyle={"dark-content"}
+          barStyle={appTheme === "light" ? "dark-content" : "light-content"}
           backgroundColor={theme.bg} // Set the status bar color based on the theme
         />
         <Topbar />

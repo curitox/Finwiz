@@ -8,6 +8,7 @@ import {
   Foundation,
   FontAwesome5,
   MaterialIcons,
+  MaterialCommunityIcons,
   Entypo,
   Feather,
 } from "@expo/vector-icons";
@@ -70,7 +71,7 @@ const FlexContainer = styled.View`
 const Flex = styled.View`
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 `;
 const Finance = styled.View`
   background-color: ${({ theme }) => theme.text_secondary_light + 30};
@@ -111,10 +112,14 @@ const VerticalLine = styled.View`
   background-color: ${({ theme }) => theme.text_secondary_light + 70};
 `;
 
+const TextColor = styled.Text`
+  color: ${({ theme }) => theme.text_secondary};
+`;
+
 export default function Account() {
   const { setOpenBottomSheet } = useBottomSheetContext();
   const { signOut, currentUser } = useAuthContext();
-  const themeMode = useThemeContext();
+  const { appTheme, toggleTheme } = useThemeContext();
   const theme = useTheme();
   const [fingerPrint, setFingerPrint] = useState(false);
 
@@ -135,6 +140,7 @@ export default function Account() {
           style={{
             fontWeight: "500",
             fontSize: 22,
+            color: theme.text_primary,
           }}
         >
           {currentUser?.user?.name}
@@ -150,7 +156,9 @@ export default function Account() {
         <FlexContainer>
           <Flex borderRight="1px solid #5d5d5d">
             <Foundation name="male-symbol" size={24} color={theme.primary} />
-            <Text>{currentUser?.user?.gender}</Text>
+            <Text style={{ color: theme.text_secondary }}>
+              {currentUser?.user?.gender}
+            </Text>
           </Flex>
           <Flex>
             <FontAwesome5
@@ -158,7 +166,9 @@ export default function Account() {
               size={16}
               color={theme.primary}
             />
-            <Text>{moment(currentUser?.user?.dob).format("MMMM Do YYYY")}</Text>
+            <Text style={{ color: theme.text_secondary }}>
+              {moment(currentUser?.user?.dob).format("MMMM Do YYYY")}
+            </Text>
           </Flex>
         </FlexContainer>
         <Finance>
@@ -220,7 +230,7 @@ export default function Account() {
               size={22}
               color={theme.text_secondary}
             />
-            <Text style={{ fontSize: 16 }}>Fingerprint Lock</Text>
+            <TextColor style={{ fontSize: 16 }}>Fingerprint Lock</TextColor>
           </View>
           <Switch
             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -236,6 +246,30 @@ export default function Account() {
         </Container>
         <HorizontalLine />
         <Container
+          style={{ justifyContent: "space-between" }}
+          onPress={() => toggleTheme()}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            {appTheme === "light" ? (
+              <MaterialIcons
+                name="nightlight-round"
+                size={22}
+                color={theme.text_secondary}
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name="lightbulb-on"
+                size={22}
+                color={theme.text_secondary}
+              />
+            )}
+            <TextColor style={{ fontSize: 16 }}>
+              {appTheme === "light" ? "Dark Mode" : "Light Mode"}
+            </TextColor>
+          </View>
+        </Container>
+        <HorizontalLine />
+        <Container
           onPress={() =>
             setOpenBottomSheet({
               open: true,
@@ -245,17 +279,17 @@ export default function Account() {
           }
         >
           <MaterialIcons name="update" size={22} color={theme.text_secondary} />
-          <Text style={{ fontSize: 16 }}>Update Profile</Text>
+          <TextColor style={{ fontSize: 16 }}>Update Profile</TextColor>
         </Container>
         <HorizontalLine />
         <Container>
           <Entypo name="share" size={22} color={theme.text_secondary} />
-          <Text style={{ fontSize: 16 }}>Share</Text>
+          <TextColor style={{ fontSize: 16 }}>Share</TextColor>
         </Container>
         <HorizontalLine />
         <Container>
           <Feather name="info" size={22} color={theme.text_secondary} />
-          <Text style={{ fontSize: 16 }}>About Us</Text>
+          <TextColor style={{ fontSize: 16 }}>About Us</TextColor>
         </Container>
         <HorizontalLine />
         <Container>
@@ -264,16 +298,17 @@ export default function Account() {
             size={22}
             color={theme.text_secondary}
           />
-          <Text style={{ fontSize: 16 }}>Rate Us</Text>
+          <TextColor style={{ fontSize: 16 }}>Rate Us</TextColor>
         </Container>
         <HorizontalLine />
         <Container onPress={() => signOut()}>
           <AntDesign name="logout" size={20} color={theme.categoryRed + 90} />
-          <Text style={{ fontSize: 16, color: theme.categoryRed + 90 }}>
+          <TextColor style={{ fontSize: 16, color: theme.categoryRed + 90 }}>
             Logout
-          </Text>
+          </TextColor>
         </Container>
       </Settings>
+      <View style={{ marginBottom: 50 }}></View>
     </MainContainer>
   );
 }

@@ -17,7 +17,7 @@ const CardIcon = styled.View`
   height: 58px;
   justify-content: center;
   align-items: center;
-  background: ${({ background }) => background};
+  background: ${({ background, color }) => color + 20};
   color: ${({ color }) => color};
   border-radius: 60px;
 `;
@@ -29,18 +29,18 @@ const CardText = styled.Text`
 `;
 const NavigationCards = ({ data }) => {
   const { setOpenBottomSheet } = useBottomSheetContext();
-  const router = useRouter()
+  const router = useRouter();
   const OpenLink = () => {
     if (data?.link !== null) {
-      router.replace(data?.link)
+      router.replace(data?.link);
     } else {
       setOpenBottomSheet({
         open: true,
         content: data?.bottomSheet,
         snapPoint: ["60%"],
-      })
+      });
     }
-  }
+  };
   return (
     <Card onPress={() => OpenLink()}>
       <CardIcon background={data.background} color={data.color}>
