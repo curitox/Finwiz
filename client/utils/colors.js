@@ -6,9 +6,9 @@ const commonColor = {
   red: "#ff0000",
   yellow: "#ffa31a",
   gold: "#E1C158",
-  categoryGreen: "#17715F",
+  categoryGreen: "#26CF7E",
   categoryYellow: "#e39400",
-  categoryViolet: "#a30ff2",
+  categoryViolet: "#7132F9",
   categoryBlue: "#0f7df2",
   categoryRed: "#ff002b",
   categoryGreenLight: "#d0f2e4",
@@ -21,7 +21,7 @@ const commonColor = {
 export const light = {
   bg: "#FFFFFF",
   bottomBar: "#FDFDFD",
-  card: "#0E1826",
+  card: "#FFFFFF",
   mainCard: "#1D2A30",
   text: "#000000",
   text_primary: "#2b2b2b",
@@ -31,13 +31,13 @@ export const light = {
 };
 
 export const dark = {
-  bg: "#1F1F1F",
-  bottomBar: "#292929",
-  card: "#292929",
-  mainCard: "#1D2A30",
+  bg: "#282C41",
+  bottomBar: "#2A2D40",
+  card: "#212436",
+  mainCard: "#212436",
   text: "#ffffff",
-  text_primary: "#F2F2F2",
-  text_secondary: "#BDBDBD",
-  text_secondary_light: "#828282",
+  text_primary: "#F1F2F7",
+  text_secondary: "#9297B7",
+  text_secondary_light: "#5B628A",
   ...commonColor,
 };

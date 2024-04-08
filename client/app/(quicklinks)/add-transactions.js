@@ -19,6 +19,7 @@ const Container = styled.View`
   flex: 1;
   gap: 22px;
   padding: 42px 16px 16px 16px;
+  background-color: ${({ theme }) => theme.bg};
 `;
 const Back = styled.TouchableOpacity`
   width: 46px;

@@ -24,7 +24,7 @@ const CardContainer = styled(Card)`
   flex-direction: column;
   border-radius: 12px;
   gap: 6px;
-  background-color: ${({ theme }) => theme.bg};
+  background-color: ${({ theme }) => theme.card};
 `;
 
 const Wrapper = styled(Card.Content)`
@@ -46,6 +46,10 @@ const Desc = styled.Text`
 
 const WeeklyExpence = ({ data }) => {
   const theme = useTheme();
+  const newData = data?.map((obj) => ({
+    ...obj,
+    labelTextStyle: { color: theme.text_secondary },
+  }));
   return (
     <CardContainer elevation={0.5}>
       <Wrapper>
@@ -63,12 +67,12 @@ const WeeklyExpence = ({ data }) => {
           barBorderRadius={4}
           spacing={20}
           frontColor={theme.green}
-          data={data}
+          data={newData}
           yAxisThickness={0}
           xAxisThickness={0.1}
           isAnimated
-          yAxisColor="lightgray"
-          xAxisColor="lightgray"
+          yAxisTextStyle={{ color: theme.text_secondary }}
+          xAxisTextStyle={{ color: theme.text_secondary }}
         />
       </Wrapper>
     </CardContainer>

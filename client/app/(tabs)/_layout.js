@@ -33,6 +33,7 @@ export default function TabsLayout() {
           tabBarActiveTintColor: theme.primary,
           headerShown: false,
           tabBarStyle: {
+            borderTopWidth: 0,
             position: "absolute",
             backgroundColor: theme.bottomBar,
             padding: 2,
@@ -69,7 +70,7 @@ export default function TabsLayout() {
                   name={focused ? "home" : "home-outline"}
                   size={24}
                   style={{ marginBottom: -4 }}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -77,7 +78,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Home
@@ -104,7 +105,7 @@ export default function TabsLayout() {
                   name={focused ? "bank" : "bank-outline"}
                   size={24}
                   style={{ marginBottom: -5 }}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -112,7 +113,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Transactions
@@ -126,7 +127,7 @@ export default function TabsLayout() {
           options={{
             href: "/goals",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -138,7 +139,7 @@ export default function TabsLayout() {
                 <MaterialCommunityIcons
                   name="bullseye-arrow"
                   size={24}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                   style={{ marginBottom: -6 }}
                 />
                 <Text
@@ -147,7 +148,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Goals
@@ -174,7 +175,7 @@ export default function TabsLayout() {
                   name={focused ? "stats-chart" : "stats-chart-outline"}
                   size={24}
                   style={{ marginBottom: -1 }}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -182,7 +183,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Analytics
@@ -207,9 +208,9 @@ export default function TabsLayout() {
               >
                 <FontAwesome
                   size={21}
-                  style={{ marginBottom: -4 }}
+                  style={{ marginBottom: -1 }}
                   name={focused ? "user" : "user-o"}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -217,7 +218,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Account
@@ -235,6 +236,7 @@ export default function TabsLayout() {
         }
         enablePanDownToClose={true}
         index={-1}
+        backgroundStyle={{ backgroundColor: theme.bg }}
         containerStyle={{
           backgroundColor: openBottomSheet.open
             ? `rgba(0,0,0,0.3)`

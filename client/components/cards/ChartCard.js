@@ -13,10 +13,12 @@ import { PieChart } from "react-native-gifted-charts";
 import { Feather } from "@expo/vector-icons";
 import { getCategoryByValue } from "../../utils/data";
 import moment from "moment";
+import { Card } from "react-native-paper";
 
-const Card = styled.View`
+const CardWrapper = styled(Card)`
   flex: 1;
   width: 360px;
+  height: fit-content;
   margin: 2px 4px 8px 4px;
   position: relative;
   flex-direction: column;
@@ -94,7 +96,7 @@ const ChartCard = ({ chartData, month }) => {
   const theme = useTheme();
 
   return (
-    <Card style={{ elevation: 1 }}>
+    <CardWrapper elevation={0.5}>
       <ImageBg source={BgImage} resizeMode="cover" />
       <Wrapper>
         <View
@@ -174,7 +176,7 @@ const ChartCard = ({ chartData, month }) => {
           </Right>
         </Section>
       </Wrapper>
-    </Card>
+    </CardWrapper>
   );
 };
 
