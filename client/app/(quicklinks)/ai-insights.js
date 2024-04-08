@@ -63,7 +63,9 @@ export default function AIinsights() {
   const router = useRouter();
   const theme = useTheme();
   const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(true);
+  const [FutureExpenceLoading, setFutureExpenceLoading] = useState(true);
+  const [budgetLoading, setbudgetLoading] = useState(true);
   const [budgetRecomendation, setBudgetRecomendation] = useState([]);
   const [personalizedInsight, setPersonalizedInsight] = useState();
   const [futureExpence, setfutureExpence] = useState();
@@ -72,15 +74,17 @@ export default function AIinsights() {
   const getFutureExpences = async () => {
     setError("");
     setLoading(true);
+    setFutureExpenceLoading(true);
     await Predict_Future_expences(currentUser?.token)
       .then((res) => {
         setError("");
         setfutureExpence(res?.data);
-        console.log(res?.data);
+        setFutureExpenceLoading(false);
         setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
+        setFutureExpenceLoading(false);
         setError(err.message);
       });
   };
@@ -103,14 +107,17 @@ export default function AIinsights() {
   const getBudgetRecomendation = async () => {
     setError("");
     setLoading(true);
+    setbudgetLoading(true);
     await BudgetAnalysis(currentUser?.token)
       .then((res) => {
         setError("");
         setBudgetRecomendation(res?.data?.recommended_categories);
         setLoading(false);
+        setbudgetLoading(false);
       })
       .catch((err) => {
         setLoading(false);
+        setbudgetLoading(false);
         setError(err.message);
       });
   };
@@ -189,12 +196,16 @@ export default function AIinsights() {
                       gap: 10,
                     }}
                   >
-                    <ExpencePredictionCard futureExpence={futureExpence} />
+                    <ExpencePredictionCard
+                      futureExpence={futureExpence}
+                      loading={FutureExpenceLoading}
+                    />
                     <PersonalizedInsight
                       personalizedInsight={personalizedInsight}
                     />
                     <BudgetRecomendations
                       budgetRecomendation={budgetRecomendation}
+                      loading={budgetLoading}
                     />
                   </View>
                 </Wrapper>

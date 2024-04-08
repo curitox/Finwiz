@@ -11,7 +11,7 @@ import UserAvatar from "react-native-user-avatar";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
 
-const Container = styled.TouchableOpacity`
+const Container = styled.View`
   flex: 1;
   flex-direction: column;
   gap: 6px;
@@ -47,13 +47,14 @@ const Topbar = () => {
             gap: 16,
           }}
         >
-          <View
+          <TouchableOpacity
             style={{
               width: 40,
             }}
+            onPress={() => router.replace("/account")}
           >
             <UserAvatar size={40} name="Rishav Chanda" />
-          </View>
+          </TouchableOpacity>
           {/* <Text>FinWiz</Text> */}
         </View>
 

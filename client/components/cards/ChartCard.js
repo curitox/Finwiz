@@ -12,9 +12,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { PieChart } from "react-native-gifted-charts";
 import { Feather } from "@expo/vector-icons";
 import { getCategoryByValue } from "../../utils/data";
+import moment from "moment";
 
 const Card = styled.View`
   flex: 1;
+  width: 360px;
+  margin: 2px 4px 8px 4px;
   position: relative;
   flex-direction: column;
   border-radius: 12px;
@@ -87,7 +90,7 @@ const renderDot = (color) => {
   );
 };
 
-const ChartCard = ({ chartData }) => {
+const ChartCard = ({ chartData, month }) => {
   const theme = useTheme();
 
   return (
@@ -99,8 +102,12 @@ const ChartCard = ({ chartData }) => {
             gap: 2,
           }}
         >
-          <Title>Todays Expences</Title>
-          <Desc>Detailed insight of your todays Expences </Desc>
+          <Title>{month ? "Current Months Expences" : "Todays Expences"}</Title>
+          <Desc>
+            {month
+              ? `Detailed insight of "${moment().format("MMMM")}" Expences`
+              : "Detailed insight of your todays Expences"}{" "}
+          </Desc>
         </View>
         <Section>
           <Left>
