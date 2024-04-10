@@ -321,9 +321,9 @@ const Home = () => {
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                   >
-                    {chartData !== null && chartData !== undefined && (
-                      <ChartCard chartData={chartData} />
-                    )}
+                    {chartData !== null &&
+                      chartData !== undefined &&
+                      chartData && <ChartCard chartData={chartData} />}
                     {chartDataMonth !== null &&
                       chartDataMonth !== undefined && (
                         <ChartCard chartData={chartDataMonth} month />

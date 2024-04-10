@@ -133,7 +133,7 @@ export default function Account() {
         <ImageBg source={BgImage} resizeMode="cover" />
       </Card>
       <ProfileImg>
-        <UserAvatar size={100} name="Rishav Chanda" />
+        <UserAvatar size={100} name={currentUser?.user?.name} />
       </ProfileImg>
       <ProfileInfo>
         <Text

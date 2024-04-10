@@ -18,7 +18,7 @@ import { Card } from "react-native-paper";
 const CardWrapper = styled(Card)`
   flex: 1;
   width: 360px;
-  height: fit-content;
+  min-height: 200px;
   margin: 2px 4px 8px 4px;
   position: relative;
   flex-direction: column;
@@ -35,6 +35,7 @@ const ImageBg = styled.ImageBackground`
   right: 0;
   bottom: 0;
   opacity: 0.5;
+  min-height: 250px;
 `;
 const Wrapper = styled.View`
   position: relative;
@@ -43,6 +44,7 @@ const Wrapper = styled.View`
   flex-direction: column;
   border-radius: 20px;
   padding: 12px 16px;
+  min-height: 200px;
 `;
 const Section = styled.View`
   flex: 1;

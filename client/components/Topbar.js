@@ -10,6 +10,7 @@ import styled, { css, useTheme } from "styled-components/native";
 import UserAvatar from "react-native-user-avatar";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
+import { useAuthContext } from "../context/auth";
 
 const Container = styled.View`
   flex: 1;
@@ -37,6 +38,7 @@ const IconButton = styled.TouchableOpacity`
 const Topbar = () => {
   const router = useRouter();
   const theme = useTheme();
+  const { currentUser } = useAuthContext();
 
   return (
     <Container>
@@ -53,7 +55,7 @@ const Topbar = () => {
             }}
             onPress={() => router.replace("/account")}
           >
-            <UserAvatar size={40} name="Rishav Chanda" />
+            <UserAvatar size={40} name={currentUser?.user?.name} />
           </TouchableOpacity>
           {/* <Text>FinWiz</Text> */}
         </View>
