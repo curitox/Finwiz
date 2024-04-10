@@ -236,7 +236,7 @@ export default function TabsLayout() {
         }
         enablePanDownToClose={true}
         index={-1}
-        backgroundStyle={{ backgroundColor: theme.bg }}
+        backgroundStyle={{ backgroundColor: theme.card }}
         containerStyle={{
           backgroundColor: openBottomSheet.open
             ? `rgba(0,0,0,0.3)`

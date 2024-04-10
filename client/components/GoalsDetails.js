@@ -358,7 +358,7 @@ const GoalsDetails = ({ item }) => {
                 width: 16,
                 height: 16,
                 borderRadius: 25,
-                backgroundColor: theme.bg,
+                backgroundColor: theme.card,
                 marginLeft: -22,
               }}
             ></View>
@@ -377,7 +377,7 @@ const GoalsDetails = ({ item }) => {
                 width: 16,
                 height: 16,
                 borderRadius: 25,
-                backgroundColor: theme.bg,
+                backgroundColor: theme.card,
                 marginRight: -22,
               }}
             ></View>
