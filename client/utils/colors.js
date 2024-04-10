@@ -8,7 +8,7 @@ const commonColor = {
   gold: "#E1C158",
   categoryGreen: "#26CF7E",
   categoryYellow: "#e39400",
-  categoryViolet: "#7132F9",
+  categoryViolet: "#EF6496",
   categoryBlue: "#0f7df2",
   categoryRed: "#ff002b",
   categoryGreenLight: "#d0f2e4",

@@ -12,7 +12,7 @@ const Container = styled.View`
   gap: 6px;
 `;
 const IconButton = styled(Card)`
-  background: ${({ theme }) => theme.card};
+  background: ${({ theme }) => theme.white};
   padding: 6px;
   margin: 20px;
   width: 50px;

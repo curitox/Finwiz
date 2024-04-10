@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const StyledButton = styled.TouchableOpacity`
   flex: 1;
   max-height: 58px;
+  min-height: 30px;
   flex-direction: row;
   justify-content: center;
   align-items: center;

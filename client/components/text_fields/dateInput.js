@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const InputContainer = styled.View`
@@ -79,7 +79,7 @@ const DateInput = ({
     setIsFocused(false);
   };
 
-  const handleDateChange = (selectedDate) => {
+  const handleDateChange = (event, selectedDate) => {
     setDatePickerVisible(false);
     if (selectedDate) {
       const formattedDate = formatDate(selectedDate);
@@ -112,16 +112,24 @@ const DateInput = ({
         </InputWrapper>
         {endIcon && <IconContainer>{endIcon}</IconContainer>}
       </InputContainer>
-
       {error && <ErrorText>{error}</ErrorText>}
-
-      <DateTimePickerModal
+      {/* <DateTimePicker
         isVisible={isDatePickerVisible}
         mode="date"
         date={new Date()}
         onConfirm={handleDateChange}
         onCancel={() => setDatePickerVisible(false)}
-      />
+      /> */}
+      {isDatePickerVisible && (
+        <DateTimePicker
+          value={new Date()}
+          mode={"date"}
+          is24Hour={true}
+          display="default"
+          onChange={handleDateChange}
+          style={{ backgroundColor: "white" }}
+        />
+      )}
     </View>
   );
 };
