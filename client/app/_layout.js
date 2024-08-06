@@ -6,6 +6,7 @@ import { Slot, Stack } from "expo-router";
 import { ThemeProvider } from "../context/themeContext";
 import { Provider } from "../context/auth";
 import { BottomSheetProvider } from "../context/bottomSheetContext";
+import * as LocalAuthentication from "expo-local-authentication";
 
 SplashScreen.preventAutoHideAsync();
 

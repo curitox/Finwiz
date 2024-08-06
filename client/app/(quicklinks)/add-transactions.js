@@ -1,6 +1,6 @@
-import { View, Text, Pressable, Linking } from "react-native";
-import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { View, Text, Linking } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -276,6 +276,7 @@ export default function AddTransactions() {
   };
 
   const OpenUPIAPP = async () => {
+    if (data === undefined || data === null) return;
     const upiUrl = data;
     const additionalParams = {
       tn: transactionData.description,
@@ -318,17 +319,21 @@ export default function AddTransactions() {
         });
         setLoading(false);
         console.log(data);
-        if (data !== "" || data !== undefined || data !== null) {
-          OpenUPIAPP();
+        if (data === undefined) {
+          router.replace("/home");
         }
-        router.replace("/home");
+        if (data !== "" || data !== undefined || data !== null) {
+          console.log(data);
+          await OpenUPIAPP();
+          router.replace("/home");
+        }
       })
       .catch((err) => {
-        console.log(err.response.data.message);
+        console.log(err?.response?.data?.message);
         Toast.show({
           type: "error",
           text1: "Something went wrong",
-          text2: err.response.data.message,
+          text2: err?.response?.data?.message,
         });
         setLoading(false);
       });

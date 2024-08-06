@@ -3,10 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { Camera } from "expo-camera";
 import styled, { useTheme } from "styled-components";
 import { Ionicons } from "@expo/vector-icons";
-import { router, useRouter } from "expo-router";
+import {  useRouter } from "expo-router";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Button from "../components/buttons/button";
-// import { Camera } from "expo-barcode-scanner";
 
 const Container = styled.View`
   flex: 1;

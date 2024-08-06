@@ -1,12 +1,10 @@
 import {
   View,
   Text,
-  Pressable,
   StatusBar,
   RefreshControl,
   Image,
 } from "react-native";
-import { Link } from "expo-router";
 import moment from "moment";
 import { useAuthContext } from "../../context/auth";
 import Loader from "../../components/Loader";

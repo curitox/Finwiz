@@ -1,37 +1,13 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  View,
-  RefreshControl,
-  Text,
-  StatusBar,
-  TouchableHighlightBase,
-  Linking,
-  ScrollView,
-  Image,
-} from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import { View, RefreshControl, Text, StatusBar, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useThemeContext } from "../../context/themeContext";
-import { router, useRouter } from "expo-router";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { useAuthContext } from "../../context/auth";
+import { useRouter } from "expo-router";
 import Button from "../../components/buttons/button";
 import NavigationCards from "../../components/cards/NavigationCards";
-import { Categories } from "../../utils/data";
 import ChartCard from "../../components/cards/ChartCard";
 import Topbar from "../../components/Topbar";
-import { Entypo } from "@expo/vector-icons";
-import {
-  MaterialCommunityIcons,
-  Ionicons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import GoalCard from "../../components/cards/GoalsCard";
 import TextButton from "../../components/buttons/textButton";
 import TransactionsCard from "../../components/cards/Transactions";
@@ -43,11 +19,11 @@ import {
   TodaysChart,
 } from "../../api";
 import Loader from "../../components/Loader";
-import { useBottomSheetContext } from "../../context/bottomSheetContext";
 import InvestmentPredictor from "../../components/InvestmentPredictor";
 import NoTransactionsFound from "../../assets/images/NoTransactionsFound.png";
 import Oops from "../../assets/images/Oops.png";
 import moment from "moment";
+import { useAuthContext } from "../../context/auth";
 
 const Container = styled.ScrollView`
   padding: 32px 0px;

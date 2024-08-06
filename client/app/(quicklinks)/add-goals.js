@@ -1,6 +1,6 @@
-import { View, Text, Pressable, Linking } from "react-native";
-import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { View} from "react-native";
+import {useLocalSearchParams, useRouter } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";

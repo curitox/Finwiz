@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, ScrollView } from "react-native";
 import InputText from "../../components/text_fields/inputText";
 import Button from "../../components/buttons/button";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";

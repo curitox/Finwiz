@@ -1,6 +1,4 @@
 import { View, Text, Switch, StatusBar } from "react-native";
-import { Link } from "expo-router";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import UserAvatar from "react-native-user-avatar";
 import { useAuthContext } from "../../context/auth";

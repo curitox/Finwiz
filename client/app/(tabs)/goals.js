@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Pressable,
   RefreshControl,
   StatusBar,
   Image,

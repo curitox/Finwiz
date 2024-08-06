@@ -1,31 +1,24 @@
 import {
   View,
   Text,
-  Pressable,
   RefreshControl,
   Image,
   StatusBar,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import React, { useEffect, useState } from "react";
 import {
   GetExpenceCategory,
   GetGoalStatus,
-  GetGoals,
   GetGoalsGraph,
   GetWeeklyExpence,
 } from "../../api";
 import Topbar from "../../components/Topbar";
 import Loader from "../../components/Loader";
-import GoalCard from "../../components/cards/GoalsCard";
-import Button from "../../components/buttons/button";
-import { router } from "expo-router";
 import CategoryWiseExpence from "../../components/cards/CategoryWiseExpenceCard";
 import WeeklyExpence from "../../components/cards/WeeklyExpenceCard";
 import CategoryWiseGoal from "../../components/cards/CategoryWiseGoalCard";
-import GoalCompletionChart from "../../components/cards/GoalCompletionChart";
 import Oops from "../../assets/images/Oops.png";
 
 const Container = styled.ScrollView`

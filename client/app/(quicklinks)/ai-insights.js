@@ -1,30 +1,14 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Linking,
-  RefreshControl,
-  Image,
-} from "react-native";
-import { Link, router, useLocalSearchParams, useRouter } from "expo-router";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, Text, RefreshControl, Image } from "react-native";
+import { useRouter } from "expo-router";
 import { useAuthContext } from "../../context/auth";
 import styled, { useTheme } from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import InputText from "../../components/text_fields/inputText";
-import Button from "../../components/buttons/button";
-import DateInput from "../../components/text_fields/dateInput";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import SelectableChip from "../../components/selectable/SelectableChip";
 import {
-  AddGoal,
   BudgetAnalysis,
   GetPersonalizedInsight,
   Predict_Future_expences,
 } from "../../api";
-import moment from "moment";
 import Toast from "react-native-toast-message";
 import ExpencePredictionCard from "../../components/cards/ExpencePredictionCard";
 import PersonalizedInsight from "../../components/cards/PersonalizedInsightCard";
