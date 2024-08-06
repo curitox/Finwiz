@@ -281,7 +281,34 @@ export default function AddTransactions() {
       tn: transactionData.description,
       am: transactionData.amount,
     };
-    await Linking.openURL(modifyUpiUrl(upiUrl, additionalParams));
+    const sign =
+      "&sign=MEYCIQDq96qhUnqvyLsdgxtfdZ11SQP//6F7f7VGJ0qr//lF/gIhAPgTMsopbn4Y9DiE7AwkQEPPnb2Obx5Fcr0HJghd4gzo";
+    console.log(modifyUpiUrl(upiUrl, additionalParams) + sign);
+    await Linking.openURL(modifyUpiUrl(upiUrl, additionalParams) + sign);
+  };
+
+  const openPaymentApp = async (payApp) => {
+    let url = "";
+    switch (payApp) {
+      case "PAYTM":
+        url = "paytmmp://";
+        break;
+      case "GPAY":
+        url = "tez://upi/";
+        break;
+      case "PHONEPE":
+        url = "phonepe://";
+        break;
+    }
+    url =
+      url +
+      "pay?pa=upasanachaudhuri0710@oksbi&pn=Upasana%20Chaudhuri&aid=uGICAgIC327n1RA&am=1&tn=TestUPI&mc=1234&cu=INR";
+    console.log("URL : ", url);
+    try {
+      await Linking.openURL(url);
+    } catch (err) {
+      console.error("ERROR : ", err);
+    }
   };
 
   const handelUpdateTransaction = async (id) => {
@@ -353,6 +380,7 @@ export default function AddTransactions() {
 
     return { upiId, name };
   };
+
   return (
     <>
       {stages === 0 ? (
@@ -505,7 +533,7 @@ export default function AddTransactions() {
             color={theme.white}
             bgcolor={theme.primary}
             loading={loading}
-            onPress={() => handelNext()}
+            onPress={() => openPaymentApp("GPAY")}
             disabled={
               transactionData.transactionDate === "" ||
               transactionData.category === "" ||

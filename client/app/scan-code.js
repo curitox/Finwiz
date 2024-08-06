@@ -49,6 +49,7 @@ const QRScanner = () => {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
+    console.log(data);
     const chechUrl = data.split(":")[0] === "upi";
     if (chechUrl) {
       router.replace({ pathname: `/add-transactions`, params: { data } });
