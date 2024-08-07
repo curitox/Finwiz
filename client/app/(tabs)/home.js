@@ -39,6 +39,7 @@ import {
   GetExpences,
   GetGoals,
   GetYearlyExpences,
+  MonthsChart,
   TodaysChart,
 } from "../../api";
 import Loader from "../../components/Loader";
@@ -99,18 +100,20 @@ const Home = () => {
   const theme = useTheme();
   const themeMode = useThemeContext();
   const [loading, setLoading] = useState(true);
-  const { toggleTheme } = useThemeContext();
+  const { appTheme } = useThemeContext();
   const [year, setYear] = useState(moment().format("YYYY"));
   const [error, setError] = useState();
   const [expences, setExpences] = useState([]);
   const [prevMonth, setPrevMonth] = useState([]);
   const [goals, setGoals] = useState([]);
   const [chartData, setChartData] = useState({});
+  const [chartDataMonth, setChartDataMonth] = useState({});
 
   const onRefresh = React.useCallback(() => {
     getExpences();
     getGoals();
     getExpencesChart();
+    getExpencesChartMonth();
     getPreviousMonth();
   }, []);
 
@@ -235,11 +238,26 @@ const Home = () => {
         setError(err.message);
       });
   };
+  const getExpencesChartMonth = async () => {
+    setError("");
+    setLoading(true);
+    await MonthsChart(currentUser?.token)
+      .then((res) => {
+        setError("");
+        setChartDataMonth(res?.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message);
+      });
+  };
 
   useEffect(() => {
     getExpences();
     getGoals();
     getExpencesChart();
+    getExpencesChartMonth();
     getPreviousMonth();
   }, []);
 
@@ -251,7 +269,7 @@ const Home = () => {
     >
       <Wrapper>
         <StatusBar
-          barStyle={"dark-content"}
+          barStyle={appTheme === "light" ? "dark-content" : "light-content"}
           backgroundColor={theme.bg} // Set the status bar color based on the theme
         />
         <Topbar />
@@ -265,7 +283,7 @@ const Home = () => {
                   <TransactionCardWrapper
                     style={{
                       gap: 12,
-                      height: 700,
+                      height: 800,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
@@ -299,9 +317,18 @@ const Home = () => {
             ) : (
               <>
                 <Section>
-                  {chartData !== null && chartData !== undefined && (
-                    <ChartCard chartData={chartData} />
-                  )}
+                  <GoalsWrapper
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                  >
+                    {chartData !== null &&
+                      chartData !== undefined &&
+                      chartData && <ChartCard chartData={chartData} />}
+                    {chartDataMonth !== null &&
+                      chartDataMonth !== undefined && (
+                        <ChartCard chartData={chartDataMonth} month />
+                      )}
+                  </GoalsWrapper>
                 </Section>
                 <Section>
                   <Title>Quick Links</Title>

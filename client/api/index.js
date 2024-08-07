@@ -25,6 +25,10 @@ export const TodaysChart = async (token) =>
   await API.get("/expenseDaily", {
     headers: { Authorization: `Bearer ${token}` },
   });
+export const MonthsChart = async (token) =>
+  await API.get("/expenseDaily?m=month", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
 export const AddExpence = async (data, token) =>
   await API.post("/expense/add", data, {

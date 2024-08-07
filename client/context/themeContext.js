@@ -8,31 +8,31 @@ const ThemeContext = createContext();
 export const useThemeContext = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("light"); // Default theme is light
+  const [appTheme, setAppTheme] = useState("light"); // Default theme is light
 
   useEffect(() => {
     async function loadTheme() {
       const storedTheme = await getTheme();
       if (storedTheme) {
-        setTheme(storedTheme);
+        setAppTheme(storedTheme);
       }
     }
     loadTheme();
   }, []);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setAppTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
-  const currentTheme = theme === "light" ? light : dark;
+  const currentTheme = appTheme === "light" ? light : dark;
   // const currentTheme = dark;
 
   useEffect(() => {
-    saveTheme(theme);
-  }, [theme]);
+    saveTheme(appTheme);
+  }, [appTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, currentTheme }}>
+    <ThemeContext.Provider value={{ appTheme, toggleTheme, currentTheme }}>
       <StyledThemeProvider theme={currentTheme}>{children}</StyledThemeProvider>
     </ThemeContext.Provider>
   );

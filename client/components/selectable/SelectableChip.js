@@ -12,6 +12,7 @@ const StyledButton = styled.TouchableOpacity`
   padding-vertical: 4px;
   padding-horizontal: 8px;
   gap: 6px;
+  color: ${({theme}) => theme.text_secondary + 90};
 
   ${({ color, theme, selected }) => {
     if (selected) {

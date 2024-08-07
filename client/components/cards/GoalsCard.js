@@ -27,7 +27,7 @@ const CardContainer = styled(Card)`
   flex-direction: column;
   border-radius: 12px;
   gap: 6px;
-  background-color: ${({ theme }) => theme.bg};
+  background-color: ${({ theme }) => theme.card};
 `;
 
 const IconButton = styled.TouchableOpacity`

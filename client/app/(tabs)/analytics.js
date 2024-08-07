@@ -37,12 +37,14 @@ const Container = styled.ScrollView`
 const Wrapper = styled.SafeAreaView`
   flex: 1;
   gap: -6px;
+  background-color: ${({ theme }) => theme.bg};
 `;
 
 const Section = styled.View`
   flex: 1;
   gap: 12px;
   padding: 12px;
+  background-color: ${({ theme }) => theme.bg};
 `;
 const TitleWrapper = styled.View`
   align-items: center;

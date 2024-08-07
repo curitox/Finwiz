@@ -1,6 +1,8 @@
 {
   "expo": {
+    "name": "Finwiz",
     "scheme": "acme",
+    "version": "1.0.0",
     "web": {
       "bundler": "metro"
     },
@@ -13,7 +15,30 @@
           "microphonePermission": "Allow to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
-    ]
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": true
+          },
+          "android": {
+            "newArchEnabled": true
+          }
+        }
+      ],
+      "expo-asset"
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7b32aea3-217d-4399-9044-bd74ba418b13"
+      }
+    },
+    "android": {
+      "package": "com.rishavchanda.finwiz"
+    }
   }
 }

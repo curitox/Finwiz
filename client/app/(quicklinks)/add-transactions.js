@@ -19,6 +19,7 @@ const Container = styled.View`
   flex: 1;
   gap: 22px;
   padding: 42px 16px 16px 16px;
+  background-color: ${({ theme }) => theme.bg};
 `;
 const Back = styled.TouchableOpacity`
   width: 46px;
@@ -229,14 +230,14 @@ export default function AddTransactions() {
 
   const modifyUpiUrl = (upiUrl, additionalParams) => {
     // Parse the existing UPI URL to extract existing parameters
-    const urlParts = upiUrl.split("?");
+    const urlParts = upiUrl?.split("?");
     const baseUrl = urlParts[0];
-    const params = urlParts[1] ? urlParts[1].split("&") : [];
+    const params = urlParts[1] ? urlParts[1]?.split("&") : [];
 
     // Create a map to store parameters
     const paramMap = {};
     params.forEach((param) => {
-      const [key, value] = param.split("=");
+      const [key, value] = param?.split("=");
       paramMap[key] = value;
     });
 
@@ -316,7 +317,8 @@ export default function AddTransactions() {
           text2: "Transaction created successfully 👋",
         });
         setLoading(false);
-        if (data !== "") {
+        console.log(data);
+        if (data !== "" || data !== undefined || data !== null) {
           OpenUPIAPP();
         }
         router.replace("/home");

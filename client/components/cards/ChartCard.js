@@ -12,9 +12,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { PieChart } from "react-native-gifted-charts";
 import { Feather } from "@expo/vector-icons";
 import { getCategoryByValue } from "../../utils/data";
+import moment from "moment";
+import { Card } from "react-native-paper";
 
-const Card = styled.View`
+const CardWrapper = styled(Card)`
   flex: 1;
+  width: 360px;
+  min-height: 200px;
+  margin: 2px 4px 8px 4px;
   position: relative;
   flex-direction: column;
   border-radius: 12px;
@@ -30,6 +35,7 @@ const ImageBg = styled.ImageBackground`
   right: 0;
   bottom: 0;
   opacity: 0.5;
+  min-height: 250px;
 `;
 const Wrapper = styled.View`
   position: relative;
@@ -38,6 +44,7 @@ const Wrapper = styled.View`
   flex-direction: column;
   border-radius: 20px;
   padding: 12px 16px;
+  min-height: 200px;
 `;
 const Section = styled.View`
   flex: 1;
@@ -87,11 +94,11 @@ const renderDot = (color) => {
   );
 };
 
-const ChartCard = ({ chartData }) => {
+const ChartCard = ({ chartData, month }) => {
   const theme = useTheme();
 
   return (
-    <Card style={{ elevation: 1 }}>
+    <CardWrapper elevation={0.5}>
       <ImageBg source={BgImage} resizeMode="cover" />
       <Wrapper>
         <View
@@ -99,8 +106,12 @@ const ChartCard = ({ chartData }) => {
             gap: 2,
           }}
         >
-          <Title>Todays Expences</Title>
-          <Desc>Detailed insight of your todays Expences </Desc>
+          <Title>{month ? "Current Months Expences" : "Todays Expences"}</Title>
+          <Desc>
+            {month
+              ? `Detailed insight of "${moment().format("MMMM")}" Expences`
+              : "Detailed insight of your todays Expences"}{" "}
+          </Desc>
         </View>
         <Section>
           <Left>
@@ -167,7 +178,7 @@ const ChartCard = ({ chartData }) => {
           </Right>
         </Section>
       </Wrapper>
-    </Card>
+    </CardWrapper>
   );
 };
 

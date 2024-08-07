@@ -9,7 +9,10 @@ import { Tabs } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Platform, View, Text } from "react-native";
 import { useTheme } from "styled-components/native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetModalProvider,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { useBottomSheetContext } from "../../context/bottomSheetContext";
 
 export default function TabsLayout() {
@@ -33,6 +36,7 @@ export default function TabsLayout() {
           tabBarActiveTintColor: theme.primary,
           headerShown: false,
           tabBarStyle: {
+            borderTopWidth: 0,
             position: "absolute",
             backgroundColor: theme.bottomBar,
             padding: 2,
@@ -56,7 +60,7 @@ export default function TabsLayout() {
           options={{
             href: "/home",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -66,10 +70,10 @@ export default function TabsLayout() {
                 }}
               >
                 <Ionicons
-                  name="home-outline"
+                  name={focused ? "home" : "home-outline"}
                   size={24}
                   style={{ marginBottom: -4 }}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -77,7 +81,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Home
@@ -91,7 +95,7 @@ export default function TabsLayout() {
           options={{
             href: "/transactions",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -101,10 +105,10 @@ export default function TabsLayout() {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="bank-outline"
+                  name={focused ? "bank" : "bank-outline"}
                   size={24}
                   style={{ marginBottom: -5 }}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -112,7 +116,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Transactions
@@ -126,7 +130,7 @@ export default function TabsLayout() {
           options={{
             href: "/goals",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -138,7 +142,7 @@ export default function TabsLayout() {
                 <MaterialCommunityIcons
                   name="bullseye-arrow"
                   size={24}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                   style={{ marginBottom: -6 }}
                 />
                 <Text
@@ -147,7 +151,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Goals
@@ -161,7 +165,7 @@ export default function TabsLayout() {
           options={{
             href: "/analytics",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -170,11 +174,11 @@ export default function TabsLayout() {
                   backgroundColor: "transparent",
                 }}
               >
-                <SimpleLineIcons
-                  name="chart"
-                  size={20}
+                <Ionicons
+                  name={focused ? "stats-chart" : "stats-chart-outline"}
+                  size={24}
                   style={{ marginBottom: -1 }}
-                  color={color}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -182,7 +186,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Analytics
@@ -196,7 +200,7 @@ export default function TabsLayout() {
           options={{
             href: "/account",
             title: "",
-            tabBarIcon: ({ color }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View
                 style={{
                   flexDirection: "column",
@@ -207,9 +211,9 @@ export default function TabsLayout() {
               >
                 <FontAwesome
                   size={21}
-                  style={{ marginBottom: -4 }}
-                  name="user-o"
-                  color={color}
+                  style={{ marginBottom: -1 }}
+                  name={focused ? "user" : "user-o"}
+                  color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
@@ -217,7 +221,7 @@ export default function TabsLayout() {
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
-                    color: color,
+                    color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
                   Account
@@ -228,41 +232,44 @@ export default function TabsLayout() {
         />
       </Tabs>
 
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={
-          openBottomSheet?.snapPoint ? openBottomSheet?.snapPoint : ["45%"]
-        }
-        enablePanDownToClose={true}
-        index={-1}
-        containerStyle={{
-          backgroundColor: openBottomSheet.open
-            ? `rgba(0,0,0,0.3)`
-            : "transparent",
-        }}
-        onClose={() => {
-          // Use callback version of setOpenBottomSheet to prevent infinite loop
-          setOpenBottomSheet((prevState) => {
-            if (prevState.open) {
-              return {
-                ...prevState,
-                open: false,
-                content: null,
-                snapPoint: null,
-              };
-            }
-            return prevState;
-          });
-        }}
-      >
-        <BottomSheetScrollView
-          style={{
-            flex: 1,
+      <BottomSheetModalProvider>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={
+            openBottomSheet?.snapPoint ? openBottomSheet?.snapPoint : ["45%"]
+          }
+          enablePanDownToClose={true}
+          index={-1}
+          backgroundStyle={{ backgroundColor: theme.card }}
+          containerStyle={{
+            backgroundColor: openBottomSheet.open
+              ? `rgba(0,0,0,0.3)`
+              : "transparent",
+          }}
+          onClose={() => {
+            // Use callback version of setOpenBottomSheet to prevent infinite loop
+            setOpenBottomSheet((prevState) => {
+              if (prevState.open) {
+                return {
+                  ...prevState,
+                  open: false,
+                  content: null,
+                  snapPoint: null,
+                };
+              }
+              return prevState;
+            });
           }}
         >
-          {openBottomSheet?.content}
-        </BottomSheetScrollView>
-      </BottomSheet>
+          <BottomSheetScrollView
+            style={{
+              flex: 1,
+            }}
+          >
+            {openBottomSheet?.content}
+          </BottomSheetScrollView>
+        </BottomSheet>
+      </BottomSheetModalProvider>
     </>
   );
 }
