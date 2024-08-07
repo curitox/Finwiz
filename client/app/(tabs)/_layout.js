@@ -9,7 +9,10 @@ import { Tabs } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Platform, View, Text } from "react-native";
 import { useTheme } from "styled-components/native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetModalProvider,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { useBottomSheetContext } from "../../context/bottomSheetContext";
 
 export default function TabsLayout() {
@@ -229,42 +232,44 @@ export default function TabsLayout() {
         />
       </Tabs>
 
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={
-          openBottomSheet?.snapPoint ? openBottomSheet?.snapPoint : ["45%"]
-        }
-        enablePanDownToClose={true}
-        index={-1}
-        backgroundStyle={{ backgroundColor: theme.card }}
-        containerStyle={{
-          backgroundColor: openBottomSheet.open
-            ? `rgba(0,0,0,0.3)`
-            : "transparent",
-        }}
-        onClose={() => {
-          // Use callback version of setOpenBottomSheet to prevent infinite loop
-          setOpenBottomSheet((prevState) => {
-            if (prevState.open) {
-              return {
-                ...prevState,
-                open: false,
-                content: null,
-                snapPoint: null,
-              };
-            }
-            return prevState;
-          });
-        }}
-      >
-        <BottomSheetScrollView
-          style={{
-            flex: 1,
+      <BottomSheetModalProvider>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={
+            openBottomSheet?.snapPoint ? openBottomSheet?.snapPoint : ["45%"]
+          }
+          enablePanDownToClose={true}
+          index={-1}
+          backgroundStyle={{ backgroundColor: theme.card }}
+          containerStyle={{
+            backgroundColor: openBottomSheet.open
+              ? `rgba(0,0,0,0.3)`
+              : "transparent",
+          }}
+          onClose={() => {
+            // Use callback version of setOpenBottomSheet to prevent infinite loop
+            setOpenBottomSheet((prevState) => {
+              if (prevState.open) {
+                return {
+                  ...prevState,
+                  open: false,
+                  content: null,
+                  snapPoint: null,
+                };
+              }
+              return prevState;
+            });
           }}
         >
-          {openBottomSheet?.content}
-        </BottomSheetScrollView>
-      </BottomSheet>
+          <BottomSheetScrollView
+            style={{
+              flex: 1,
+            }}
+          >
+            {openBottomSheet?.content}
+          </BottomSheetScrollView>
+        </BottomSheet>
+      </BottomSheetModalProvider>
     </>
   );
 }
