@@ -49,14 +49,14 @@ const Topbar = () => {
             gap: 16,
           }}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               width: 40,
             }}
             onPress={() => router.replace("/account")}
           >
             <UserAvatar size={40} name={currentUser?.user?.name} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {/* <Text>FinWiz</Text> */}
         </View>
 
