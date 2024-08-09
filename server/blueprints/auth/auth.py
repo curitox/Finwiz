@@ -27,16 +27,6 @@ savings=Savings()
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-# user.createTable()
-# expense.createTable()
-# goal.createTable()
-# savings.createTable()
-
-# savings.dropTable()
-# goal.dropTable()
-# expense.dropTable()
-# user.dropTable()
-
 @auth_bp.route("/", methods=['GET'])
 def hello():
     return 'hello'

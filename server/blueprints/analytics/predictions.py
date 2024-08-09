@@ -2,9 +2,8 @@ import pickle
 from flask import request, jsonify, Blueprint
 import pandas as pd
 from datetime import datetime, timedelta
-from sqlalchemy import func
 from middleware.verifyToken import verifyToken
-from model import User, Expense, db
+from model import User, Expense
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from error import create_error

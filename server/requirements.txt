@@ -30,3 +30,5 @@ flask_cors
 scikit-learn==1.4.1.post1
 flask_sqlalchemy
 statsmodels
+flask_migrate
+click

@@ -1,12 +1,16 @@
 from app import app
-from sqlalchemy import Enum, func
+from sqlalchemy import Enum, func, text
 from sqlalchemy.orm import validates
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from sqlalchemy.orm import Session
 from datetime import datetime
 from error import create_error
 
 db = SQLAlchemy(app)
+migrate = Migrate()
 
+migrate.init_app(app, db)
 class User(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name= db.Column(db.String(50),nullable=False)
@@ -14,7 +18,8 @@ class User(db.Model):
     password = db.Column(db.String(200))
     gender = db.Column(Enum('MALE','FEMALE','OTHER', name='gender_enum', default='MALE'))
     dob = db.Column(db.Date)  
-    image = db.Column(db.String) 
+    image = db.Column(db.String)
+    image2 = db.Column(db.String)
     financialKnowledge = db.Column(Enum('BEGINNER', 'INTERMEDIATE', 'ADVANCED',name='financial_knowledge_enum',default='BEGINNER'))
     monthlyIncome = db.Column(db.Numeric(10, 2),default=0.0)
     riskTolerance = db.Column(Enum('CONSERVATIVE', 'MODERATE', 'AGGRESSIVE', name='risk_tolerance_enum',default='CONSERVATIVE'))
