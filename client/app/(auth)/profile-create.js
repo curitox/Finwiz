@@ -26,7 +26,7 @@ const Logo = styled.Text`
 `;
 
 const HeadingText = styled.Text`
-  font-size: 30px;
+  font-size: 36px;
   font-weight: 700;
   color: ${({ theme }) => theme.text_primary};
 `;

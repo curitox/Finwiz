@@ -4,6 +4,7 @@ import styled, { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const InputContainer = styled.View`
+  height: 58px;
   flex-direction: row;
   align-items: center;
   border-width: 1.2px;
@@ -16,6 +17,7 @@ const InputContainer = styled.View`
   ${({ small }) =>
     small &&
     `
+    height: 30px;
   gap: 8px;
   padding-horizontal: 12px;
   padding-vertical: 4px;`}
@@ -45,11 +47,13 @@ const InputField = styled.TextInput`
 const Label = styled.Text`
   font-size: 10px;
   font-weight: 700;
+  margin-bottom: 3px;
   color: ${({ error, focused, theme }) =>
     error ? "red" : focused ? theme.primary : theme.text_secondary};
   ${({ small }) =>
     small &&
     `
+  margin-bottom: 1.5px;
   font-size: 10px;`}
 `;
 

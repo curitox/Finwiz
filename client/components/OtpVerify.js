@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StatusBar, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StatusBar,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import InputText from "./text_fields/inputText";
 import Button from "./buttons/button";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -32,7 +38,7 @@ const Resend = styled.View`
 `;
 
 const HeadingText = styled.Text`
-  font-size: 30px;
+  font-size: 36px;
   font-weight: 700;
   color: ${({ theme }) => theme.text_primary};
 `;
@@ -189,7 +195,14 @@ const OtpVerify = ({ emailId, name, setShowOtp, setOtpVerified }) => {
   }, [otp]);
 
   return (
-    <Wrapper>
+    <Wrapper
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: "space-between",
+        flexDirection: "column",
+      }}
+      keyboardShouldPersistTaps="handled"
+    >
       <StatusBar
         barStyle={
           themeMode.theme === "light" ? "dark-content" : "light-content"
@@ -199,84 +212,92 @@ const OtpVerify = ({ emailId, name, setShowOtp, setOtpVerified }) => {
       <View
         style={{
           flex: 1,
-          gap: 22,
-          paddingTop: 16,
+          justifyContent: "space-between",
+          flexDirection: "column",
         }}
       >
-        <Logo>Finwiz</Logo>
-        <HeadingText>Verify OTP 📩💬</HeadingText>
-
         <View
           style={{
             flex: 1,
-            gap: 2,
+            gap: 22,
+            paddingTop: 16,
+            justifyContent: "start",
           }}
         >
-          <SubHeadingText>
-            An OTP has been sent to your email id:
-          </SubHeadingText>
-          <TextButton
-            label={emailId}
-            color={theme.primary}
-            disabled={true}
-            enabled={false}
-          />
-        </View>
+          <Logo>Finwiz</Logo>
+          <HeadingText>Enter verification code</HeadingText>
 
-        <View
-          style={{
-            flex: 1,
-            gap: 16,
-          }}
-        >
-          <OtpInput
-            numberOfDigits={6}
-            focusColor={theme.primary}
-            focusStickBlinkingDuration={500}
-            onTextChange={(text) => setOtp(text)}
-          />
-          <Resend>
-            {showTimer ? (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  gap: 10,
-                }}
-              >
-                <Text>Resend in</Text>
+          <View
+            style={{
+              gap: 2,
+            }}
+          >
+            <SubHeadingText>
+              An OTP has been sent to your email id:
+            </SubHeadingText>
+            <TextButton
+              label={emailId}
+              color={theme.primary}
+              disabled={true}
+              enabled={false}
+            />
+          </View>
+
+          <View
+            style={{
+              gap: 16,
+            }}
+          >
+            <OtpInput
+              numberOfDigits={6}
+              focusColor={theme.primary}
+              focusStickBlinkingDuration={500}
+              onTextChange={(text) => setOtp(text)}
+            />
+            <Resend>
+              {showTimer ? (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    gap: 10,
+                  }}
+                >
+                  <Text>Resend in</Text>
+                  <TextButton
+                    label={timer}
+                    color={theme.primary}
+                    disabled={true}
+                    enabled={true}
+                  />
+                </View>
+              ) : (
                 <TextButton
-                  label={timer}
+                  label="Resend"
                   color={theme.primary}
-                  disabled={true}
+                  disabled={false}
                   enabled={true}
+                  onPress={() => resendOtp()}
                 />
-              </View>
-            ) : (
-              <TextButton
-                label="Resend"
-                color={theme.primary}
-                disabled={false}
-                enabled={true}
-                onPress={() => resendOtp()}
-              />
-            )}
-          </Resend>
+              )}
+            </Resend>
+          </View>
         </View>
-        <Button
-          type="filled"
-          color={theme.white}
-          bgcolor={theme.primary}
-          loading={loading}
-          onPress={validateOtp}
-          disabled={buttonDisabled}
-        >
-          Verify OTP
-        </Button>
+        <Toast />
       </View>
-      <Toast />
+
+      <Button
+        type="filled"
+        color={theme.white}
+        bgcolor={theme.primary}
+        loading={loading}
+        onPress={validateOtp}
+        disabled={buttonDisabled}
+      >
+        Verify OTP
+      </Button>
     </Wrapper>
   );
 };
