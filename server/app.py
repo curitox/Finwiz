@@ -9,8 +9,8 @@ app = Flask(__name__)
 CORS(app)
 
 try:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://finwiz_user:ULqxsQCQmoZxK5HnGOBZgJp8hJvDyKfy@dpg-cqpq0bggph6c73b3s08g-a.singapore-postgres.render.com/finwiz"
-    app.config['SECRET_KEY'] = "ULqxsQCQmoZxK5HnGOBZgJp8hJvDyKfy"
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+    app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
     print("Connection succesful")
 except:
     print("Some error")

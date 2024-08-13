@@ -37,7 +37,7 @@ const Verified = styled.View`
 `;
 
 const HeadingText = styled.Text`
-  font-size: 30px;
+  font-size: 36px;
   font-weight: 700;
   color: ${({ theme }) => theme.text_primary};
 `;
@@ -58,7 +58,7 @@ const Seperator = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0px 50px;
+  padding: 10px 50px;
   gap: 12px;
 `;
 
@@ -231,7 +231,7 @@ const SignIn = () => {
         }}
       >
         <Logo>Finwiz</Logo>
-        <HeadingText>Welcome Back 👋</HeadingText>
+        <HeadingText>Sign in to your account</HeadingText>
         <SubHeadingText>
           Welcome Back, Please Enter Your Email Id{" "}
         </SubHeadingText>
@@ -240,7 +240,7 @@ const SignIn = () => {
         style={{
           flex: 1,
           padding: 16,
-          gap: 16,
+          gap: 18,
         }}
       >
         <View
@@ -340,11 +340,11 @@ const SignIn = () => {
             loading={loading}
             // onPress={() => _googlesignIn()}
           >
-            Continue with Google
+            SignIn with Google
           </Button>
         </SocialAuth>
         <AlreadyAccount>
-          <Txt>Don't have an account on Renegan? </Txt>
+          <Txt>Don't have an account on Finwiz? </Txt>
           <TextButton
             label="Sign Up"
             color={theme.primary}

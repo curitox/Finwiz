@@ -36,7 +36,7 @@ const Verified = styled.View`
 `;
 
 const HeadingText = styled.Text`
-  font-size: 30px;
+  font-size: 36px;
   font-weight: 700;
   color: ${({ theme }) => theme.text_primary};
 `;
@@ -57,7 +57,7 @@ const Seperator = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0px 50px;
+  padding: 10px 50px;
   gap: 12px;
 `;
 
@@ -275,7 +275,7 @@ const SignUp = () => {
             }}
           >
             <Logo>Finwiz</Logo>
-            <HeadingText>Welcome to Finwiz 👋</HeadingText>
+            <HeadingText>Get started with Finwiz</HeadingText>
             <SubHeadingText>
               Create your new account to continue to Finwiz
             </SubHeadingText>
@@ -399,11 +399,11 @@ const SignUp = () => {
                 loading={loading}
                 onPress={handleSignIn}
               >
-                Continue with Google
+                SignUp with Google
               </Button>
             </SocialAuth>
             <AlreadyAccount>
-              <Txt>Already have an account on Renegan? </Txt>
+              <Txt>Already have an account on Finwiz? </Txt>
               <TextButton
                 label="Sign In"
                 color={theme.primary}
