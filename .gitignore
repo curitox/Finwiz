@@ -1,4 +1,7 @@
 /server/__pycache__
+/server/middleware/__pycache__
+/server/ml/__pycache__
+/server/utils/__pycache__
 /server/controllers/__pycache__
 /server/migrations/__pycache__
 /server/models/__pycache__
