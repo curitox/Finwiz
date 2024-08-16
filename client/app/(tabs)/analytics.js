@@ -30,7 +30,6 @@ import Oops from "../../assets/images/Oops.png";
 
 const Container = styled.ScrollView`
   padding: 32px 0px;
-  padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
 `;
 
@@ -145,7 +144,6 @@ export default function Analytics() {
         <RefreshControl refreshing={false} onRefresh={onRefresh} />
       }
     >
-      <Wrapper>
         <StatusBar
           barStyle={"dark-content"}
           backgroundColor={theme.bg} // Set the status bar color based on the theme
@@ -214,10 +212,9 @@ export default function Analytics() {
 
         <View
           style={{
-            height: 90,
+            height: 120,
           }}
         ></View>
-      </Wrapper>
     </Container>
   );
 }

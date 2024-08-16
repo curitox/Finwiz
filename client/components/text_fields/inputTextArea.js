@@ -8,8 +8,8 @@ const InputContainer = styled.View`
   justify-content: flex-start; /* Align elements at the top */
   align-items: flex-start; /* Align elements at the top */
   border-width: 1.2px;
-  border-color: ${({ focused, error }) =>
-    error ? "red" : focused ? "blue" : "#BABABA"};
+  border-color: ${({ focused, error, theme }) =>
+    error ? "red" : focused ? theme.primary + 80 : theme.text_secondary};
   border-radius: 10px;
   padding-horizontal: 16px;
   padding-vertical: 8px;

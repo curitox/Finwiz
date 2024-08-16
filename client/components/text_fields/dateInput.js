@@ -10,7 +10,7 @@ const InputContainer = styled.View`
   align-items: center;
   border-width: 1.2px;
   border-color: ${({ error, focused, theme }) =>
-    error ? "red" : focused ? theme.primary + 80 : theme.text_secondary_light};
+    error ? "red" : focused ? theme.primary + 80 : theme.text_secondary};
   border-radius: 10px;
   padding-horizontal: 14px;
   padding-vertical: 6px;

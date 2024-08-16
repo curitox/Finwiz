@@ -74,7 +74,7 @@ const Flex = styled.View`
   gap: 8px;
 `;
 const Finance = styled.View`
-  background-color: ${({ theme }) => theme.text_secondary_light + 30};
+  background-color: ${({ theme }) => theme.text_secondary_light + 10};
   border-radius: 12px;
   margin: 12px;
   padding: 10px 20px;
@@ -88,7 +88,7 @@ const Content = styled.View`
   gap: 2px;
 `;
 const Settings = styled.View`
-  background-color: ${({ theme }) => theme.text_secondary_light + 30};
+  background-color: ${({ theme }) => theme.text_secondary_light + 10};
   margin: 12px 0px;
   gap: 8px;
   flex-direction: column;
@@ -104,7 +104,7 @@ const Container = styled.TouchableOpacity`
 const HorizontalLine = styled.View`
   height: 1px;
   flex: 1;
-  background-color: ${({ theme }) => theme.text_secondary_light + 70};
+  background-color: ${({ theme }) => theme.text_secondary_light + 10};
 `;
 const VerticalLine = styled.View`
   height: 36px;
@@ -308,7 +308,7 @@ export default function Account() {
           </TextColor>
         </Container>
       </Settings>
-      <View style={{ marginBottom: 50 }}></View>
+      <View style={{ height: 120 }}></View>
     </MainContainer>
   );
 }

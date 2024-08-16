@@ -66,21 +66,20 @@ export default function TabsLayout() {
                   flexDirection: "column",
                   alignItems: "center",
                   marginTop: 14,
-                  backgroundColor: "transparent",
                 }}
               >
                 <Ionicons
                   name={focused ? "home" : "home-outline"}
-                  size={24}
+                  size={22}
                   style={{ marginBottom: -4 }}
                   color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
-                    marginTop: 5,
+                    marginTop: 8,
                     fontSize: 12,
                     opacity: 1,
-                    fontWeight: 500,
+                    fontWeight: 600,
                     color: focused ? theme.primary : theme.text_secondary,
                   }}
                 >
@@ -112,7 +111,7 @@ export default function TabsLayout() {
                 />
                 <Text
                   style={{
-                    marginTop: 5,
+                    marginTop: 8,
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
@@ -141,13 +140,13 @@ export default function TabsLayout() {
               >
                 <MaterialCommunityIcons
                   name="bullseye-arrow"
-                  size={24}
+                  size={25}
                   color={focused ? theme.primary : theme.text_secondary}
                   style={{ marginBottom: -6 }}
                 />
                 <Text
                   style={{
-                    marginTop: 5,
+                    marginTop: 9,
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
@@ -176,13 +175,13 @@ export default function TabsLayout() {
               >
                 <Ionicons
                   name={focused ? "stats-chart" : "stats-chart-outline"}
-                  size={24}
+                  size={22}
                   style={{ marginBottom: -1 }}
                   color={focused ? theme.primary : theme.text_secondary}
                 />
                 <Text
                   style={{
-                    marginTop: 5,
+                    marginTop: 8,
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,
@@ -217,7 +216,7 @@ export default function TabsLayout() {
                 />
                 <Text
                   style={{
-                    marginTop: 5,
+                    marginTop: 8,
                     fontSize: 12,
                     opacity: 1,
                     fontWeight: 500,

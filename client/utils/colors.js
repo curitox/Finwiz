@@ -31,13 +31,13 @@ export const light = {
 };
 
 export const dark = {
-  bg: "#282C41",
-  bottomBar: "#2A2D40",
-  card: "#212436",
-  mainCard: "#212436",
+  bg: "#141718",
+  bottomBar: "#232627",
+  card: "#232627",
+  mainCard: "#232627",
   text: "#ffffff",
   text_primary: "#F1F2F7",
-  text_secondary: "#9297B7",
-  text_secondary_light: "#5B628A",
+  text_secondary: "#6C7275",
+  text_secondary_light: "#E8ECEF",
   ...commonColor,
 };
