@@ -51,13 +51,7 @@ import moment from "moment";
 
 const Container = styled.ScrollView`
   padding: 32px 0px;
-  padding: 32px 0px;
   background-color: ${({ theme }) => theme.bg};
-`;
-
-const Wrapper = styled.SafeAreaView`
-  flex: 1;
-  gap: -6px;
 `;
 
 const Section = styled.View`
@@ -267,182 +261,179 @@ const Home = () => {
         <RefreshControl refreshing={false} onRefresh={onRefresh} />
       }
     >
-      <Wrapper>
-        <StatusBar
-          barStyle={appTheme === "light" ? "dark-content" : "light-content"}
-          backgroundColor={theme.bg} // Set the status bar color based on the theme
-        />
-        <Topbar />
-        {loading ? (
-          <Loader />
-        ) : (
-          <>
-            {error ? (
-              <>
-                <View style={{ flex: 1 }}>
+      <StatusBar
+        barStyle={appTheme === "light" ? "dark-content" : "light-content"}
+        backgroundColor={theme.bg} // Set the status bar color based on the theme
+      />
+      <Topbar />
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          {error ? (
+            <>
+              <View style={{ flex: 1 }}>
+                <TransactionCardWrapper
+                  style={{
+                    gap: 12,
+                    height: 800,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    style={{
+                      width: 300,
+                      height: 300,
+                    }}
+                    source={Oops}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 500,
+                      color: theme.red,
+                    }}
+                  >
+                    {error}
+                  </Text>
+                  <Text
+                    style={{
+                      color: theme.text_primary,
+                    }}
+                  >
+                    Please refresh the page again !
+                  </Text>
+                </TransactionCardWrapper>
+              </View>
+            </>
+          ) : (
+            <>
+              <Section>
+                <GoalsWrapper
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {chartData !== null &&
+                    chartData !== undefined &&
+                    chartData && <ChartCard chartData={chartData} />}
+                  {chartDataMonth !== null && chartDataMonth !== undefined && (
+                    <ChartCard chartData={chartDataMonth} month />
+                  )}
+                </GoalsWrapper>
+              </Section>
+              <Section>
+                <Title>Quick Links</Title>
+                <CardWrapper>
+                  {categories.map((item) => (
+                    <NavigationCards data={item} key={item.id} />
+                  ))}
+                </CardWrapper>
+              </Section>
+              {goals?.length > 0 && (
+                <Section>
+                  <TitleWrapper>
+                    <Title>Goals</Title>
+
+                    <TextButton
+                      small
+                      label="View All"
+                      color={theme.primary}
+                      disabled={false}
+                      enabled={true}
+                      onPress={() => router.replace("/goals")}
+                    />
+                  </TitleWrapper>
+                  <GoalsWrapper
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                  >
+                    {goals?.map((item) => (
+                      <GoalCard key={`goal-home-${item?.id}`} item={item} />
+                    ))}
+                  </GoalsWrapper>
+                </Section>
+              )}
+              <Section>
+                <Title>Transactions</Title>
+
+                {expences.length === 0 ? (
                   <TransactionCardWrapper
                     style={{
                       gap: 12,
-                      height: 800,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
                     <Image
                       style={{
-                        width: 300,
-                        height: 300,
+                        width: 200,
+                        height: 200,
                       }}
-                      source={Oops}
+                      source={NoTransactionsFound}
                     />
                     <Text
                       style={{
-                        fontSize: 16,
-                        fontWeight: 500,
-                        color: theme.red,
+                        color: theme.text_secondary,
                       }}
                     >
-                      {error}
+                      No Transactions Found Today
                     </Text>
-                    <Text
-                      style={{
-                        color: theme.text_primary,
-                      }}
+                    <Button
+                      micro
+                      filled
+                      color={theme.white}
+                      bgcolor={theme.primary}
+                      startIcon={
+                        <MaterialIcons
+                          name="add"
+                          size={14}
+                          color={theme.white}
+                        />
+                      }
+                      onPress={() => router.replace("/add-transactions")}
                     >
-                      Please refresh the page again !
-                    </Text>
+                      Add new Transaction
+                    </Button>
                   </TransactionCardWrapper>
-                </View>
-              </>
-            ) : (
-              <>
-                <Section>
-                  <GoalsWrapper
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    {chartData !== null &&
-                      chartData !== undefined &&
-                      chartData && <ChartCard chartData={chartData} />}
-                    {chartDataMonth !== null &&
-                      chartDataMonth !== undefined && (
-                        <ChartCard chartData={chartDataMonth} month />
-                      )}
-                  </GoalsWrapper>
-                </Section>
-                <Section>
-                  <Title>Quick Links</Title>
-                  <CardWrapper>
-                    {categories.map((item) => (
-                      <NavigationCards data={item} key={item.id} />
-                    ))}
-                  </CardWrapper>
-                </Section>
-                {goals?.length > 0 && (
-                  <Section>
-                    <TitleWrapper>
-                      <Title>Goals</Title>
-
-                      <TextButton
-                        small
-                        label="View All"
-                        color={theme.primary}
-                        disabled={false}
-                        enabled={true}
-                        onPress={() => router.replace("/goals")}
-                      />
-                    </TitleWrapper>
-                    <GoalsWrapper
-                      horizontal={true}
-                      showsHorizontalScrollIndicator={false}
-                    >
-                      {goals?.map((item) => (
-                        <GoalCard key={`goal-home-${item?.id}`} item={item} />
+                ) : (
+                  <>
+                    <Month>Today</Month>
+                    <TransactionCardWrapper>
+                      {expences?.map((item) => (
+                        <TransactionsCard
+                          item={item}
+                          key={`expence-home-${item?.category}-${item?.id}`}
+                        />
                       ))}
-                    </GoalsWrapper>
-                  </Section>
-                )}
-                <Section>
-                  <Title>Transactions</Title>
-
-                  {expences.length === 0 ? (
-                    <TransactionCardWrapper
-                      style={{
-                        gap: 12,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Image
-                        style={{
-                          width: 200,
-                          height: 200,
-                        }}
-                        source={NoTransactionsFound}
-                      />
-                      <Text
-                        style={{
-                          color: theme.text_secondary,
-                        }}
-                      >
-                        No Transactions Found Today
-                      </Text>
-                      <Button
-                        micro
-                        filled
-                        color={theme.white}
-                        bgcolor={theme.primary}
-                        startIcon={
-                          <MaterialIcons
-                            name="add"
-                            size={14}
-                            color={theme.white}
-                          />
-                        }
-                        onPress={() => router.replace("/add-transactions")}
-                      >
-                        Add new Transaction
-                      </Button>
                     </TransactionCardWrapper>
-                  ) : (
-                    <>
-                      <Month>Today</Month>
-                      <TransactionCardWrapper>
-                        {expences?.map((item) => (
-                          <TransactionsCard
-                            item={item}
-                            key={`expence-home-${item?.category}-${item?.id}`}
-                          />
-                        ))}
-                      </TransactionCardWrapper>
-                    </>
-                  )}
-                  {prevMonth.length > 0 && (
-                    <>
-                      <Month>{prevMonth[0]?.month}</Month>
+                  </>
+                )}
+                {prevMonth.length > 0 && (
+                  <>
+                    <Month>{prevMonth[0]?.month}</Month>
 
-                      <TransactionCardWrapper style={{ gap: 0 }}>
-                        {prevMonth[0]?.transactions?.map((transactions) => (
-                          <TransactionsCard
-                            item={transactions}
-                            key={`expence-transactions-${transactions?.category}-${transactions?.id}`}
-                          />
-                        ))}
-                      </TransactionCardWrapper>
-                    </>
-                  )}
-                </Section>
-              </>
-            )}
-          </>
-        )}
+                    <TransactionCardWrapper style={{ gap: 0 }}>
+                      {prevMonth[0]?.transactions?.map((transactions) => (
+                        <TransactionsCard
+                          item={transactions}
+                          key={`expence-transactions-${transactions?.category}-${transactions?.id}`}
+                        />
+                      ))}
+                    </TransactionCardWrapper>
+                  </>
+                )}
+              </Section>
+            </>
+          )}
+        </>
+      )}
 
-        <View
-          style={{
-            height: 90,
-          }}
-        ></View>
-      </Wrapper>
+      <View
+        style={{
+          height: 120,
+        }}
+      ></View>
     </Container>
   );
 };

@@ -16,6 +16,7 @@ const Container = styled.View`
   flex: 1;
   flex-direction: column;
   gap: 6px;
+  padding-top: 20px;
 `;
 
 const Wrapper = styled.View`
@@ -49,14 +50,14 @@ const Topbar = () => {
             gap: 16,
           }}
         >
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={{
               width: 40,
             }}
             onPress={() => router.replace("/account")}
           >
             <UserAvatar size={40} name={currentUser?.user?.name} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
           {/* <Text>FinWiz</Text> */}
         </View>
 
