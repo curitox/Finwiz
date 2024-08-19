@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Camera } from "expo-camera";
 import styled, { useTheme } from "styled-components";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import Button from "../components/buttons/button";
-// import { Camera } from "expo-barcode-scanner";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 const Container = styled.View`
   flex: 1;
@@ -28,26 +26,19 @@ const Title = styled.Text`
   text-align: center;
   font-weight: 600;
   font-size: 24px;
-  margin-top: 12px;
+  margin-top: 18px;
   color: ${({ theme }) => theme.text_primary};
 `;
 
 const QRScanner = () => {
   const router = useRouter();
   const theme = useTheme();
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const [camera, setCamera] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState("back");
   const [scanned, setScanned] = useState(false);
-  const [image, setImage] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  useEffect(() => {
-    (async () => {
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === "granted");
-    })();
-  }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    console.log("scanned");
     setScanned(true);
     const chechUrl = data.split(":")[0] === "upi";
     if (chechUrl) {
@@ -57,9 +48,35 @@ const QRScanner = () => {
     }
   };
 
-  if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
   }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <Container>
+        <Back onPress={() => router.replace("/home")}>
+          <Ionicons name="chevron-back" size={22} color={theme.text_primary} />
+        </Back>
+        <Container>
+          <Title>We need your permission to show the camera</Title>
+          <Container>
+            <Button
+              onPress={requestPermission}
+              filled
+              color={theme.white}
+              bgcolor={theme.primary}
+            >
+              Grant Cammera Permissions
+            </Button>
+          </Container>
+        </Container>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Back onPress={() => router.replace("/home")}>
@@ -67,18 +84,15 @@ const QRScanner = () => {
       </Back>
       <Title>Scan Your Payment QR code</Title>
       <View style={styles.cameraContainer}>
-        {hasCameraPermission ? (
-          <Camera
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            barCodeScannerSettings={{
-              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
-            }}
-            style={styles.fixedRatio}
-            ratio={"1:1"}
-          />
-        ) : (
-          <></>
-        )}
+        <CameraView
+          facing={facing}
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr"],
+          }}
+          style={styles.fixedRatio}
+          ratio={"1:1"}
+        ></CameraView>
       </View>
       {scanned && (
         <Button
