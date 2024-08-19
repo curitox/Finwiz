@@ -5,6 +5,7 @@ import {
   View,
   Text,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import styled, { css, useTheme } from "styled-components/native";
 import BgImage from "../../assets/icons/pattern.png";
@@ -17,7 +18,7 @@ import { Card } from "react-native-paper";
 
 const CardWrapper = styled(Card)`
   flex: 1;
-  width: 360px;
+  width: ${({ width }) => width + "px"};
   min-height: 200px;
   margin: 2px 4px 8px 4px;
   position: relative;
@@ -109,8 +110,10 @@ const renderDot = (color) => {
 const ChartCard = ({ chartData, month }) => {
   const theme = useTheme();
 
+  const windowWidth = Dimensions.get("window").width;
+
   return (
-    <CardWrapper elevation={0.5}>
+    <CardWrapper elevation={0.5} width={windowWidth - 60}>
       <ContentWrapper>
         <ImageBg source={BgImage} resizeMode="cover" />
         <Wrapper>
