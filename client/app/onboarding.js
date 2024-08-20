@@ -57,6 +57,17 @@ const Onboarding = () => {
     useRef(Animated.divide(scrollX, width)).current
   );
 
+  const nextClick = () => {
+    const nextIndex = Math.min(
+      animatedCurrent.__getValue() + 1,
+      onboardingDetails.length - 1
+    );
+    scrollX.current?.scrollTo({x: nextIndex * width, y: 0, animatedCurrent: false});
+    const updatedValue = Animated.add(animatedCurrent, 1);
+
+    setAnimatedCurrent(updatedValue);
+  }
+
   return (
     <Container>
       <SkipBar>
@@ -72,6 +83,8 @@ const Onboarding = () => {
         horizontal={true}
         pagingEnabled={true}
         showsHorizontalScrollIndicator={false}
+        scrollToOverflowEnabled={true}
+        ref={scrollX}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
           {
@@ -102,13 +115,7 @@ const Onboarding = () => {
           <FAB
             color={theme.primary}
             icon={{ name: "east", color: "white" }}
-            onPress={() => {
-              const nextIndex = Math.min(
-                animatedCurrent._value + 1,
-                onboardingDetails.length - 1
-              );
-              scrollX.setValue(nextIndex * width);
-            }}
+            onPress={nextClick}
           />
         </NextButton>
       </Indicator>
