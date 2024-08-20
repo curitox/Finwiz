@@ -56,6 +56,12 @@ const Layout = () => {
                 }}
               />
               <Stack.Screen
+                name="onboarding"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
                 name="index"
                 options={{
                   headerShown: false,

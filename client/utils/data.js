@@ -124,3 +124,21 @@ const TransactionCategories = [
 export const getCategoryByValue = (value) => {
   return TransactionCategories.find((category) => category.value === value);
 };
+
+export const onboardingDetails = [
+  {
+    image: "https://cdn.dribbble.com/users/2514124/screenshots/5474610/crypto6_3.gif",
+    title: "Track your transactions effortlessly",
+    description: "Keep a detailed record of all your financial transactions. Stay organized and manage your expenses with ease."
+  },
+  {
+    image: "https://cdn.dribbble.com/users/25514/screenshots/4276494/vyta_brand_llustration_goals_tracking.gif",
+    title: "Set Goals, Track Your Progress",
+    description: "Define your objectives and monitor your achievements. Stay focused and motivated on your path to success.",
+  },
+  {
+    image: "https://cdn.dribbble.com/users/1655164/screenshots/4818499/ss.gif",
+    title: "Predict Profitable Investments, Estimate Expenses",
+    description: "Identify the best investment opportunities and anticipate future costs. Make informed financial decisions with confidence.",
+  }
+]
